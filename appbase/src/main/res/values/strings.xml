@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--region DateTimeAgo Util Message-->
+    <string name="date_util_term_less" translatable="false">less than</string>
+    <string name="date_util_term_a" translatable="false">a</string>
+    <string name="date_util_term_an" translatable="false">an</string>
+
+    <string name="date_util_unit_second" translatable="false">second</string>
+    <string name="date_util_unit_seconds" translatable="false">seconds</string>
+    <string name="date_util_unit_minute" translatable="false">minute</string>
+    <string name="date_util_unit_minutes" translatable="false">minutes</string>
+    <string name="date_util_unit_hour" translatable="false">hour</string>
+    <string name="date_util_unit_hours" translatable="false">hours</string>
+    <string name="date_util_unit_day" translatable="false">day</string>
+    <string name="date_util_unit_days" translatable="false">days</string>
+    <string name="date_util_unit_month" translatable="false">month</string>
+    <string name="date_util_unit_months" translatable="false">months</string>
+    <string name="date_util_unit_year" translatable="false">year</string>
+    <string name="date_util_unit_years" translatable="false">years</string>
+
+    <string name="date_util_prefix_lt" translatable="false">less than a</string>
+    <string name="date_util_prefix_about" translatable="false">about</string>
+    <string name="date_util_prefix_over" translatable="false">over</string>
+    <string name="date_util_prefix_almost" translatable="false">almost</string>
+
+    <string name="date_util_suffix" translatable="false">ago</string>
+    <string name="str_onprocessstarted">onProcessStarted..</string>
+    <string name="str_onupdateresult">onUpdateResult..</string>
+    <string name="str_no_rooted_device">No rooted device!</string>
+    <string name="str_going">Going..</string>
+    <string name="str_ch_state_unchecked">CH_STATE_UNCHECKED..</string>
+    <string name="str_ch_state_checked_error">CH_STATE_CHECKED_ERROR..</string>
+    <string name="str_tel">tel:%1$s</string>
+    <string name="str_fb_page">fb://page/%1$s</string>
+    <string name="str_https_www_facebook_com">https://www.facebook.com/%1$s</string>
+    <string name="str_mailto">mailto</string>
+    <string name="str_package">package</string>
+    <string name="str_message">message</string>
+    <!--endregion-->
+</resources>
