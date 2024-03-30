@@ -77,7 +77,7 @@ fun NiaNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = Color.White,
+        containerColor = Color.DarkGray,
         contentColor = NiaNavigationDefaults.navigationContentColor(),
         tonalElevation = 4.dp,
         content = content,
@@ -196,7 +196,7 @@ fun NiaNavigationPreview() {
  */
 object NiaNavigationDefaults {
     @Composable
-    fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
+    fun navigationContentColor() = Color.Gray
 
     @Composable
     fun navigationSelectedItemColor() = PrimaryColor

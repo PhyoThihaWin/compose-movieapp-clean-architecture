@@ -1,32 +1,32 @@
 package com.pthw.composemovieappcleanarchitecture.feature.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,8 +39,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -56,6 +56,7 @@ import kotlin.math.absoluteValue
 /**
  * Created by P.T.H.W on 27/03/2024.
  */
+@SuppressLint("ResourceAsColor")
 @Composable
 fun HomeNavPage(modifier: Modifier = Modifier) {
     HomePageContent(modifier = modifier)
@@ -114,7 +115,7 @@ fun HomePageContent(modifier: Modifier) {
 
                 HorizontalPager(
                     modifier = modifier
-                        .heightIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
+                        .heightIn(max = (LocalConfiguration.current.screenHeightDp / 2.8).dp)
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(
                         horizontal = Dimens.MARGIN_XXXXLARGE,
@@ -167,12 +168,103 @@ fun HomePageContent(modifier: Modifier) {
 
                 }
 
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                TitleTextView(modifier = modifier.fillMaxWidth(), text = "Avengers - Infinity War")
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_SMALL))
+
+                Text(
+                    modifier = modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    text = "2h29m • Action, adventure, sci-fi",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = Dimens.TEXT_REGULAR_2
+                )
+
+                Row(
+                    modifier = modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Rounded.Star, "", tint = PrimaryColor)
+                        TitleTextView(modifier = modifier, text = "4.8")
+                    }
+
+                    Text(
+                        "(1.222)",
+                        fontSize = Dimens.TEXT_XSMALL,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
                 HorizontalPagerIndicator(
                     pageCount = 10,
                     currentPage = pagerState.currentPage,
                     targetPage = pagerState.targetPage,
                     currentPageOffsetFraction = pagerState.currentPageOffsetFraction
                 )
+
+
+                // Coming Soon
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+                TitleTextView(
+                    modifier = modifier.padding(
+                        horizontal = Dimens.MARGIN_MEDIUM_2,
+                        vertical = Dimens.MARGIN_MEDIUM
+                    ), text = "Coming soon"
+                )
+
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                ) {
+                    items(20) {
+                        Column(
+                            modifier = modifier.width(170.dp)
+                        ) {
+                            AsyncImage(
+                                model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
+                                modifier = modifier
+                                    .height(220.dp)
+                                    .width(170.dp)
+                                    .padding(end = Dimens.MARGIN_MEDIUM_2)
+                                    .clip(Shapes.small)
+                            )
+
+                            Text(
+                                text = "Avatar 2: The Way Of Water",
+                                fontSize = Dimens.TEXT_REGULAR_2,
+                                fontWeight = FontWeight.Medium,
+                                color = PrimaryColor
+                            )
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(painter = painterResource(id = R.drawable.ic_video_info), "")
+                                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                                Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
+                            }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(painter = painterResource(id = R.drawable.ic_video_info), "")
+                                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                                Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
+                            }
+                        }
+                    }
+                }
+
+
 
                 Box(
                     modifier = modifier
@@ -289,13 +381,17 @@ private fun HomeSearchBarView(
             painter = painterResource(id = R.drawable.ic_search_normal),
             contentDescription = ""
         )
-        TextField(
+        OutlinedTextField(
             modifier = modifier
                 .fillMaxWidth()
                 .background(color = Color.DarkGray),
             value = "", onValueChange = {},
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.Transparent
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             ),
             placeholder = { Text(text = "Search", color = Color.Gray) }
         )

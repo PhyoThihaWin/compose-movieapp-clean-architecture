@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 
 /**
@@ -18,6 +19,7 @@ fun TitleTextView(
     Text(
         modifier = modifier,
         text = text,
+        textAlign = TextAlign.Center,
         fontSize = Dimens.TEXT_XLARGE,
         color = Color.White,
         fontWeight = FontWeight.SemiBold
