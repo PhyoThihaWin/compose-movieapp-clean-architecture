@@ -13,7 +13,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
  */
 @Composable
 fun TitleTextView(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     text: String
 ) {
     Text(
@@ -21,7 +21,6 @@ fun TitleTextView(
         text = text,
         textAlign = TextAlign.Center,
         fontSize = Dimens.TEXT_XLARGE,
-        color = Color.White,
         fontWeight = FontWeight.SemiBold
     )
 }

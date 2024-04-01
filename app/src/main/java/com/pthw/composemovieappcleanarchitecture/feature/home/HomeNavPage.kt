@@ -1,6 +1,9 @@
 package com.pthw.composemovieappcleanarchitecture.feature.home
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,21 +17,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,34 +80,34 @@ fun HomePageContent(modifier: Modifier) {
         topBar = {
             Row(
                 modifier = modifier
-                    .background(color = Color.Black)
                     .padding(horizontal = Dimens.MARGIN_MEDIUM_2, vertical = Dimens.MARGIN_MEDIUM)
             ) {
                 Column(modifier.weight(1f)) {
-                    Text("Hi, Angelina \uD83D\uDC4B", color = Color.White)
+                    Text("Hi, Angelina \uD83D\uDC4B")
                     Text(
-                        "Welcome back",
-                        color = Color.White,
+                        text = "Welcome back",
                         fontSize = Dimens.TEXT_HEADING,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
                 Image(
                     painter = painterResource(id = R.drawable.ic_notification),
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
                     contentDescription = ""
                 )
             }
         },
     ) { innerPadding ->
-        val pagerState = rememberPagerState(pageCount = {
+        val nowPlayingPagerState = rememberPagerState(pageCount = {
             10
+        })
+        val promoPagerState = rememberPagerState(pageCount = {
+            20
         })
 
         LazyColumn(
             modifier = modifier
                 .padding(innerPadding)
-                .background(color = Color.Black)
         ) {
             item {
 
@@ -106,9 +117,14 @@ fun HomePageContent(modifier: Modifier) {
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
 
-                TitleTextView(
-                    modifier = modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2),
-                    text = "Now playing"
+
+                // Now Playing
+                SectionTitleWithSeeAll(
+                    modifier = modifier.padding(
+                        horizontal = Dimens.MARGIN_MEDIUM_2,
+                        vertical = Dimens.MARGIN_MEDIUM_2
+                    ),
+                    title = "Now playing"
                 )
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -118,54 +134,16 @@ fun HomePageContent(modifier: Modifier) {
                         .heightIn(max = (LocalConfiguration.current.screenHeightDp / 2.8).dp)
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(
-                        horizontal = Dimens.MARGIN_XXXXLARGE,
+                        horizontal = 80.dp,
                         vertical = 8.dp
                     ),
-                    state = pagerState
+                    state = nowPlayingPagerState
                 ) { page ->
-                    // Our page content
-                    Card(
-                        modifier = modifier
-                            .graphicsLayer {
-                                val pageOffset = (
-                                        (pagerState.currentPage - page) + pagerState
-                                            .currentPageOffsetFraction
-                                        )
-
-                                alpha = lerp(
-                                    start = 0.7f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
-                                )
-
-                                cameraDistance = 8 * density
-                                rotationY = lerp(
-                                    start = 0f,
-                                    stop = 0f,
-                                    fraction = pageOffset.coerceIn(-1f, 1f),
-                                )
-
-                                lerp(
-                                    start = 0.8f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
-                                ).also { scale ->
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                            },
-
-                        content = {
-                            AsyncImage(
-                                model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                            )
-                        }
-
+                    HorizontalPagerItemView(
+                        modifier = modifier,
+                        pagerState = nowPlayingPagerState,
+                        currentPage = page
                     )
-
-
                 }
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -205,101 +183,252 @@ fun HomePageContent(modifier: Modifier) {
 
                 HorizontalPagerIndicator(
                     pageCount = 10,
-                    currentPage = pagerState.currentPage,
-                    targetPage = pagerState.targetPage,
-                    currentPageOffsetFraction = pagerState.currentPageOffsetFraction
+                    currentPage = nowPlayingPagerState.currentPage,
+                    targetPage = nowPlayingPagerState.targetPage,
+                    currentPageOffsetFraction = nowPlayingPagerState.currentPageOffsetFraction
                 )
 
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
                 // Coming Soon
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-                TitleTextView(
+                SectionTitleWithSeeAll(
                     modifier = modifier.padding(
                         horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM
-                    ), text = "Coming soon"
+                        vertical = Dimens.MARGIN_MEDIUM_2
+                    ),
+                    title = "Coming soon"
                 )
-
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
                 ) {
                     items(20) {
+                        ComingSoonMoviesItemView(modifier)
+                    }
+                }
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+
+                // Promo & Discount
+                SectionTitleWithSeeAll(
+                    modifier = modifier.padding(
+                        horizontal = Dimens.MARGIN_MEDIUM_2,
+                        vertical = Dimens.MARGIN_MEDIUM_2
+                    ),
+                    title = "Promo & Discount"
+                )
+
+                HorizontalPager(
+                    state = promoPagerState,
+                    modifier = modifier
+                        .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
+                    pageSpacing = Dimens.MARGIN_MEDIUM_2,
+                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                ) {
+                    AsyncImage(
+                        modifier = modifier.clip(Shapes.small),
+                        model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                    )
+                }
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                // Service
+                SectionTitleWithSeeAll(
+                    modifier = modifier.padding(
+                        horizontal = Dimens.MARGIN_MEDIUM_2,
+                        vertical = Dimens.MARGIN_MEDIUM_2
+                    ),
+                    title = "Celebrities"
+                )
+
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
+                ) {
+                    items(20) {
+                        CelebritiesItemView(modifier = modifier)
+                    }
+                }
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                // Movie News
+                SectionTitleWithSeeAll(
+                    modifier = modifier.padding(
+                        horizontal = Dimens.MARGIN_MEDIUM_2,
+                        vertical = Dimens.MARGIN_MEDIUM_2
+                    ),
+                    title = "Movie News"
+                )
+
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
+                ) {
+                    items(20) {
                         Column(
-                            modifier = modifier.width(170.dp)
+                            modifier = modifier
+                                .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
+                                .padding(end = Dimens.MARGIN_MEDIUM_2)
                         ) {
                             AsyncImage(
+                                modifier = modifier
+                                    .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
+                                    .clip(Shapes.small),
                                 model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
-                                modifier = modifier
-                                    .height(220.dp)
-                                    .width(170.dp)
-                                    .padding(end = Dimens.MARGIN_MEDIUM_2)
-                                    .clip(Shapes.small)
                             )
-
+                            Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
                             Text(
-                                text = "Avatar 2: The Way Of Water",
+                                text = "When The Batman 2 Starts Filming Reportedly Revealed",
                                 fontSize = Dimens.TEXT_REGULAR_2,
-                                fontWeight = FontWeight.Medium,
-                                color = PrimaryColor
                             )
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(painter = painterResource(id = R.drawable.ic_video_info), "")
-                                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-                                Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
-                            }
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(painter = painterResource(id = R.drawable.ic_video_info), "")
-                                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-                                Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
-                            }
                         }
                     }
                 }
 
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_LARGE))
 
-
-                Box(
-                    modifier = modifier
-                        .padding(innerPadding)
-                        .background(Color.Blue)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom = 40.dp),
-                )
-
-                Box(
-                    modifier = modifier
-                        .padding(innerPadding)
-                        .background(Color.Blue)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom = 40.dp),
-                )
-                Box(
-                    modifier = modifier
-                        .padding(innerPadding)
-                        .background(Color.Blue)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom = 40.dp),
-                )
-                Box(
-                    modifier = modifier
-                        .padding(innerPadding)
-                        .background(Color.Blue)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom = 40.dp),
-                )
             }
+        }
+    }
+}
+
+@Composable
+private fun CelebritiesItemView(modifier: Modifier) {
+    Column(
+        modifier = modifier
+            .padding(end = Dimens.MARGIN_MEDIUM_2)
+            .width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            modifier = modifier
+                .size(100.dp)
+                .clip(CircleShape),
+            model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+        Text(text = "Keanau Reeves", fontSize = Dimens.TEXT_REGULAR_2, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun SectionTitleWithSeeAll(
+    modifier: Modifier,
+    title: String,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TitleTextView(text = title)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "See All",
+                color = PrimaryColor,
+                fontSize = Dimens.TEXT_REGULAR
+            )
+            Icon(
+                modifier = Modifier.size(Dimens.MARGIN_20),
+                imageVector = Icons.Rounded.KeyboardArrowRight,
+                contentDescription = "",
+                tint = PrimaryColor,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HorizontalPagerItemView(modifier: Modifier, pagerState: PagerState, currentPage: Int) {
+    val pageOffset = pagerState.currentPage - currentPage + pagerState.currentPageOffsetFraction
+    Card(
+        modifier = modifier
+            .graphicsLayer {
+                alpha = lerp(
+                    start = 0.7f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
+                )
+
+                cameraDistance = 8 * density
+                rotationY = lerp(
+                    start = 0f,
+                    stop = 0f,
+                    fraction = pageOffset.coerceIn(-1f, 1f),
+                )
+
+                lerp(
+                    start = 0.8f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.absoluteValue + 0.2f,
+                ).also { scale ->
+                    scaleX = scale
+                    scaleY = scale
+                }
+            },
+
+        content = {
+            AsyncImage(
+                model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+        }
+    )
+}
+
+@Composable
+private fun ComingSoonMoviesItemView(
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(180.dp)
+            .padding(end = Dimens.MARGIN_MEDIUM_2)
+    ) {
+        AsyncImage(
+            model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = modifier
+                .height(220.dp)
+                .width(180.dp)
+                .clip(Shapes.small)
+        )
+
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+        Text(
+            text = "Avatar 2: The Way Of Water",
+            fontSize = Dimens.TEXT_REGULAR_2,
+            fontWeight = FontWeight.Medium,
+            color = PrimaryColor
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(painter = painterResource(id = R.drawable.ic_video_info), "")
+            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+            Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(painter = painterResource(id = R.drawable.ic_calendar), "")
+            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+            Text(text = "20.1.2024", fontSize = Dimens.TEXT_SMALL)
         }
     }
 }
@@ -399,10 +528,38 @@ private fun HomeSearchBarView(
 
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun HomeNavPageNightPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        HomePageContent(modifier = Modifier)
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun HomeNavPagePreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        HomePageContent(modifier = Modifier.background(color = Color.Black))
+        HomePageContent(modifier = Modifier)
+    }
+}
+
+@Preview
+@Composable
+private fun SectionTitleWithSeeAllPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            SectionTitleWithSeeAll(modifier = Modifier, title = "Promo & Test")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CelebritiesItemViewPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            CelebritiesItemView(modifier = Modifier)
+        }
     }
 }

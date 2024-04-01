@@ -42,10 +42,7 @@ fun MainPage(
         modifier = Modifier.semantics {
             testTagsAsResourceId = true
         },
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-
         bottomBar = {
             NiaBottomBar(
                 destinations = appState.topLevelDestinations,
@@ -57,7 +54,7 @@ fun MainPage(
         },
     ) { padding ->
         MainNavHost(
-            modifier = Modifier.padding(padding).background(color = Color.Black),
+            modifier = Modifier.padding(padding),
             appState = appState
         )
     }
