@@ -1,5 +1,6 @@
 package com.pthw.domain.repository
 
+import com.pthw.domain.model.ActorVo
 import com.pthw.domain.model.MovieVo
 
 /**
@@ -8,4 +9,6 @@ import com.pthw.domain.model.MovieVo
 interface HomeRepository {
     suspend fun getNowPlayingMovies(): List<MovieVo>
     suspend fun getUpComingMovies(): List<MovieVo>
+    suspend fun getPopularMovies(): List<MovieVo>
+    suspend fun getPopularPeople(): List<ActorVo>
 }
