@@ -37,4 +37,17 @@
     <string name="str_package">package</string>
     <string name="str_message">message</string>
     <!--endregion-->
+
+    <!--region : Network error-->
+    <string name="error_generic">Something went wrong. Try again later.</string>
+    <string name="error_no_internet">No internet connection.</string>
+    <string name="error_socket_timeout">Connection timeout.</string>
+    <string name="error_server_401" translatable="false">Unauthorized credentials.</string>
+    <string name="error_server_451" translatable="false">Refused for legal reasons.</string>
+    <string name="error_server_403" translatable="false">Too many attempts, temporarily forbidden.</string>
+    <string name="error_server_500">Server error occurs. Try again later.</string>
+    <string name="error_server_503">Service under maintenance or unavailable.</string>
+    <string name="error_server_404">Server not found.</string>
+    <string name="error_http">Server error occurs.Try again later.</string>
+    <!--endregion -->
 </resources>

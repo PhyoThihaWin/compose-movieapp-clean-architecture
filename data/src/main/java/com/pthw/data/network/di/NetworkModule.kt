@@ -4,6 +4,7 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
+import com.pthw.data.network.ktor.AuthTokenInterceptor
 import com.pthw.data.network.ktor.ktorHttpClient
 import dagger.Module
 import dagger.Provides
@@ -43,10 +44,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideKtorClient(
-//        authTokenInterceptor: AuthTokenInterceptor,
+        authTokenInterceptor: AuthTokenInterceptor,
         chuckerInterceptor: ChuckerInterceptor,
     ): HttpClient {
-        return ktorHttpClient(listOf(chuckerInterceptor))
+        return ktorHttpClient(listOf(authTokenInterceptor, chuckerInterceptor))
     }
 
 }

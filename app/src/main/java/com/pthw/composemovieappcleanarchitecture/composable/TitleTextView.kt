@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 
 /**
@@ -14,13 +15,16 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 @Composable
 fun TitleTextView(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     Text(
         modifier = modifier,
         text = text,
         textAlign = TextAlign.Center,
         fontSize = Dimens.TEXT_XLARGE,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.SemiBold,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis
     )
 }

@@ -22,9 +22,6 @@ private const val CONNECT_TIMEOUT = 15L
 private const val READ_TIMEOUT = 60L
 private const val WRITE_TIMEOUT = 15L
 
-// Ktor BaseUrl
-const val KTOR_BASE_URL = "https://api.themoviedb.org/"
-
 // ktor http client
 @OptIn(ExperimentalSerializationApi::class)
 val ktorHttpClient: (List<Interceptor>) -> HttpClient = { interceptors ->
