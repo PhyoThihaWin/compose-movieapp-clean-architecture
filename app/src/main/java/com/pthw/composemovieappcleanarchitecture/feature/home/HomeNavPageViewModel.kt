@@ -57,8 +57,9 @@ class HomeNavPageViewModel @Inject constructor(
         upComingMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
-                val data = getUpComingMoviesUseCase.execute(Unit)
-                upComingMovies.value = ObjViewState.Success(data)
+                getUpComingMoviesUseCase.execute(Unit).collectLatest {
+                    upComingMovies.value = ObjViewState.Success(it)
+                }
             }.getOrElse {
                 Timber.e(it)
                 upComingMovies.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())
@@ -70,8 +71,9 @@ class HomeNavPageViewModel @Inject constructor(
         popularMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
-                val data = getPopularMoviesUseCase.execute(Unit)
-                popularMovies.value = ObjViewState.Success(data)
+                getPopularMoviesUseCase.execute(Unit).collectLatest {
+                    popularMovies.value = ObjViewState.Success(it)
+                }
             }.getOrElse {
                 Timber.e(it)
                 popularMovies.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())
@@ -83,8 +85,9 @@ class HomeNavPageViewModel @Inject constructor(
         popularPeople.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
-                val data = getPopularPeopleUseCase.execute(Unit)
-                popularPeople.value = ObjViewState.Success(data)
+                getPopularPeopleUseCase.execute(Unit).collectLatest {
+                    popularPeople.value = ObjViewState.Success(it)
+                }
             }.getOrElse {
                 Timber.e(it)
                 popularPeople.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())

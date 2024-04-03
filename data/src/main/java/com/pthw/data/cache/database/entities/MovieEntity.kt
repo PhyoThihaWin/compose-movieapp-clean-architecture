@@ -19,5 +19,9 @@ data class MovieEntity(
     val releaseDate: String,
     val voteAverage: Double,
     val genreIds: List<Int>,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+
+    var isNowPlaying: Boolean = false,
+    var isUpComing: Boolean = false,
+    var isPopular: Boolean = false
 )

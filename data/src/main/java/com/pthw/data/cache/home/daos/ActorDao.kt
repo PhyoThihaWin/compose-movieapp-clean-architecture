@@ -1,4 +1,4 @@
-package com.pthw.data.cache.database.daos
+package com.pthw.data.cache.home.daos
 
 import androidx.room.Dao
 import androidx.room.Insert

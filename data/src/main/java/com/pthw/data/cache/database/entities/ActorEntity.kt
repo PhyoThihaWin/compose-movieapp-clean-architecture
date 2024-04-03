@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "actor")
 data class ActorEntity(
-    @PrimaryKey val tableId: Long = 1L,
+    @PrimaryKey(autoGenerate = true) val tableId: Long = 0L,
     val adult: Boolean,
     val gender: Int,
     val id: Int,

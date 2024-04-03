@@ -213,6 +213,7 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                         CircularProgressIndicator()
                     },
                     success = {
+                        if (it.isEmpty()) return@RenderCompose
                         HorizontalPager(
                             state = promoPagerState,
                             modifier = modifier

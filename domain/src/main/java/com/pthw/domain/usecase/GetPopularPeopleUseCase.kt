@@ -5,6 +5,8 @@ import com.pthw.domain.model.ActorVo
 import com.pthw.domain.model.MovieVo
 import com.pthw.domain.repository.HomeRepository
 import com.pthw.domain.utils.CoroutineUseCase
+import com.pthw.domain.utils.FlowUseCase
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -13,8 +15,9 @@ import javax.inject.Inject
 class GetPopularPeopleUseCase @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val homeRepository: HomeRepository
-) : CoroutineUseCase<Unit, List<ActorVo>>(dispatcherProvider) {
-    override suspend fun provide(params: Unit): List<ActorVo> {
-        return homeRepository.getPopularPeople()
+) : FlowUseCase<Unit, List<ActorVo>>(dispatcherProvider) {
+    override suspend fun provide(params: Unit): Flow<List<ActorVo>> {
+        return homeRepository.getDbPopularPeople()
     }
+
 }
