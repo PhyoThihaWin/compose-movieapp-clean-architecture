@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.viewstate.ObjViewState
+import com.pthw.domain.model.ActorVo
 import com.pthw.domain.model.MovieVo
 import com.pthw.domain.usecase.GetNowPlayingMoviesUseCase
+import com.pthw.domain.usecase.GetPopularMoviesUseCase
+import com.pthw.domain.usecase.GetPopularPeopleUseCase
 import com.pthw.domain.usecase.GetUpComingMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,12 +24,18 @@ import javax.inject.Inject
 class HomeNavPageViewModel @Inject constructor(
     private val handler: ExceptionHandler,
     private val getNowPlayingMoviesUseCase: GetNowPlayingMoviesUseCase,
-    private val getUpComingMoviesUseCase: GetUpComingMoviesUseCase
+    private val getUpComingMoviesUseCase: GetUpComingMoviesUseCase,
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
+    private val getPopularPeopleUseCase: GetPopularPeopleUseCase
 ) : ViewModel() {
 
     var nowPlayingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
         private set
     var upComingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
+        private set
+    var popularMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
+        private set
+    var popularPeople = mutableStateOf<ObjViewState<List<ActorVo>>>(ObjViewState.Idle())
         private set
 
     private fun getNowPlayingMovies() {
@@ -55,8 +64,36 @@ class HomeNavPageViewModel @Inject constructor(
         }
     }
 
+    private fun getPopularMovies() {
+        popularMovies.value = ObjViewState.Loading()
+        viewModelScope.launch {
+            runCatching {
+                val data = getPopularMoviesUseCase.execute(Unit)
+                popularMovies.value = ObjViewState.Success(data)
+            }.getOrElse {
+                Timber.e(it)
+                popularMovies.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())
+            }
+        }
+    }
+
+    private fun getPopularPeople() {
+        popularPeople.value = ObjViewState.Loading()
+        viewModelScope.launch {
+            runCatching {
+                val data = getPopularPeopleUseCase.execute(Unit)
+                popularPeople.value = ObjViewState.Success(data)
+            }.getOrElse {
+                Timber.e(it)
+                popularPeople.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())
+            }
+        }
+    }
+
     init {
         getNowPlayingMovies()
         getUpComingMovies()
+        getPopularMovies()
+        getPopularPeople()
     }
 }

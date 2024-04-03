@@ -73,6 +73,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanAr
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
+import com.pthw.domain.model.ActorVo
 import com.pthw.domain.model.MovieVo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
@@ -89,7 +90,9 @@ fun HomeNavPage(
 ) {
     val uiState = UiState(
         nowPlayingMovies = viewModel.nowPlayingMovies.value,
-        comingSoonMovies = viewModel.upComingMovies.value
+        comingSoonMovies = viewModel.upComingMovies.value,
+        popularMovies = viewModel.popularMovies.value,
+        popularActors = viewModel.popularPeople.value
     )
     HomePageContent(modifier = modifier, uiState = uiState)
 }
@@ -97,6 +100,8 @@ fun HomeNavPage(
 private data class UiState(
     val nowPlayingMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val comingSoonMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
+    val popularMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
+    val popularActors: ObjViewState<List<ActorVo>> = ObjViewState.Idle()
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -154,7 +159,7 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
-                RenderCompose(state = uiState.nowPlayingMovies,
+                RenderCompose(uiState.nowPlayingMovies,
                     loading = {
                         CircularProgressIndicator()
                     },
@@ -178,7 +183,7 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                     title = "Coming soon"
                 )
 
-                RenderCompose(state = uiState.comingSoonMovies,
+                RenderCompose(uiState.comingSoonMovies,
                     loading = {
                         CircularProgressIndicator()
                     },
@@ -205,20 +210,30 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                     title = "Promo & Discount"
                 )
 
-                HorizontalPager(
-                    state = promoPagerState,
-                    modifier = modifier
-                        .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
-                    pageSpacing = Dimens.MARGIN_MEDIUM_2,
-                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                ) {
-                    AsyncImage(
-                        modifier = modifier.clip(Shapes.small),
-                        model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                    )
-                }
+                RenderCompose(uiState.popularMovies,
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    success = {
+                        HorizontalPager(
+                            state = promoPagerState,
+                            modifier = modifier
+                                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
+                            pageSpacing = Dimens.MARGIN_MEDIUM_2,
+                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                        ) { index ->
+                            AsyncImage(
+                                modifier = modifier
+                                    .fillMaxSize()
+                                    .clip(Shapes.small),
+                                model = it[index].backdropPath,
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                )
+
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
@@ -231,13 +246,19 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                     title = "Celebrities"
                 )
 
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
-                ) {
-                    items(20) {
-                        CelebritiesItemView(modifier = modifier)
-                    }
-                }
+                RenderCompose(uiState.popularActors,
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    success = {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
+                        ) {
+                            items(it.size) { index ->
+                                CelebritiesItemView(modifier = modifier, actorVo = it[index])
+                            }
+                        }
+                    })
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
@@ -250,31 +271,40 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                     title = "Movie News"
                 )
 
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
-                ) {
-                    items(20) {
-                        Column(
-                            modifier = modifier
-                                .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
-                                .padding(end = Dimens.MARGIN_MEDIUM_2)
+
+                RenderCompose(uiState.nowPlayingMovies,
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    success = {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
                         ) {
-                            AsyncImage(
-                                modifier = modifier
-                                    .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
-                                    .clip(Shapes.small),
-                                model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                            )
-                            Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-                            Text(
-                                text = "When The Batman 2 Starts Filming Reportedly Revealed",
-                                fontSize = Dimens.TEXT_REGULAR_2,
-                            )
+                            items(it.size) { index ->
+                                Column(
+                                    modifier = modifier
+                                        .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
+                                        .padding(end = Dimens.MARGIN_MEDIUM_2)
+                                ) {
+                                    AsyncImage(
+                                        modifier = modifier
+                                            .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
+                                            .clip(Shapes.small),
+                                        model = it[index].backdropPath,
+                                        contentScale = ContentScale.Crop,
+                                        contentDescription = null,
+                                    )
+                                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+                                    Text(
+                                        text = it[index].overview,
+                                        fontSize = Dimens.TEXT_REGULAR_2,
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
+                    })
 
                 Spacer(modifier = modifier.padding(top = Dimens.MARGIN_LARGE))
 
@@ -360,7 +390,7 @@ private fun NowPlayingMoviesSectionView(
 }
 
 @Composable
-private fun CelebritiesItemView(modifier: Modifier) {
+private fun CelebritiesItemView(modifier: Modifier, actorVo: ActorVo?) {
     Column(
         modifier = modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
@@ -371,12 +401,16 @@ private fun CelebritiesItemView(modifier: Modifier) {
             modifier = modifier
                 .size(100.dp)
                 .clip(CircleShape),
-            model = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a8fa5da-d816-43a7-8e4b-5eb6aafbb825/dgr8qdd-b7743841-157a-4889-ad5e-46a74ef50796.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdhOGZhNWRhLWQ4MTYtNDNhNy04ZTRiLTVlYjZhYWZiYjgyNVwvZGdyOHFkZC1iNzc0Mzg0MS0xNTdhLTQ4ODktYWQ1ZS00NmE3NGVmNTA3OTYuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.l1FQgFXccI8y_LnnCZPUxRppZZ87U_FqQhJtx0u1lvI",
+            model = actorVo?.profilePath,
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
         Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-        Text(text = "Keanau Reeves", fontSize = Dimens.TEXT_REGULAR_2, textAlign = TextAlign.Center)
+        Text(
+            text = actorVo?.name.orEmpty(),
+            fontSize = Dimens.TEXT_REGULAR_2,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -601,7 +635,7 @@ private fun SectionTitleWithSeeAllPreview() {
 private fun CelebritiesItemViewPreview() {
     ComposeMovieAppCleanArchitectureTheme {
         Surface {
-            CelebritiesItemView(modifier = Modifier)
+            CelebritiesItemView(modifier = Modifier, null)
         }
     }
 }

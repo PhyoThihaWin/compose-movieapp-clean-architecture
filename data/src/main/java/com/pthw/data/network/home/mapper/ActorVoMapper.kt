@@ -1,6 +1,7 @@
 package com.pthw.data.network.home.mapper
 
 import com.pthw.data.network.home.response.ActorResponse
+import com.pthw.data.network.ktor.IMAGE_BASE_URL
 import com.pthw.domain.model.ActorVo
 import com.pthw.shared.extension.orFalse
 import com.pthw.shared.extension.orZero
@@ -20,7 +21,7 @@ class ActorVoMapper @Inject constructor() : UnidirectionalMap<ActorResponse?, Ac
             name = item?.name.orEmpty(),
             originalName = item?.originalName.orEmpty(),
             popularity = item?.popularity.orZero(),
-            profilePath = item?.profilePath.orEmpty()
+            profilePath = IMAGE_BASE_URL + item?.profilePath.orEmpty()
         )
     }
 }

@@ -6,6 +6,7 @@ import com.pthw.data.network.ktor.DataResponse
 import com.pthw.data.network.ktor.ENDPOINT_GET_NOW_PLAYING
 import com.pthw.data.network.ktor.ENDPOINT_GET_UP_COMING
 import com.pthw.data.network.ktor.ENDPOINT_POPULAR_MOVIES
+import com.pthw.data.network.ktor.ENDPOINT_POPULAR_PERSON
 import com.pthw.data.network.ktor.toKtor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -33,7 +34,7 @@ class HomeService(private val client: HttpClient) {
     }
 
     suspend fun getPopularPeople(): DataResponse<List<ActorResponse>> {
-        val endpoint = ENDPOINT_POPULAR_MOVIES.toKtor()
+        val endpoint = ENDPOINT_POPULAR_PERSON.toKtor()
         return client.get(endpoint).body()
     }
 }
