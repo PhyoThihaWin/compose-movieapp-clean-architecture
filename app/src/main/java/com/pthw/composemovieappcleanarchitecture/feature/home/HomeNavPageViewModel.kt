@@ -12,6 +12,7 @@ import com.pthw.domain.usecase.GetPopularMoviesUseCase
 import com.pthw.domain.usecase.GetPopularPeopleUseCase
 import com.pthw.domain.usecase.GetUpComingMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,8 +43,9 @@ class HomeNavPageViewModel @Inject constructor(
         nowPlayingMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
-                val data = getNowPlayingMoviesUseCase.execute(Unit)
-                nowPlayingMovies.value = ObjViewState.Success(data)
+                getNowPlayingMoviesUseCase.execute(Unit).collectLatest {
+                    nowPlayingMovies.value = ObjViewState.Success(it)
+                }
             }.getOrElse {
                 Timber.e(it)
                 nowPlayingMovies.value = ObjViewState.Error(handler.getErrorBody(it).orEmpty())

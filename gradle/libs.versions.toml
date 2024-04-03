@@ -27,6 +27,7 @@ jetbrainsKotlinJvm = "1.9.22"
 javaxInject = "1"
 coroutineCore = "1.6.4"
 coil = "2.6.0"
+room_version = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,9 @@ javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInjec
 coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutineCore" }
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleVersion" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room_version" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room_version" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -129,9 +129,6 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
             }
         },
     ) { innerPadding ->
-        val nowPlayingPagerState = rememberPagerState(pageCount = {
-            8
-        })
         val promoPagerState = rememberPagerState(pageCount = {
             20
         })
@@ -164,11 +161,12 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                         CircularProgressIndicator()
                     },
                     success = {
-                        NowPlayingMoviesSectionView(
-                            modifier = modifier,
-                            pagerState = nowPlayingPagerState,
-                            movies = it
-                        )
+                        if (it.isNotEmpty()) {
+                            NowPlayingMoviesSectionView(
+                                modifier = modifier,
+                                movies = it.take(8)
+                            )
+                        }
                     })
 
 
@@ -317,9 +315,11 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
 @Composable
 private fun NowPlayingMoviesSectionView(
     modifier: Modifier,
-    pagerState: PagerState,
     movies: List<MovieVo>
 ) {
+    val pagerState = rememberPagerState(pageCount = {
+        movies.size
+    })
     Column {
         HorizontalPager(
             modifier = modifier
