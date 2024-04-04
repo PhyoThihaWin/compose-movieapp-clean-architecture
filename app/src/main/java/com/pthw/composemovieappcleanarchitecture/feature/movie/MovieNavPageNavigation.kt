@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
  * Created by P.T.H.W on 25/03/2024.
  */
 
-const val movieNavPageNavigationRoute = "movie/"
+const val movieNavPageNavigationRoute = "MOVIE"
 fun NavGraphBuilder.movieNavPage() {
     composable(
         route = movieNavPageNavigationRoute,

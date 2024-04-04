@@ -2,19 +2,15 @@ package com.pthw.composemovieappcleanarchitecture.feature.home
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,9 +26,12 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -43,15 +42,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,21 +57,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
+import androidx.navigation.NavController
 import com.pthw.appbase.viewstate.ObjViewState
 import com.pthw.appbase.viewstate.RenderCompose
-import com.pthw.appbase.viewstate.renderState
 import com.pthw.composemovieappcleanarchitecture.R
+import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
+import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.model.ActorVo
 import com.pthw.domain.model.MovieVo
-import dagger.hilt.android.lifecycle.HiltViewModel
-import timber.log.Timber
 import kotlin.math.absoluteValue
 
 /**
@@ -87,26 +81,37 @@ import kotlin.math.absoluteValue
 fun HomeNavPage(
     modifier: Modifier = Modifier,
     viewModel: HomeNavPageViewModel = hiltViewModel(),
+    navController: NavController,
 ) {
     val uiState = UiState(
+        refreshing = viewModel.refreshing.value,
         nowPlayingMovies = viewModel.nowPlayingMovies.value,
         comingSoonMovies = viewModel.upComingMovies.value,
         popularMovies = viewModel.popularMovies.value,
         popularActors = viewModel.popularPeople.value
     )
-    HomePageContent(modifier = modifier, uiState = uiState)
+    HomePageContent(modifier = modifier, uiState = uiState, refresh = viewModel::refreshHomeData,
+        seeAll = {
+            navController.navigate(movieListingPageNavigationRoute)
+        })
 }
 
 private data class UiState(
+    val refreshing: Boolean = false,
     val nowPlayingMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val comingSoonMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val popularMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val popularActors: ObjViewState<List<ActorVo>> = ObjViewState.Idle()
 )
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
-private fun HomePageContent(modifier: Modifier, uiState: UiState) {
+private fun HomePageContent(
+    modifier: Modifier,
+    uiState: UiState,
+    refresh: () -> Unit = {},
+    seeAll: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
             Row(
@@ -121,193 +126,200 @@ private fun HomePageContent(modifier: Modifier, uiState: UiState) {
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.ic_notification),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.background
                 )
             }
         },
     ) { innerPadding ->
-        val promoPagerState = rememberPagerState(pageCount = {
-            20
-        })
+        val promoPagerState = rememberPagerState { 20 }
+        val state = rememberPullRefreshState(uiState.refreshing, refresh)
 
-        LazyColumn(
-            modifier = modifier
-                .padding(innerPadding)
-        ) {
-            item {
+        Box(Modifier.pullRefresh(state)) {
+            LazyColumn(
+                modifier = modifier
+                    .padding(innerPadding)
+            ) {
+                item {
 
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
 
-                HomeSearchBarView(modifier = modifier)
+                    HomeSearchBarView(modifier = modifier)
 
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
 
-                // Now Playing
-                SectionTitleWithSeeAll(
-                    modifier = modifier.padding(
-                        horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    title = "Now playing"
-                )
-
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-                RenderCompose(uiState.nowPlayingMovies,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    success = {
-                        if (it.isNotEmpty()) {
-                            NowPlayingMoviesSectionView(
-                                modifier = modifier,
-                                movies = it.take(8)
-                            )
-                        }
-                    })
-
-
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-                // Coming Soon
-                SectionTitleWithSeeAll(
-                    modifier = modifier.padding(
-                        horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    title = "Coming soon"
-                )
-
-                RenderCompose(uiState.comingSoonMovies,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    success = {
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                        ) {
-                            items(it.size) { index ->
-                                ComingSoonMoviesItemView(modifier, it[index])
-                            }
-                        }
+                    // Now Playing
+                    SectionTitleWithSeeAll(
+                        modifier = modifier.padding(
+                            horizontal = Dimens.MARGIN_MEDIUM_2,
+                            vertical = Dimens.MARGIN_MEDIUM_2
+                        ),
+                        title = "Now playing"
+                    ) {
+                        seeAll()
                     }
-                )
 
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
-
-                // Promo & Discount
-                SectionTitleWithSeeAll(
-                    modifier = modifier.padding(
-                        horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    title = "Promo & Discount"
-                )
-
-                RenderCompose(uiState.popularMovies,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    success = {
-                        if (it.isEmpty()) return@RenderCompose
-                        HorizontalPager(
-                            state = promoPagerState,
-                            modifier = modifier
-                                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
-                            pageSpacing = Dimens.MARGIN_MEDIUM_2,
-                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                        ) { index ->
-                            AsyncImage(
-                                modifier = modifier
-                                    .fillMaxSize()
-                                    .clip(Shapes.small),
-                                model = it[index].backdropPath,
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                )
-
-
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-                // Service
-                SectionTitleWithSeeAll(
-                    modifier = modifier.padding(
-                        horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    title = "Celebrities"
-                )
-
-                RenderCompose(uiState.popularActors,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    success = {
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
-                        ) {
-                            items(it.size) { index ->
-                                CelebritiesItemView(modifier = modifier, actorVo = it[index])
+                    RenderCompose(uiState.nowPlayingMovies,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        success = {
+                            if (it.isNotEmpty()) {
+                                NowPlayingMoviesSectionView(
+                                    modifier = modifier,
+                                    movies = it.take(8)
+                                )
                             }
-                        }
-                    })
-
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-                // Movie News
-                SectionTitleWithSeeAll(
-                    modifier = modifier.padding(
-                        horizontal = Dimens.MARGIN_MEDIUM_2,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    title = "Movie News"
-                )
+                        })
 
 
-                RenderCompose(uiState.nowPlayingMovies,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    success = {
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
-                        ) {
-                            items(it.size) { index ->
-                                Column(
-                                    modifier = modifier
-                                        .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
-                                        .padding(end = Dimens.MARGIN_MEDIUM_2)
-                                ) {
-                                    AsyncImage(
-                                        modifier = modifier
-                                            .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
-                                            .clip(Shapes.small),
-                                        model = it[index].backdropPath,
-                                        contentScale = ContentScale.Crop,
-                                        contentDescription = null,
-                                    )
-                                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-                                    Text(
-                                        text = it[index].overview,
-                                        fontSize = Dimens.TEXT_REGULAR_2,
-                                        maxLines = 3,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                    // Coming Soon
+                    SectionTitleWithSeeAll(
+                        modifier = modifier.padding(
+                            horizontal = Dimens.MARGIN_MEDIUM_2,
+                            vertical = Dimens.MARGIN_MEDIUM_2
+                        ),
+                        title = "Coming soon"
+                    )
+
+                    RenderCompose(uiState.comingSoonMovies,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        success = {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            ) {
+                                items(it.size) { index ->
+                                    ComingSoonMoviesItemView(modifier, it[index])
                                 }
                             }
                         }
-                    })
+                    )
 
-                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_LARGE))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
+
+                    // Promo & Discount
+                    SectionTitleWithSeeAll(
+                        modifier = modifier.padding(
+                            horizontal = Dimens.MARGIN_MEDIUM_2,
+                            vertical = Dimens.MARGIN_MEDIUM_2
+                        ),
+                        title = "Promo & Discount"
+                    )
+
+                    RenderCompose(uiState.popularMovies,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        success = {
+                            if (it.isEmpty()) return@RenderCompose
+                            HorizontalPager(
+                                state = promoPagerState,
+                                modifier = modifier
+                                    .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
+                                pageSpacing = Dimens.MARGIN_MEDIUM_2,
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            ) { index ->
+                                CoilAsyncImage(
+                                    modifier = modifier
+                                        .fillMaxSize()
+                                        .clip(Shapes.small),
+                                    imageUrl = it[index].backdropPath,
+                                )
+                            }
+                        }
+                    )
+
+
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                    // Service
+                    SectionTitleWithSeeAll(
+                        modifier = modifier.padding(
+                            horizontal = Dimens.MARGIN_MEDIUM_2,
+                            vertical = Dimens.MARGIN_MEDIUM_2
+                        ),
+                        title = "Celebrities"
+                    )
+
+                    RenderCompose(uiState.popularActors,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        success = {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
+                            ) {
+                                items(it.size) { index ->
+                                    CelebritiesItemView(modifier = modifier, actorVo = it[index])
+                                }
+                            }
+                        })
+
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                    // Movie News
+                    SectionTitleWithSeeAll(
+                        modifier = modifier.padding(
+                            horizontal = Dimens.MARGIN_MEDIUM_2,
+                            vertical = Dimens.MARGIN_MEDIUM_2
+                        ),
+                        title = "Movie News"
+                    )
+
+
+                    RenderCompose(uiState.nowPlayingMovies,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        success = {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
+                            ) {
+                                items(it.size) { index ->
+                                    Column(
+                                        modifier = modifier
+                                            .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
+                                            .padding(end = Dimens.MARGIN_MEDIUM_2)
+                                    ) {
+                                        CoilAsyncImage(
+                                            modifier = modifier
+                                                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
+                                                .clip(Shapes.small),
+                                            imageUrl = it[index].backdropPath,
+                                        )
+                                        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+                                        Text(
+                                            text = it[index].overview,
+                                            fontSize = Dimens.TEXT_REGULAR_2,
+                                            maxLines = 3,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+                            }
+                        })
+
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_LARGE))
+
+                }
             }
+
+            PullRefreshIndicator(
+                uiState.refreshing,
+                state,
+                Modifier
+                    .padding(innerPadding)
+                    .align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -398,13 +410,11 @@ private fun CelebritiesItemView(modifier: Modifier, actorVo: ActorVo?) {
             .width(100.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
+        CoilAsyncImage(
             modifier = modifier
                 .size(100.dp)
                 .clip(CircleShape),
-            model = actorVo?.profilePath,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
+            imageUrl = actorVo?.profilePath.toString(),
         )
         Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
         Text(
@@ -451,11 +461,9 @@ private fun HorizontalPagerItemView(
             },
 
         content = {
-            AsyncImage(
+            CoilAsyncImage(
                 modifier = modifier.fillMaxSize(),
-                model = movieVo.posterPath,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
+                imageUrl = movieVo.posterPath,
             )
         }
     )
@@ -471,10 +479,8 @@ private fun ComingSoonMoviesItemView(
             .width(180.dp)
             .padding(end = Dimens.MARGIN_MEDIUM_2)
     ) {
-        AsyncImage(
-            model = movieVo.posterPath,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
+        CoilAsyncImage(
+            imageUrl = movieVo.posterPath,
             modifier = modifier
                 .height(220.dp)
                 .width(180.dp)
@@ -609,7 +615,7 @@ private fun HomeSearchBarView(
 @Composable
 private fun HomeNavPageNightPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        HomePageContent(modifier = Modifier, uiState = UiState())
+        HomePageContent(modifier = Modifier, uiState = UiState(), {})
     }
 }
 

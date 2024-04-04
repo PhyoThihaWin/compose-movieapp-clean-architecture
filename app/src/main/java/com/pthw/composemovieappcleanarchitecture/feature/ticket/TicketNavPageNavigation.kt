@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
  * Created by P.T.H.W on 25/03/2024.
  */
 
-const val ticketNavPageNavigationRoute = "ticket/"
+const val ticketNavPageNavigationRoute = "TICKET"
 fun NavGraphBuilder.ticketNavPage() {
     composable(
         route = ticketNavPageNavigationRoute,

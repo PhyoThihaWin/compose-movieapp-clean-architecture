@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -89,6 +90,8 @@ fun ComposeMovieAppCleanArchitectureTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+
+    // default colorScheme
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -98,6 +101,11 @@ fun ComposeMovieAppCleanArchitectureTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    // custom colorScheme
+    val customColorsPalette =
+        if (darkTheme) OnDarkCustomColorsPalette else OnLightCustomColorsPalette
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -110,10 +118,15 @@ fun ComposeMovieAppCleanArchitectureTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalCustomColorsPalette provides customColorsPalette
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            shapes = Shapes,
+            content = content
+        )
+    }
+
 }

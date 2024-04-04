@@ -10,7 +10,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.movie.MovieNavPage
  * Created by P.T.H.W on 27/03/2024.
  */
 
-const val profileNavPageNavigationRoute = "profile/"
+const val profileNavPageNavigationRoute = "PROFILE"
 fun NavGraphBuilder.profileNavPage() {
     composable(
         route = profileNavPageNavigationRoute,

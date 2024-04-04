@@ -1,5 +1,6 @@
 package com.pthw.composemovieappcleanarchitecture.navigation
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
@@ -19,11 +20,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.Navigator
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBar
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBarItem
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
+import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -117,6 +122,40 @@ private fun Modifier.notificationDot(): Modifier =
 
 private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
     this?.hierarchy?.any {
-        it.route?.contains(destination.name, true) ?: false
+        it.route == destination.name
     } ?: false
+
+
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+private fun NiaBottomBarPreview() {
+    val testNav = NavDestination("")
+    testNav.route = "home"
+    ComposeMovieAppCleanArchitectureTheme {
+        NiaBottomBar(
+            destinations = listOf(TopLevelDestination.HOME,TopLevelDestination.MOVIE),
+            destinationsWithUnreadResources = emptySet(),
+            onNavigateToDestination = {},
+            currentDestination = testNav,
+            modifier = Modifier.testTag("NiaBottomBar"),
+        )
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun NiaBottomBarNightPreview() {
+    val testNav = NavDestination("")
+    testNav.route = "home"
+    ComposeMovieAppCleanArchitectureTheme {
+        NiaBottomBar(
+            destinations = listOf(TopLevelDestination.HOME,TopLevelDestination.MOVIE),
+            destinationsWithUnreadResources = emptySet(),
+            onNavigateToDestination = {},
+            currentDestination = testNav,
+            modifier = Modifier.testTag("NiaBottomBar"),
+        )
+    }
+}
 

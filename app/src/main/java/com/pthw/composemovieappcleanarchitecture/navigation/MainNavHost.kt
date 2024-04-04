@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.pthw.composemovieappcleanarchitecture.feature.home.homeNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.home.homeNavPageNavigationRoute
+import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPage
 import com.pthw.composemovieappcleanarchitecture.feature.movie.movieNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.movie.movieNavPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.feature.profile.profileNavPage
@@ -27,9 +28,10 @@ fun MainNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeNavPage()
+        homeNavPage(navController)
         ticketNavPage()
         movieNavPage()
         profileNavPage()
+        movieListingPage()
     }
 }

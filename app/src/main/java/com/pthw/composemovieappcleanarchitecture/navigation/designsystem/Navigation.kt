@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.pthw.composemovieappcleanarchitecture.ui.theme.BtnIndicatorColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 
 /**
@@ -77,7 +78,7 @@ fun NiaNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = Color.DarkGray,
+        containerColor = LocalCustomColorsPalette.current.navigationBarColor,
         contentColor = NiaNavigationDefaults.navigationContentColor(),
         tonalElevation = 4.dp,
         content = content,

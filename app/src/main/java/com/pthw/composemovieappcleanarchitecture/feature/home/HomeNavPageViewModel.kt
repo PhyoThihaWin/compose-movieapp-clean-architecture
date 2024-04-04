@@ -12,6 +12,7 @@ import com.pthw.domain.usecase.GetPopularMoviesUseCase
 import com.pthw.domain.usecase.GetPopularPeopleUseCase
 import com.pthw.domain.usecase.GetUpComingMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -30,6 +31,8 @@ class HomeNavPageViewModel @Inject constructor(
     private val getPopularPeopleUseCase: GetPopularPeopleUseCase
 ) : ViewModel() {
 
+    var refreshing = mutableStateOf(false)
+        private set
     var nowPlayingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
         private set
     var upComingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
@@ -40,11 +43,11 @@ class HomeNavPageViewModel @Inject constructor(
         private set
 
     private fun getNowPlayingMovies() {
-        nowPlayingMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
                 getNowPlayingMoviesUseCase.execute(Unit).collectLatest {
                     nowPlayingMovies.value = ObjViewState.Success(it)
+                    refreshing.value = false
                 }
             }.getOrElse {
                 Timber.e(it)
@@ -54,7 +57,6 @@ class HomeNavPageViewModel @Inject constructor(
     }
 
     private fun getUpComingMovies() {
-        upComingMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
                 getUpComingMoviesUseCase.execute(Unit).collectLatest {
@@ -68,7 +70,6 @@ class HomeNavPageViewModel @Inject constructor(
     }
 
     private fun getPopularMovies() {
-        popularMovies.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
                 getPopularMoviesUseCase.execute(Unit).collectLatest {
@@ -95,10 +96,20 @@ class HomeNavPageViewModel @Inject constructor(
         }
     }
 
-    init {
+    private fun fetchHomeData() {
         getNowPlayingMovies()
         getUpComingMovies()
         getPopularMovies()
         getPopularPeople()
+    }
+
+    fun refreshHomeData() = viewModelScope.launch {
+        refreshing.value = true
+        delay(1000)
+        fetchHomeData()
+    }
+
+    init {
+        fetchHomeData()
     }
 }

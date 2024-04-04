@@ -8,14 +8,16 @@ import com.pthw.composemovieappcleanarchitecture.feature.movie.MovieNavPage
 
 /**
  * Created by P.T.H.W on 27/03/2024.
-*/
+ */
 
-const val homeNavPageNavigationRoute = "home/"
-fun NavGraphBuilder.homeNavPage() {
+const val homeNavPageNavigationRoute = "HOME"
+fun NavGraphBuilder.homeNavPage(
+    navController: NavController
+) {
     composable(
         route = homeNavPageNavigationRoute,
     ) {
-        HomeNavPage()
+        HomeNavPage(navController = navController)
     }
 }
 

@@ -1,16 +1,23 @@
 package com.pthw.composemovieappcleanarchitecture.composable
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 
@@ -22,6 +29,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 fun SectionTitleWithSeeAll(
     modifier: Modifier,
     title: String,
+    onSeeAll: () -> Unit = {}
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -30,7 +38,12 @@ fun SectionTitleWithSeeAll(
     ) {
         TitleTextView(text = title)
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .padding(vertical = Dimens.MARGIN_MEDIUM)
+                .clickable {
+                    onSeeAll()
+                },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "See All",
@@ -43,6 +56,16 @@ fun SectionTitleWithSeeAll(
                 contentDescription = "",
                 tint = PrimaryColor,
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun SectionTitleWithSeeAllPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            SectionTitleWithSeeAll(modifier = Modifier, title = "Test Title")
         }
     }
 }
