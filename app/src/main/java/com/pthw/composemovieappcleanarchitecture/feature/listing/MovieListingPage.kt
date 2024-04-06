@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,17 +29,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.pthw.appbase.viewstate.ObjViewState
 import com.pthw.appbase.viewstate.RenderCompose
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
+import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
+import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
+import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
-import com.pthw.domain.model.ActorVo
-import com.pthw.domain.model.MovieVo
+import com.pthw.domain.home.model.ActorVo
+import com.pthw.domain.home.model.MovieVo
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * Created by P.T.H.W on 04/04/2024.
@@ -48,23 +58,17 @@ fun MovieListingPage(
     modifier: Modifier = Modifier,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
-    val uiState = UiState(
-        nowPlayingMovies = viewModel.nowPlayingMovies.value,
+    PageContent(
+        modifier = modifier,
+        pagingItems = viewModel.pagingFlow.collectAsLazyPagingItems()
     )
-    PageContent(modifier = modifier, uiState = uiState)
 }
 
-private data class UiState(
-    val nowPlayingMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val comingSoonMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val popularMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val popularActors: ObjViewState<List<ActorVo>> = ObjViewState.Idle()
-)
 
 @Composable
 private fun PageContent(
     modifier: Modifier,
-    uiState: UiState
+    pagingItems: LazyPagingItems<MovieVo>
 ) {
     Scaffold(
         topBar = {
@@ -79,26 +83,52 @@ private fun PageContent(
             }
         },
     ) { innerPadding ->
-        RenderCompose(state = uiState.nowPlayingMovies,
-            loading = {
-                CircularProgressIndicator()
-            },
-            success = {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = modifier.padding(innerPadding),
-                    contentPadding = PaddingValues(
-                        horizontal = Dimens.MARGIN_MEDIUM,
-                        vertical = Dimens.MARGIN_MEDIUM_2
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(Dimens.MARGIN_20),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(it.size) { index ->
-                        MoviesItemView(modifier = modifier, movieVo = it[index])
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = modifier.padding(innerPadding),
+            contentPadding = PaddingValues(
+                horizontal = Dimens.MARGIN_MEDIUM,
+                vertical = Dimens.MARGIN_MEDIUM_2
+            ),
+            verticalArrangement = Arrangement.spacedBy(Dimens.MARGIN_20),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(pagingItems.itemCount) { index ->
+                pagingItems[index]?.let { MoviesItemView(modifier = modifier, movieVo = it) }
+            }
+            pagingItems.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item { PageLoader(modifier = Modifier.fillMaxSize()) }
+                    }
+
+                    loadState.refresh is LoadState.Error -> {
+                        val error = pagingItems.loadState.refresh as LoadState.Error
+                        item {
+                            ErrorMessage(
+                                modifier = Modifier.fillMaxSize(),
+                                message = error.error.localizedMessage!!,
+                                onClickRetry = { retry() })
+                        }
+                    }
+
+                    loadState.append is LoadState.Loading -> {
+                        item { LoadingNextPageItem(modifier = Modifier) }
+                    }
+
+                    loadState.append is LoadState.Error -> {
+                        val error = pagingItems.loadState.append as LoadState.Error
+                        item {
+                            ErrorMessage(
+                                modifier = Modifier,
+                                message = error.error.localizedMessage!!,
+                                onClickRetry = { retry() })
+                        }
                     }
                 }
-            })
+            }
+        }
+
     }
 }
 
@@ -151,6 +181,9 @@ private fun MoviesItemView(
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        PageContent(modifier = Modifier, uiState = UiState())
+        PageContent(
+            modifier = Modifier,
+            pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
+        )
     }
 }

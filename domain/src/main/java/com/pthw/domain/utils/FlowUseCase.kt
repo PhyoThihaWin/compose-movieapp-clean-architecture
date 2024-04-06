@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.flowOn
  */
 
 abstract class FlowUseCase<I, O>(
-  protected val dispatcherProvider: DispatcherProvider
+    protected val dispatcherProvider: DispatcherProvider
 ) {
 
-  suspend fun execute(params: I): Flow<O> {
-    return provide(params)
-      .flowOn(dispatcherProvider.io())
-  }
+    fun execute(params: I): Flow<O> {
+        return provide(params)
+            .flowOn(dispatcherProvider.io())
+    }
 
-  protected abstract suspend fun provide(
-    params: I
-  ): Flow<O>
+    protected abstract fun provide(
+        params: I
+    ): Flow<O>
 
 }

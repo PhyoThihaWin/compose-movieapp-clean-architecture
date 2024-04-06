@@ -13,3 +13,6 @@ const val ENDPOINT_GET_NOW_PLAYING = "3/movie/now_playing"
 const val ENDPOINT_GET_UP_COMING = "3/movie/upcoming"
 const val ENDPOINT_POPULAR_MOVIES = "3/movie/popular"
 const val ENDPOINT_POPULAR_PERSON = "3/trending/person/week"
+
+// Parameter
+const val PARAM_PAGE = "page"

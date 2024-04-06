@@ -2,7 +2,7 @@ package com.pthw.data.cache.home.mapper
 
 import com.pthw.data.cache.database.entities.ActorEntity
 import com.pthw.data.network.ktor.IMAGE_BASE_URL
-import com.pthw.domain.model.ActorVo
+import com.pthw.domain.home.model.ActorVo
 import com.pthw.shared.mapper.UnidirectionalMap
 import javax.inject.Inject
 

@@ -30,6 +30,8 @@ javaxInject = "1"
 coroutineCore = "1.6.4"
 coil = "2.6.0"
 room_version = "2.6.1"
+paging = "3.2.1"
+pagingCompose = "3.3.0-beta01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -75,6 +77,9 @@ coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room_version" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room_version" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -87,4 +92,5 @@ jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains
 
 [bundles]
 ktor = ["ktor-client-okhttp", "ktor-client-logging", "ktor-content-negotiation", "ktor-kotlinx-serialization", "kotlinx-serialization"]
+paging = ["paging-runtime", "paging-compose"]
 

@@ -1,8 +1,8 @@
-package com.pthw.domain.usecase
+package com.pthw.domain.home.usecase
 
 import com.pthw.domain.DispatcherProvider
-import com.pthw.domain.model.MovieVo
-import com.pthw.domain.repository.HomeRepository
+import com.pthw.domain.home.model.MovieVo
+import com.pthw.domain.home.repository.HomeRepository
 import com.pthw.domain.utils.CoroutineUseCase
 import com.pthw.domain.utils.FlowUseCase
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class GetUpComingMoviesUseCase @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val homeRepository: HomeRepository
-) : FlowUseCase<Unit, List<MovieVo>>(dispatcherProvider) {
+) : CoroutineUseCase<Unit, Flow<List<MovieVo>>>(dispatcherProvider) {
     override suspend fun provide(params: Unit): Flow<List<MovieVo>> {
         return homeRepository.getDbUpComingMovies()
     }

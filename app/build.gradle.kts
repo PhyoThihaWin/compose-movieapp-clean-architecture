@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.compose.viewmodel)
     implementation(libs.timber)
     implementation(libs.coil)
+    implementation(libs.bundles.paging)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

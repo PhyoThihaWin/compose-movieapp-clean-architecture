@@ -69,8 +69,8 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanAr
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
-import com.pthw.domain.model.ActorVo
-import com.pthw.domain.model.MovieVo
+import com.pthw.domain.home.model.ActorVo
+import com.pthw.domain.home.model.MovieVo
 import kotlin.math.absoluteValue
 
 /**

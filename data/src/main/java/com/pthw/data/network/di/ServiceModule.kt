@@ -1,6 +1,6 @@
 package com.pthw.data.network.di
 
-import com.pthw.data.network.home.HomeService
+import com.pthw.data.network.feature.home.HomeService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +16,7 @@ import io.ktor.client.HttpClient
 object MainServiceModule {
 
     @Provides
-    fun provideMainService(ktor: HttpClient): HomeService {
+    fun provideHomeService(ktor: HttpClient): HomeService {
         return HomeService(ktor)
     }
 

@@ -1,4 +1,4 @@
-package com.pthw.data.network.home.response
+package com.pthw.data.network.feature.home.response
 
 
 import kotlinx.serialization.SerialName

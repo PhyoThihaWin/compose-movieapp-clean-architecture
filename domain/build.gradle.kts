@@ -11,4 +11,5 @@ java {
 dependencies {
     implementation(libs.javax.inject)
     implementation(libs.coroutine.core)
+    implementation(libs.paging.common)
 }

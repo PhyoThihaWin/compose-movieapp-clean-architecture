@@ -1,4 +1,4 @@
-package com.pthw.domain.model
+package com.pthw.domain.home.model
 
 /**
  * Created by P.T.H.W on 02/04/2024.

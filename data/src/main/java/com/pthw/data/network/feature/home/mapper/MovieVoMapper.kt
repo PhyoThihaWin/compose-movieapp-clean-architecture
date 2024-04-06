@@ -1,8 +1,8 @@
-package com.pthw.data.network.home.mapper
+package com.pthw.data.network.feature.home.mapper
 
-import com.pthw.data.network.home.response.MovieResponse
+import com.pthw.data.network.feature.home.response.MovieResponse
 import com.pthw.data.network.ktor.IMAGE_BASE_URL
-import com.pthw.domain.model.MovieVo
+import com.pthw.domain.home.model.MovieVo
 import com.pthw.shared.extension.orZero
 import com.pthw.shared.mapper.UnidirectionalMap
 import javax.inject.Inject

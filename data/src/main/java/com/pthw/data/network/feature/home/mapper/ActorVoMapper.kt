@@ -1,8 +1,8 @@
-package com.pthw.data.network.home.mapper
+package com.pthw.data.network.feature.home.mapper
 
-import com.pthw.data.network.home.response.ActorResponse
+import com.pthw.data.network.feature.home.response.ActorResponse
 import com.pthw.data.network.ktor.IMAGE_BASE_URL
-import com.pthw.domain.model.ActorVo
+import com.pthw.domain.home.model.ActorVo
 import com.pthw.shared.extension.orFalse
 import com.pthw.shared.extension.orZero
 import com.pthw.shared.mapper.UnidirectionalMap

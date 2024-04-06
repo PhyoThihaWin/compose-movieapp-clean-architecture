@@ -1,7 +1,7 @@
 package com.pthw.data.cache.home.mapper
 
 import com.pthw.data.cache.database.entities.MovieEntity
-import com.pthw.domain.model.MovieVo
+import com.pthw.domain.home.model.MovieVo
 import com.pthw.shared.mapper.UnidirectionalMap
 import javax.inject.Inject
 

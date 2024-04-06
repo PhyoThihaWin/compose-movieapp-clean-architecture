@@ -1,7 +1,7 @@
-package com.pthw.domain.repository
+package com.pthw.domain.home.repository
 
-import com.pthw.domain.model.ActorVo
-import com.pthw.domain.model.MovieVo
+import com.pthw.domain.home.model.ActorVo
+import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -12,5 +12,4 @@ interface HomeRepository {
     suspend fun getDbUpComingMovies(): Flow<List<MovieVo>>
     suspend fun getDbPopularMovies(): Flow<List<MovieVo>>
     suspend fun getDbPopularPeople(): Flow<List<ActorVo>>
-
 }

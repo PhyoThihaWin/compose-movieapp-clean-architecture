@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.pthw.data.cache.database.entities.ActorEntity
-import com.pthw.domain.model.ActorVo
+import com.pthw.domain.home.model.ActorVo
 import kotlinx.coroutines.flow.Flow
 
 /**
