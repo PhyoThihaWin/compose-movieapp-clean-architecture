@@ -1,18 +1,11 @@
 package com.pthw.composemovieappcleanarchitecture.feature.listing
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
-import com.pthw.appbase.viewstate.ObjViewState
-import com.pthw.domain.home.model.MovieVo
-import com.pthw.domain.home.usecase.GetNowPlayingMoviesUseCase
 import com.pthw.domain.movie.usecase.GetNowPlayingMoviesPagingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 /**

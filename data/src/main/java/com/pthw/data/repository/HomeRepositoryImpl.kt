@@ -90,28 +90,38 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getDbNowPlayingMovies(): Flow<List<MovieVo>> {
-        getNowPlayingMovies()
+        supervisorScope {
+            launch {
+                getNowPlayingMovies()
+            }
+        }
         return database.movieDao().getHomeMovies(isNowPlaying = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
     override suspend fun getDbUpComingMovies(): Flow<List<MovieVo>> {
-        getUpComingMovies()
+        supervisorScope {
+            launch { getUpComingMovies() }
+        }
         return database.movieDao().getHomeMovies(isUpComing = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
     override suspend fun getDbPopularMovies(): Flow<List<MovieVo>> {
-        getPopularMovies()
+        supervisorScope {
+            launch { getPopularMovies() }
+        }
         return database.movieDao().getHomeMovies(isPopular = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
     override suspend fun getDbPopularPeople(): Flow<List<ActorVo>> {
-        getPopularPeople()
+        supervisorScope {
+            launch { getPopularPeople() }
+        }
         return database.actorDao().getAllActors().map { list ->
             list.map(actorEntityVoMapper::map)
         }

@@ -13,6 +13,8 @@ import com.pthw.domain.home.usecase.GetPopularPeopleUseCase
 import com.pthw.domain.home.usecase.GetUpComingMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -83,7 +85,6 @@ class HomeNavPageViewModel @Inject constructor(
     }
 
     private fun getPopularPeople() {
-        popularPeople.value = ObjViewState.Loading()
         viewModelScope.launch {
             runCatching {
                 getPopularPeopleUseCase.execute(Unit).collectLatest {

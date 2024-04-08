@@ -10,11 +10,13 @@ import androidx.navigation.compose.composable
  */
 
 const val movieListingPageNavigationRoute = "movie-listing"
-fun NavGraphBuilder.movieListingPage() {
+fun NavGraphBuilder.movieListingPage(
+    navController: NavController
+) {
     composable(
         route = movieListingPageNavigationRoute,
     ) {
-        MovieListingPage()
+        MovieListingPage(navController = navController)
     }
 }
 

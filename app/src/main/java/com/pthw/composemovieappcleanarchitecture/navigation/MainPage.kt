@@ -1,8 +1,12 @@
 package com.pthw.composemovieappcleanarchitecture.navigation
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +14,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -42,6 +48,8 @@ fun MainPage(
         windowSizeClass = windowSizeClass,
     ),
 ) {
+    val currentDestination = appState.currentDestination
+    val destinations = appState.topLevelDestinations
 
     Scaffold(
         modifier = Modifier.semantics {
@@ -49,17 +57,23 @@ fun MainPage(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            NiaBottomBar(
-                destinations = appState.topLevelDestinations,
-                destinationsWithUnreadResources = emptySet(),
-                onNavigateToDestination = appState::navigateToTopLevelDestination,
-                currentDestination = appState.currentDestination,
-                modifier = Modifier.testTag("NiaBottomBar"),
-            )
+            AnimatedVisibility(
+                visible = currentDestination.isTopLevelDestinationInHierarchy(destinations),
+                content = {
+                    NiaBottomBar(
+                        destinations = destinations,
+                        destinationsWithUnreadResources = emptySet(),
+                        onNavigateToDestination = appState::navigateToTopLevelDestination,
+                        currentDestination = currentDestination,
+                        modifier = Modifier.testTag("NiaBottomBar"),
+                    )
+                })
         },
     ) { padding ->
         MainNavHost(
-            modifier = Modifier.padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             appState = appState
         )
     }
@@ -78,7 +92,7 @@ private fun NiaBottomBar(
     ) {
         destinations.forEach { destination ->
             val hasUnread = destinationsWithUnreadResources.contains(destination)
-            val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+            val selected = currentDestination.isNavigationBarItemSelected(destination)
             NiaNavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
@@ -120,11 +134,16 @@ private fun Modifier.notificationDot(): Modifier =
         }
     }
 
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
+private fun NavDestination?.isTopLevelDestinationInHierarchy(destinations: List<TopLevelDestination>) =
+    this?.hierarchy?.any { destination ->
+        destinations.map { it.name }.contains(destination.route)
+    } ?: false
+
+
+private fun NavDestination?.isNavigationBarItemSelected(destination: TopLevelDestination) =
     this?.hierarchy?.any {
         it.route == destination.name
     } ?: false
-
 
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -134,7 +153,7 @@ private fun NiaBottomBarPreview() {
     testNav.route = "home"
     ComposeMovieAppCleanArchitectureTheme {
         NiaBottomBar(
-            destinations = listOf(TopLevelDestination.HOME,TopLevelDestination.MOVIE),
+            destinations = listOf(TopLevelDestination.HOME, TopLevelDestination.MOVIE),
             destinationsWithUnreadResources = emptySet(),
             onNavigateToDestination = {},
             currentDestination = testNav,
@@ -150,7 +169,7 @@ private fun NiaBottomBarNightPreview() {
     testNav.route = "home"
     ComposeMovieAppCleanArchitectureTheme {
         NiaBottomBar(
-            destinations = listOf(TopLevelDestination.HOME,TopLevelDestination.MOVIE),
+            destinations = listOf(TopLevelDestination.HOME, TopLevelDestination.MOVIE),
             destinationsWithUnreadResources = emptySet(),
             onNavigateToDestination = {},
             currentDestination = testNav,

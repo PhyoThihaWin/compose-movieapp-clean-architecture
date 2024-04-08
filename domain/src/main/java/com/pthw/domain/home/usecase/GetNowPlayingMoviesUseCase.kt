@@ -5,6 +5,7 @@ import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.home.repository.HomeRepository
 import com.pthw.domain.utils.CoroutineUseCase
 import com.pthw.domain.utils.FlowUseCase
+import com.pthw.domain.utils.UseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

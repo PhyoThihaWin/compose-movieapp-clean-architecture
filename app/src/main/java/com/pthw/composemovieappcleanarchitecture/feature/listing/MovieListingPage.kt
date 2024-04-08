@@ -3,19 +3,21 @@ package com.pthw.composemovieappcleanarchitecture.feature.listing
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,12 +31,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.pthw.appbase.viewstate.ObjViewState
-import com.pthw.appbase.viewstate.RenderCompose
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
@@ -42,10 +43,8 @@ import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
-import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.flow.flowOf
 
@@ -56,11 +55,15 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun MovieListingPage(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     PageContent(
         modifier = modifier,
-        pagingItems = viewModel.pagingFlow.collectAsLazyPagingItems()
+        pagingItems = viewModel.pagingFlow.collectAsLazyPagingItems(),
+        onBack = {
+            navController.popBackStack()
+        }
     )
 }
 
@@ -68,18 +71,30 @@ fun MovieListingPage(
 @Composable
 private fun PageContent(
     modifier: Modifier,
-    pagingItems: LazyPagingItems<MovieVo>
+    pagingItems: LazyPagingItems<MovieVo>,
+    onBack: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             Row(
                 modifier = modifier
-                    .background(color = Color.Black)
-                    .padding(horizontal = Dimens.MARGIN_MEDIUM_2, vertical = Dimens.MARGIN_MEDIUM_2)
+                    .padding(vertical = Dimens.MARGIN_MEDIUM),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier.weight(1f)) {
-                    Text("Movies", fontSize = Dimens.TEXT_REGULAR_3, fontWeight = FontWeight.Medium)
-                }
+                Icon(
+                    Icons.Rounded.KeyboardArrowLeft,
+                    modifier = Modifier
+                        .clickable {
+                            onBack()
+                        }
+                        .padding(
+                            vertical = Dimens.MARGIN_MEDIUM,
+                            horizontal = Dimens.MARGIN_MEDIUM
+                        ),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
+                Text("Movies", fontSize = Dimens.TEXT_REGULAR_3, fontWeight = FontWeight.Medium)
             }
         },
     ) { innerPadding ->
@@ -87,11 +102,13 @@ private fun PageContent(
             columns = GridCells.Fixed(2),
             modifier = modifier.padding(innerPadding),
             contentPadding = PaddingValues(
-                horizontal = Dimens.MARGIN_MEDIUM,
-                vertical = Dimens.MARGIN_MEDIUM_2
+                start = Dimens.MARGIN_MEDIUM_2,
+                end = Dimens.MARGIN_MEDIUM_2,
+                top = Dimens.MARGIN_MEDIUM,
+                bottom = Dimens.MARGIN_LARGE
             ),
             verticalArrangement = Arrangement.spacedBy(Dimens.MARGIN_20),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.MARGIN_MEDIUM_2)
         ) {
             items(pagingItems.itemCount) { index ->
                 pagingItems[index]?.let { MoviesItemView(modifier = modifier, movieVo = it) }
@@ -99,26 +116,30 @@ private fun PageContent(
             pagingItems.apply {
                 when {
                     loadState.refresh is LoadState.Loading -> {
-                        item { PageLoader(modifier = Modifier.fillMaxSize()) }
+                        item(span = { GridItemSpan(2) }) {
+                            PageLoader(modifier = Modifier)
+                        }
                     }
 
                     loadState.refresh is LoadState.Error -> {
                         val error = pagingItems.loadState.refresh as LoadState.Error
-                        item {
+                        item(span = { GridItemSpan(2) }) {
                             ErrorMessage(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier,
                                 message = error.error.localizedMessage!!,
                                 onClickRetry = { retry() })
                         }
                     }
 
                     loadState.append is LoadState.Loading -> {
-                        item { LoadingNextPageItem(modifier = Modifier) }
+                        item(span = { GridItemSpan(2) }) {
+                            LoadingNextPageItem(modifier = Modifier)
+                        }
                     }
 
                     loadState.append is LoadState.Error -> {
                         val error = pagingItems.loadState.append as LoadState.Error
-                        item {
+                        item(span = { GridItemSpan(2) }) {
                             ErrorMessage(
                                 modifier = Modifier,
                                 message = error.error.localizedMessage!!,

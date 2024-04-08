@@ -62,8 +62,10 @@ import com.pthw.appbase.viewstate.ObjViewState
 import com.pthw.appbase.viewstate.RenderCompose
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
+import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
+import com.pthw.composemovieappcleanarchitecture.composable.shimmerLoadingAnimation
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
@@ -90,10 +92,20 @@ fun HomeNavPage(
         popularMovies = viewModel.popularMovies.value,
         popularActors = viewModel.popularPeople.value
     )
-    HomePageContent(modifier = modifier, uiState = uiState, refresh = viewModel::refreshHomeData,
-        seeAll = {
-            navController.navigate(movieListingPageNavigationRoute)
-        })
+
+    if (uiState.isReady()) {
+        HomePageContent(
+            modifier = modifier,
+            uiState = uiState,
+            refresh = viewModel::refreshHomeData,
+            seeAll = {
+                navController.navigate(movieListingPageNavigationRoute)
+            },
+        )
+    } else {
+        PageLoader(modifier.fillMaxSize())
+    }
+
 }
 
 private data class UiState(
@@ -102,7 +114,11 @@ private data class UiState(
     val comingSoonMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val popularMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
     val popularActors: ObjViewState<List<ActorVo>> = ObjViewState.Idle()
-)
+) {
+    fun isReady() =
+        nowPlayingMovies is ObjViewState.Success && comingSoonMovies is ObjViewState.Success
+                && popularMovies is ObjViewState.Success && popularActors is ObjViewState.Success
+}
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -168,14 +184,15 @@ private fun HomePageContent(
                             CircularProgressIndicator()
                         },
                         success = {
-                            if (it.isNotEmpty()) {
-                                NowPlayingMoviesSectionView(
-                                    modifier = modifier,
-                                    movies = it.take(8)
-                                )
-                            }
+                            NowPlayingMoviesSectionView(
+                                modifier = modifier.shimmerLoadingAnimation(it.isEmpty()),
+                                movies = if (it.isEmpty()) listOf(
+                                    MovieVo(
+                                        1, "", "", "", "", "", 0.0, emptyList()
+                                    )
+                                ) else it.take(8)
+                            )
                         })
-
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
@@ -615,7 +632,7 @@ private fun HomeSearchBarView(
 @Composable
 private fun HomeNavPageNightPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        HomePageContent(modifier = Modifier, uiState = UiState(), {})
+        HomePageContent(modifier = Modifier, uiState = UiState())
     }
 }
 

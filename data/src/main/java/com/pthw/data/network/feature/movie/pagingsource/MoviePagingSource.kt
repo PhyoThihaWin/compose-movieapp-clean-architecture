@@ -27,6 +27,10 @@ class MoviePagingSource(
             val raw = service.getNowPlayingMovies(startKey)
             val results = raw.data.orEmpty()
             Timber.e("Success api-call: %s", results.size)
+
+            // delay
+            delay(600)
+
             LoadResult.Page(
                 data = results,
                 prevKey = if (startKey == STARTING_PAGE_INDEX) null else startKey - 1,

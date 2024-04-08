@@ -32,6 +32,6 @@ fun MainNavHost(
         ticketNavPage()
         movieNavPage()
         profileNavPage()
-        movieListingPage()
+        movieListingPage(navController)
     }
 }
