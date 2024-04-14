@@ -32,6 +32,7 @@ coil = "2.6.0"
 room_version = "2.6.1"
 paging = "3.2.1"
 pagingCompose = "3.3.0-beta01"
+constraintLayoutCompose= "1.1.0-alpha13"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,6 +81,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_ve
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCompose" }
+constraint-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayoutCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,8 +66,8 @@ import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
-import com.pthw.composemovieappcleanarchitecture.composable.shimmerLoadingAnimation
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
+import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailNavPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
@@ -97,9 +98,12 @@ fun HomeNavPage(
         HomePageContent(
             modifier = modifier,
             uiState = uiState,
-            refresh = viewModel::refreshHomeData,
-            seeAll = {
-                navController.navigate(movieListingPageNavigationRoute)
+            onAction = {
+                when (it) {
+                    UiEvent.Refresh -> viewModel.refreshHomeData()
+                    UiEvent.SeeAll -> navController.navigate(movieListingPageNavigationRoute)
+                    UiEvent.ItemClick -> navController.navigate(movieDetailNavPageNavigationRoute)
+                }
             },
         )
     } else {
@@ -120,13 +124,18 @@ private data class UiState(
                 && popularMovies is ObjViewState.Success && popularActors is ObjViewState.Success
 }
 
+private sealed class UiEvent {
+    data object Refresh : UiEvent()
+    data object SeeAll : UiEvent()
+    data object ItemClick : UiEvent()
+}
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun HomePageContent(
     modifier: Modifier,
     uiState: UiState,
-    refresh: () -> Unit = {},
-    seeAll: () -> Unit = {}
+    onAction: (UiEvent) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -151,7 +160,7 @@ private fun HomePageContent(
         },
     ) { innerPadding ->
         val promoPagerState = rememberPagerState { 20 }
-        val state = rememberPullRefreshState(uiState.refreshing, refresh)
+        val state = rememberPullRefreshState(uiState.refreshing, { onAction(UiEvent.Refresh) })
 
         Box(Modifier.pullRefresh(state)) {
             LazyColumn(
@@ -164,7 +173,7 @@ private fun HomePageContent(
 
                     HomeSearchBarView(modifier = modifier)
 
-                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
                     // Now Playing
                     SectionTitleWithSeeAll(
@@ -174,7 +183,7 @@ private fun HomePageContent(
                         ),
                         title = "Now playing"
                     ) {
-                        seeAll()
+                        onAction(UiEvent.SeeAll)
                     }
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -185,13 +194,11 @@ private fun HomePageContent(
                         },
                         success = {
                             NowPlayingMoviesSectionView(
-                                modifier = modifier.shimmerLoadingAnimation(it.isEmpty()),
-                                movies = if (it.isEmpty()) listOf(
-                                    MovieVo(
-                                        1, "", "", "", "", "", 0.0, emptyList()
-                                    )
-                                ) else it.take(8)
-                            )
+                                modifier = modifier,
+                                movies = it.take(8)
+                            ) {
+                                onAction(UiEvent.ItemClick)
+                            }
                         })
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -345,7 +352,8 @@ private fun HomePageContent(
 @Composable
 private fun NowPlayingMoviesSectionView(
     modifier: Modifier,
-    movies: List<MovieVo>
+    movies: List<MovieVo>,
+    itemClick: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {
         movies.size
@@ -362,7 +370,9 @@ private fun NowPlayingMoviesSectionView(
             state = pagerState
         ) { page ->
             HorizontalPagerItemView(
-                modifier = modifier,
+                modifier = modifier.clickable {
+                    itemClick()
+                },
                 pagerState = pagerState,
                 currentPage = page,
                 movieVo = movies[page]

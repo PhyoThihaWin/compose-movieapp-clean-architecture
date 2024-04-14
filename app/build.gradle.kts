@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.coil)
     implementation(libs.bundles.paging)
+    implementation(libs.constraint.compose)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
