@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,6 +50,7 @@ import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.StarRatingBar
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
+import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.navigateToCinemaSeatPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
@@ -63,15 +66,26 @@ fun MovieDetailPage(
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
-    PageContent(modifier = modifier) {
-        navController.popBackStack()
-    }
+    PageContent(
+        modifier = modifier,
+        onAction = {
+            when (it) {
+                UiEvent.Continue -> navController.navigateToCinemaSeatPage()
+                UiEvent.GoBack -> navController.popBackStack()
+            }
+        }
+    )
+}
+
+private sealed class UiEvent {
+    data object GoBack : UiEvent()
+    data object Continue : UiEvent()
 }
 
 @Composable
 private fun PageContent(
     modifier: Modifier,
-    onBack: () -> Unit = {}
+    onAction: (UiEvent) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
     val isScrolledOnTop by remember {
@@ -81,13 +95,13 @@ private fun PageContent(
     val bgImageHeightInDp = animateDpAsState(
         targetValue = if (isScrolledOnTop) bgImageHeight.dp else 0.dp,
         animationSpec = tween(
-            durationMillis = 200,
+            durationMillis = 300,
         ), label = "CoilAsyncImage"
     )
     val topMarginInDp = animateDpAsState(
         targetValue = if (isScrolledOnTop) (bgImageHeight / 1.4).dp else 0.dp,
         animationSpec = tween(
-            durationMillis = 200,
+            durationMillis = 300,
         ), label = "CoilAsyncImage"
     )
 
@@ -105,7 +119,7 @@ private fun PageContent(
                 tint = Color.Black,
                 modifier = Modifier
                     .clickable {
-                        onBack()
+                        onAction(UiEvent.GoBack)
                     }
                     .padding(start = Dimens.MARGIN_MEDIUM_2, top = Dimens.MARGIN_MEDIUM_2)
                     .background(color = Color.Black.copy(0.1f), shape = Shapes.small)
@@ -176,6 +190,29 @@ private fun PageContent(
                     }
                 }
 
+                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
+
+                TitleTextView(text = "Cinema")
+                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_10))
+
+            }
+
+            // payment list items
+            items(3) {
+                MovieDetailPaymentListItem()
+            }
+
+            item {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.BTN_COMMON_HEIGHT),
+                    onClick = {
+                        onAction(UiEvent.Continue)
+                    }) {
+                    Text(text = "Continue", fontSize = Dimens.TEXT_REGULAR_2, color = Color.Black)
+                }
+                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
             }
 
         }
@@ -183,7 +220,45 @@ private fun PageContent(
 }
 
 @Composable
-fun MovieDetailActorListItem() {
+private fun MovieDetailPaymentListItem() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Dimens.MARGIN_MEDIUM_2)
+            .border(
+                width = 1.dp,
+                color = PrimaryColor,
+                shape = RoundedCornerShape(Dimens.MARGIN_MEDIUM_2)
+            )
+            .padding(
+                horizontal = Dimens.MARGIN_MEDIUM_2,
+                vertical = Dimens.MARGIN_MEDIUM_2
+            )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Vincom Ocean Park CGV",
+                fontSize = Dimens.TEXT_REGULAR_2,
+                fontWeight = FontWeight.Medium
+            )
+            Image(
+                painter = painterResource(id = R.drawable.ic_payment_icon),
+                contentDescription = ""
+            )
+        }
+        Text(
+            text = "9.32 km 27 Co Linh, Long Bien, Ha Noi",
+            fontSize = Dimens.TEXT_SMALL
+        )
+    }
+}
+
+@Composable
+private fun MovieDetailActorListItem() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier

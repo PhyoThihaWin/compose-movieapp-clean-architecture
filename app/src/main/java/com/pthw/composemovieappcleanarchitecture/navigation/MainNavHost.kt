@@ -3,6 +3,7 @@ package com.pthw.composemovieappcleanarchitecture.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.cinemaSeatPage
 import com.pthw.composemovieappcleanarchitecture.feature.home.homeNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.home.homeNavPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPage
@@ -35,5 +36,6 @@ fun MainNavHost(
         profileNavPage()
         movieListingPage(navController)
         movieDetailPage(navController)
+        cinemaSeatPage(navController)
     }
 }

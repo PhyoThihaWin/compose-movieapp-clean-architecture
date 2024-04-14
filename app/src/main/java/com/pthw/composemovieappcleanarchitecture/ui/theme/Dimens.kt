@@ -46,4 +46,5 @@ object Dimens {
     val TEXT_BIG = 32.sp
 
     /// App Specific Dimensions
+    val BTN_COMMON_HEIGHT = 50.dp
 }
