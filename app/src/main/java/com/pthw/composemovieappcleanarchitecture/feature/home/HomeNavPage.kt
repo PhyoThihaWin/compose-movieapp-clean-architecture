@@ -177,10 +177,7 @@ private fun HomePageContent(
 
                     // Now Playing
                     SectionTitleWithSeeAll(
-                        modifier = modifier.padding(
-                            horizontal = Dimens.MARGIN_MEDIUM_2,
-                            vertical = Dimens.MARGIN_MEDIUM_2
-                        ),
+                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Now playing"
                     ) {
                         onAction(UiEvent.SeeAll)
@@ -205,10 +202,7 @@ private fun HomePageContent(
 
                     // Coming Soon
                     SectionTitleWithSeeAll(
-                        modifier = modifier.padding(
-                            horizontal = Dimens.MARGIN_MEDIUM_2,
-                            vertical = Dimens.MARGIN_MEDIUM_2
-                        ),
+                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Coming soon"
                     )
 
@@ -232,10 +226,7 @@ private fun HomePageContent(
 
                     // Promo & Discount
                     SectionTitleWithSeeAll(
-                        modifier = modifier.padding(
-                            horizontal = Dimens.MARGIN_MEDIUM_2,
-                            vertical = Dimens.MARGIN_MEDIUM_2
-                        ),
+                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Promo & Discount"
                     )
 
@@ -267,10 +258,7 @@ private fun HomePageContent(
 
                     // Service
                     SectionTitleWithSeeAll(
-                        modifier = modifier.padding(
-                            horizontal = Dimens.MARGIN_MEDIUM_2,
-                            vertical = Dimens.MARGIN_MEDIUM_2
-                        ),
+                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Celebrities"
                     )
 
@@ -292,10 +280,7 @@ private fun HomePageContent(
 
                     // Movie News
                     SectionTitleWithSeeAll(
-                        modifier = modifier.padding(
-                            horizontal = Dimens.MARGIN_MEDIUM_2,
-                            vertical = Dimens.MARGIN_MEDIUM_2
-                        ),
+                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Movie News"
                     )
 

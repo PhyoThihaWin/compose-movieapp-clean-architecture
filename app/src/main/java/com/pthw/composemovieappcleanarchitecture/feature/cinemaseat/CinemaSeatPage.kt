@@ -26,8 +26,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -133,6 +135,7 @@ private fun PageContent(
                                 Text(
                                     text = "A${i % 10}",
                                     fontSize = Dimens.TEXT_SMALL,
+                                    color = if (isSeatSelected.value) Color.Black else Color.White,
                                     modifier = Modifier.align(Alignment.Center),
                                 )
                             }
@@ -161,26 +164,36 @@ private fun PageContent(
 
 
                     // date
+                    var dateSelectedPosition by remember {
+                        mutableStateOf<Int?>(null)
+                    }
                     LazyRow(
                         contentPadding = PaddingValues(
                             horizontal = Dimens.MARGIN_MEDIUM_2,
                             vertical = Dimens.MARGIN_MEDIUM_2
                         )
                     ) {
-                        items(10) {
-                            DateListItem()
+                        items(10) { index ->
+                            DateListItem(dateSelectedPosition == index) {
+                                dateSelectedPosition = index
+                            }
                         }
                     }
 
                     // time
+                    var timeSelectedPosition by remember {
+                        mutableStateOf<Int?>(null)
+                    }
                     LazyRow(
                         contentPadding = PaddingValues(
                             horizontal = Dimens.MARGIN_MEDIUM_2,
                             vertical = Dimens.MARGIN_MEDIUM_2
                         )
                     ) {
-                        items(10) {
-                            TimeListItem()
+                        items(10) { index ->
+                            TimeListItem(timeSelectedPosition == index) {
+                                timeSelectedPosition = index
+                            }
                         }
                     }
 
@@ -225,7 +238,10 @@ private fun TotalAndBuyTicketSection() {
 }
 
 @Composable
-private fun TimeListItem() {
+private fun TimeListItem(
+    isSelected: Boolean,
+    onSelected: () -> Unit
+) {
     Box(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
@@ -233,9 +249,12 @@ private fun TimeListItem() {
             .background(color = LocalCustomColorsPalette.current.cardBackgroundColor)
             .border(
                 width = 1.dp,
-                color = ColorPrimary,
+                color = if (isSelected) ColorPrimary else LocalCustomColorsPalette.current.cardBackgroundColor,
                 shape = Shapes.large
             )
+            .clickable {
+                onSelected()
+            }
             .padding(
                 horizontal = Dimens.MARGIN_LARGE,
                 vertical = Dimens.MARGIN_MEDIUM
@@ -249,12 +268,18 @@ private fun TimeListItem() {
 }
 
 @Composable
-private fun DateListItem() {
+private fun DateListItem(
+    isSelected: Boolean,
+    onSelected: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM)
             .clip(Shapes.extraLarge)
-            .background(color = ColorPrimary)
+            .background(color = if (isSelected) ColorPrimary else LocalCustomColorsPalette.current.cardBackgroundColor)
+            .clickable {
+                onSelected()
+            }
             .padding(
                 start = Dimens.MARGIN_6,
                 end = Dimens.MARGIN_6,
@@ -263,18 +288,19 @@ private fun DateListItem() {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_SMALL))
         Text(
             text = "Dec",
-            fontSize = Dimens.TEXT_REGULAR_3,
+            fontSize = Dimens.TEXT_REGULAR_2,
             fontWeight = FontWeight.Medium,
-            color = Color.Black
+            color = if (isSelected) Color.Black else Color.LightGray
         )
         Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
         Box(
             modifier = Modifier
                 .size(Dimens.MARGIN_XXXLARGE)
                 .clip(CircleShape)
-                .background(Color.Black)
+                .background(Color.DarkGray)
                 .padding(Dimens.MARGIN_MEDIUM)
         ) {
             Text(

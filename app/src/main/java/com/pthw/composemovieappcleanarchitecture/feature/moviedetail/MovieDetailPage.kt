@@ -95,13 +95,13 @@ private fun PageContent(
     val bgImageHeightInDp = animateDpAsState(
         targetValue = if (isScrolledOnTop) bgImageHeight.dp else 0.dp,
         animationSpec = tween(
-            durationMillis = 300,
+            durationMillis = 500,
         ), label = "CoilAsyncImage"
     )
     val topMarginInDp = animateDpAsState(
         targetValue = if (isScrolledOnTop) (bgImageHeight / 1.4).dp else 0.dp,
         animationSpec = tween(
-            durationMillis = 300,
+            durationMillis = 500,
         ), label = "CoilAsyncImage"
     )
 
@@ -119,10 +119,11 @@ private fun PageContent(
                 tint = Color.Black,
                 modifier = Modifier
                     .padding(start = Dimens.MARGIN_MEDIUM_2, top = Dimens.MARGIN_MEDIUM_2)
+                    .clip(Shapes.small)
+                    .background(color = Color.Black.copy(0.1f))
                     .clickable {
                         onAction(UiEvent.GoBack)
                     }
-                    .background(color = Color.Black.copy(0.1f), shape = Shapes.small)
                     .padding(
                         vertical = Dimens.MARGIN_MEDIUM,
                         horizontal = Dimens.MARGIN_MEDIUM
@@ -203,6 +204,7 @@ private fun PageContent(
             }
 
             item {
+                Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()

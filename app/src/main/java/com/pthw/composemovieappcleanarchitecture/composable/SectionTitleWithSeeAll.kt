@@ -3,6 +3,7 @@ package com.pthw.composemovieappcleanarchitecture.composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,7 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
@@ -25,22 +29,24 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 
 @Composable
 fun SectionTitleWithSeeAll(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     title: String,
     onSeeAll: () -> Unit = {}
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = Dimens.MARGIN_MEDIUM_2),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         TitleTextView(text = title)
         Row(
             modifier = Modifier
-                .padding(vertical = Dimens.MARGIN_MEDIUM)
                 .clickable {
                     onSeeAll()
-                },
+                }
+                .padding(Dimens.MARGIN_MEDIUM),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -48,12 +54,16 @@ fun SectionTitleWithSeeAll(
                 color = ColorPrimary,
                 fontSize = Dimens.TEXT_REGULAR
             )
+            Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_SMALL))
             Icon(
-                modifier = Modifier.size(Dimens.MARGIN_20),
-                imageVector = Icons.Rounded.KeyboardArrowRight,
+                modifier = Modifier
+                    .size(Dimens.MARGIN_20)
+                    .rotate(180f),
+                painter = painterResource(id = R.drawable.ic_arrow_left),
                 contentDescription = "",
                 tint = ColorPrimary,
             )
+            Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_MEDIUM))
         }
     }
 }
