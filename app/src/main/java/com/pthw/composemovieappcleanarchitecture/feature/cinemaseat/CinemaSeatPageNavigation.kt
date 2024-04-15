@@ -16,7 +16,7 @@ fun NavGraphBuilder.cinemaSeatPage(
     composable(
         route = cinemaSeatPageNavigationRoute
     ) {
-        CinemaSeatPage()
+        CinemaSeatPage(navController = navController)
     }
 }
 

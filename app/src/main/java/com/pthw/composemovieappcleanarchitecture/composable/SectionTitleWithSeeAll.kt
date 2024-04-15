@@ -1,6 +1,5 @@
 package com.pthw.composemovieappcleanarchitecture.composable
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,11 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 
 /**
  * Created by P.T.H.W on 02/04/2024.
@@ -47,14 +45,14 @@ fun SectionTitleWithSeeAll(
         ) {
             Text(
                 text = "See All",
-                color = PrimaryColor,
+                color = ColorPrimary,
                 fontSize = Dimens.TEXT_REGULAR
             )
             Icon(
                 modifier = Modifier.size(Dimens.MARGIN_20),
                 imageVector = Icons.Rounded.KeyboardArrowRight,
                 contentDescription = "",
-                tint = PrimaryColor,
+                tint = ColorPrimary,
             )
         }
     }

@@ -2,8 +2,6 @@ package com.pthw.composemovieappcleanarchitecture.feature.listing
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,16 +13,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,9 +35,10 @@ import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
+import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.flow.flowOf
@@ -76,25 +71,8 @@ private fun PageContent(
 ) {
     Scaffold(
         topBar = {
-            Row(
-                modifier = modifier
-                    .padding(vertical = Dimens.MARGIN_MEDIUM),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    Icons.Rounded.KeyboardArrowLeft,
-                    modifier = Modifier
-                        .clickable {
-                            onBack()
-                        }
-                        .padding(
-                            vertical = Dimens.MARGIN_MEDIUM,
-                            horizontal = Dimens.MARGIN_MEDIUM
-                        ),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
-                Text("Movies", fontSize = Dimens.TEXT_REGULAR_3, fontWeight = FontWeight.Medium)
+            TopAppBarView(title = "Movies") {
+                onBack()
             }
         },
     ) { innerPadding ->
@@ -175,7 +153,7 @@ private fun MoviesItemView(
             text = movieVo.title,
             fontSize = Dimens.TEXT_REGULAR_2,
             fontWeight = FontWeight.Medium,
-            color = PrimaryColor,
+            color = ColorPrimary,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )

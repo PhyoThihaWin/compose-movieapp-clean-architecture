@@ -70,7 +70,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPag
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailNavPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
@@ -406,7 +406,7 @@ private fun NowPlayingMoviesSectionView(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Rounded.Star, "", tint = PrimaryColor)
+                Icon(Icons.Rounded.Star, "", tint = ColorPrimary)
                 TitleTextView(modifier = modifier, text = "4.8")
             }
 
@@ -520,7 +520,7 @@ private fun ComingSoonMoviesItemView(
             text = movieVo.title,
             fontSize = Dimens.TEXT_REGULAR_2,
             fontWeight = FontWeight.Medium,
-            color = PrimaryColor,
+            color = ColorPrimary,
             minLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -550,7 +550,7 @@ private fun HorizontalPagerIndicator(
     targetPage: Int,
     currentPageOffsetFraction: Float,
     modifier: Modifier = Modifier,
-    indicatorColor: Color = PrimaryColor,
+    indicatorColor: Color = ColorPrimary,
     unselectedIndicatorSize: Dp = 8.dp,
     selectedIndicatorSize: Dp = 12.dp,
     indicatorCornerRadius: Dp = 2.dp,

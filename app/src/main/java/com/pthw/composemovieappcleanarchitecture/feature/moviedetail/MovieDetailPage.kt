@@ -54,7 +54,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.navigateToCi
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
-import com.pthw.composemovieappcleanarchitecture.ui.theme.PrimaryColor
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -118,10 +118,10 @@ private fun PageContent(
                 painterResource(id = R.drawable.ic_arrow_left),
                 tint = Color.Black,
                 modifier = Modifier
+                    .padding(start = Dimens.MARGIN_MEDIUM_2, top = Dimens.MARGIN_MEDIUM_2)
                     .clickable {
                         onAction(UiEvent.GoBack)
                     }
-                    .padding(start = Dimens.MARGIN_MEDIUM_2, top = Dimens.MARGIN_MEDIUM_2)
                     .background(color = Color.Black.copy(0.1f), shape = Shapes.small)
                     .padding(
                         vertical = Dimens.MARGIN_MEDIUM,
@@ -227,7 +227,7 @@ private fun MovieDetailPaymentListItem() {
             .padding(bottom = Dimens.MARGIN_MEDIUM_2)
             .border(
                 width = 1.dp,
-                color = PrimaryColor,
+                color = ColorPrimary,
                 shape = RoundedCornerShape(Dimens.MARGIN_MEDIUM_2)
             )
             .padding(
@@ -331,7 +331,7 @@ private fun MovieDetailInfoCardSection() {
             Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_SMALL))
             Icon(
                 imageVector = Icons.Rounded.Star,
-                tint = PrimaryColor,
+                tint = ColorPrimary,
                 modifier = Modifier.size(Dimens.MARGIN_18),
                 contentDescription = ""
             )

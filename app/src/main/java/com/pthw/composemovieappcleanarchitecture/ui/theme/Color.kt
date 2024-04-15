@@ -64,5 +64,6 @@ val md_theme_dark_surfaceTint = Color(0xFFFFB951)
 val md_theme_dark_outlineVariant = Color(0xFF4F4539)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-val PrimaryColor = Color(0xFFFCC434)
-val BtnIndicatorColor = Color(0xFFFAF1D9)
+val ColorPrimary = Color(0xFFFCC434)
+val ColorBtnIndicator = Color(0xFFFAF1D9)
+val ColorCinemaSeatReserved = Color(0xFF261D08)
