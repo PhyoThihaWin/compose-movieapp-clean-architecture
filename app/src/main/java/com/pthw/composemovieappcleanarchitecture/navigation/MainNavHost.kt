@@ -10,6 +10,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPag
 import com.pthw.composemovieappcleanarchitecture.feature.movie.movieNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.movie.movieNavPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailPage
+import com.pthw.composemovieappcleanarchitecture.feature.payment.paymentPage
 import com.pthw.composemovieappcleanarchitecture.feature.profile.profileNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.ticketNavPage
 
@@ -37,5 +38,6 @@ fun MainNavHost(
         movieListingPage(navController)
         movieDetailPage(navController)
         cinemaSeatPage(navController)
+        paymentPage(navController)
     }
 }

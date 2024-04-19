@@ -45,6 +45,7 @@ import androidx.navigation.NavController
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
+import com.pthw.composemovieappcleanarchitecture.feature.payment.navigateToPaymentPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserved
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
@@ -65,7 +66,7 @@ fun CinemaSeatPage(
         onAction = {
             when (it) {
                 UiEvent.GoBack -> navController.popBackStack()
-                UiEvent.Continue -> TODO()
+                UiEvent.Continue -> navController.navigateToPaymentPage()
             }
         }
     )
@@ -201,14 +202,18 @@ private fun PageContent(
                 }
             }
             Divider(color = Color.DarkGray)
-            TotalAndBuyTicketSection()
+            TotalAndBuyTicketSection {
+                onAction(UiEvent.Continue)
+            }
         }
     }
 
 }
 
 @Composable
-private fun TotalAndBuyTicketSection() {
+private fun TotalAndBuyTicketSection(
+    buyTicket: () -> Unit
+) {
     Row(
         modifier = Modifier.padding(
             horizontal = Dimens.MARGIN_MEDIUM_2,
@@ -231,8 +236,10 @@ private fun TotalAndBuyTicketSection() {
             modifier = Modifier
                 .weight(1f)
                 .height(Dimens.BTN_COMMON_HEIGHT),
-            onClick = { /*TODO*/ }) {
-            Text(text = "But ticket", fontSize = Dimens.TEXT_REGULAR_2)
+            onClick = {
+                buyTicket()
+            }) {
+            Text(text = "Buy ticket", fontSize = Dimens.TEXT_REGULAR_2)
         }
     }
 }

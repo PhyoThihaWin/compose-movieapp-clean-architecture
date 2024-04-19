@@ -14,14 +14,17 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
  */
 @Composable
 fun TitleTextView(
-    modifier: Modifier = Modifier,
     text: String,
-    maxLines: Int = Int.MAX_VALUE
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
+    textAlign: TextAlign = TextAlign.Center
 ) {
     Text(
         modifier = modifier,
         text = text,
-        textAlign = TextAlign.Center,
+        color = color,
+        textAlign = textAlign,
         fontSize = Dimens.TEXT_XLARGE,
         fontWeight = FontWeight.SemiBold,
         maxLines = maxLines,

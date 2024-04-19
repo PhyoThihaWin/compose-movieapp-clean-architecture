@@ -35,7 +35,7 @@ fun TopAppBarView(
 ) {
     Box(
         modifier = modifier
-            .padding(vertical = Dimens.MARGIN_MEDIUM),
+            .padding(vertical = Dimens.MARGIN_MEDIUM, horizontal = Dimens.MARGIN_MEDIUM),
         contentAlignment = Alignment.Center
     ) {
         Icon(
