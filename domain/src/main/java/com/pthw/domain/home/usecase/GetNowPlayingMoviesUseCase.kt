@@ -15,8 +15,8 @@ import javax.inject.Inject
 class GetNowPlayingMoviesUseCase @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val homeRepository: HomeRepository
-) : CoroutineUseCase<Unit, Flow<List<MovieVo>>>(dispatcherProvider) {
-    override suspend fun provide(params: Unit): Flow<List<MovieVo>> {
+) : FlowUseCase<Unit, List<MovieVo>>(dispatcherProvider) {
+    override fun provide(params: Unit): Flow<List<MovieVo>> {
         return homeRepository.getDbNowPlayingMovies()
     }
 }

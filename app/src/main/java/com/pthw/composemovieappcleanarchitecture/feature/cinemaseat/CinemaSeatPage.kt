@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -236,6 +237,7 @@ private fun TotalAndBuyTicketSection(
             modifier = Modifier
                 .weight(1f)
                 .height(Dimens.BTN_COMMON_HEIGHT),
+            colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
             onClick = {
                 buyTicket()
             }) {

@@ -41,6 +41,7 @@ import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.CustomTextField
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
+import com.pthw.composemovieappcleanarchitecture.feature.ticket.navigateToInvoiceTicketPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserved
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
@@ -61,7 +62,7 @@ fun PaymentPage(
         onAction = {
             when (it) {
                 UiEvent.GoBack -> navController.popBackStack()
-                UiEvent.Continue -> navController.navigateToPaymentPage()
+                UiEvent.Continue -> navController.navigateToInvoiceTicketPage()
             }
         }
     )
@@ -171,12 +172,13 @@ private fun PageContent(
                         .fillMaxWidth()
                         .height(Dimens.BTN_COMMON_HEIGHT),
                     onClick = {
-                        // todo
+                        onAction(UiEvent.Continue)
                     },
                 ) {
                     Text(text = "Continue", fontSize = Dimens.TEXT_REGULAR_2)
                 }
 
+                Spacer(modifier = modifier.height(Dimens.MARGIN_XXLARGE))
 
             }
         }
@@ -272,7 +274,9 @@ private fun DiscountCodeApplySection() {
             shape = Shapes.small,
             contentPadding = PaddingValues(horizontal = Dimens.MARGIN_XLARGE),
             colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
-            onClick = { /*TODO*/ }) {
+            onClick = {
+                // todo
+            }) {
             Text(
                 text = "Apply",
                 fontSize = Dimens.TEXT_REGULAR,

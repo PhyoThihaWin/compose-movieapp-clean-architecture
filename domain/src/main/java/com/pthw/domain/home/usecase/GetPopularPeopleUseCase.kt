@@ -15,8 +15,8 @@ import javax.inject.Inject
 class GetPopularPeopleUseCase @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val homeRepository: HomeRepository
-) : CoroutineUseCase<Unit, Flow<List<ActorVo>>>(dispatcherProvider) {
-    override suspend fun provide(params: Unit): Flow<List<ActorVo>> {
+) : FlowUseCase<Unit, List<ActorVo>>(dispatcherProvider) {
+    override fun provide(params: Unit): Flow<List<ActorVo>> {
         return homeRepository.getDbPopularPeople()
     }
 

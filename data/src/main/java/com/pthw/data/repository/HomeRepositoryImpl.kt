@@ -13,9 +13,11 @@ import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.home.repository.HomeRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
@@ -34,94 +36,74 @@ class HomeRepositoryImpl @Inject constructor(
     private val actorEntityVoMapper: ActorEntityVoMapper,
     private val actorVoEntityMapper: ActorVoEntityMapper
 ) : HomeRepository {
+
     private suspend fun getNowPlayingMovies() {
-        try {
-            val raw = service.getNowPlayingMovies()
-            movieVoEntityMapper.prepareForNowPlaying()
-            val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
-            database.withTransaction {
-                database.movieDao().deleteNowPlayingMovies()
-                database.movieDao().insertMovies(data.orEmpty())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val raw = service.getNowPlayingMovies()
+        movieVoEntityMapper.prepareForNowPlaying()
+        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+        database.withTransaction {
+            database.movieDao().deleteNowPlayingMovies()
+            database.movieDao().insertMovies(data.orEmpty())
         }
     }
 
     private suspend fun getUpComingMovies() {
-        try {
-            val raw = service.getUpComingMovies()
-            movieVoEntityMapper.prepareForUpComing()
-            val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
-            database.withTransaction {
-                database.movieDao().deleteUpComingMovies()
-                database.movieDao().insertMovies(data.orEmpty())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val raw = service.getUpComingMovies()
+        movieVoEntityMapper.prepareForUpComing()
+        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+        database.withTransaction {
+            database.movieDao().deleteUpComingMovies()
+            database.movieDao().insertMovies(data.orEmpty())
         }
     }
 
     private suspend fun getPopularMovies() {
-        try {
-            val raw = service.getPopularMovies()
-            movieVoEntityMapper.prepareForPopular()
-            val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
-            database.withTransaction {
-                database.movieDao().deletePopularMovies()
-                database.movieDao().insertMovies(data.orEmpty())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val raw = service.getPopularMovies()
+        movieVoEntityMapper.prepareForPopular()
+        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+        database.withTransaction {
+            database.movieDao().deletePopularMovies()
+            database.movieDao().insertMovies(data.orEmpty())
         }
     }
 
     private suspend fun getPopularPeople() {
-        try {
-            val raw = service.getPopularPeople()
-            val data = raw.data?.map(actorVoMapper::map)?.map(actorVoEntityMapper::map)
-            database.withTransaction {
-                database.actorDao().clearActors()
-                database.actorDao().insertActors(data.orEmpty())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val raw = service.getPopularPeople()
+        val data = raw.data?.map(actorVoMapper::map)?.map(actorVoEntityMapper::map)
+        database.withTransaction {
+            database.actorDao().clearActors()
+            database.actorDao().insertActors(data.orEmpty())
         }
     }
 
-    override suspend fun getDbNowPlayingMovies(): Flow<List<MovieVo>> {
-        supervisorScope {
-            launch {
-                getNowPlayingMovies()
-            }
+    override suspend fun fetchHomeData() {
+        coroutineScope {
+            async { getNowPlayingMovies() }.await()
+            async { getUpComingMovies() }.await()
+            async { getPopularMovies() }.await()
+            async { getPopularPeople() }.await()
         }
+    }
+
+    override fun getDbNowPlayingMovies(): Flow<List<MovieVo>> {
         return database.movieDao().getHomeMovies(isNowPlaying = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
-    override suspend fun getDbUpComingMovies(): Flow<List<MovieVo>> {
-        supervisorScope {
-            launch { getUpComingMovies() }
-        }
+    override fun getDbUpComingMovies(): Flow<List<MovieVo>> {
         return database.movieDao().getHomeMovies(isUpComing = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
-    override suspend fun getDbPopularMovies(): Flow<List<MovieVo>> {
-        supervisorScope {
-            launch { getPopularMovies() }
-        }
+    override fun getDbPopularMovies(): Flow<List<MovieVo>> {
         return database.movieDao().getHomeMovies(isPopular = true).map { list ->
             list.map(movieEntityVoMapper::map)
         }
     }
 
-    override suspend fun getDbPopularPeople(): Flow<List<ActorVo>> {
-        supervisorScope {
-            launch { getPopularPeople() }
-        }
+    override fun getDbPopularPeople(): Flow<List<ActorVo>> {
         return database.actorDao().getAllActors().map { list ->
             list.map(actorEntityVoMapper::map)
         }

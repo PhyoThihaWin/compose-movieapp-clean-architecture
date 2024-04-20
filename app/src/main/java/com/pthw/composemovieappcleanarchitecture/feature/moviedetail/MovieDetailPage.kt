@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -209,6 +210,7 @@ private fun PageContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Dimens.BTN_COMMON_HEIGHT),
+                    colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
                     onClick = {
                         onAction(UiEvent.Continue)
                     }) {

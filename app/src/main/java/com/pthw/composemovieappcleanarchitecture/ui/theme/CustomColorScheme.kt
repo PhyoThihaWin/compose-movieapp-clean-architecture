@@ -11,18 +11,23 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 data class CustomColorsPalette(
     val navigationBarColor: Color = Color.Unspecified,
-    val cardBackgroundColor: Color = Color.Unspecified
+    val cardBackgroundColor: Color = Color.Unspecified,
+    val invoiceTicketBgColor: Color = Color.Unspecified,
+    val invoiceTicketTextColor: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
     navigationBarColor = Color(color = 0xFFFFFFFF),
-    cardBackgroundColor = Color(color = 0xFFFFFFFF)
+    cardBackgroundColor = Color(color = 0xFFFFFFFF),
+    invoiceTicketBgColor = Color(color = 0xFF000000),
+    invoiceTicketTextColor = Color(color = 0xFFFFFFFF)
 )
 
 val OnDarkCustomColorsPalette = CustomColorsPalette(
     navigationBarColor = Color(color = 0xFF17181D),
-    cardBackgroundColor = Color(color = 0xFF292727)
-
+    cardBackgroundColor = Color(color = 0xFF292727),
+    invoiceTicketBgColor = Color(color = 0xFFFFFFFF),
+    invoiceTicketTextColor = Color(color = 0xFF000000)
 )
 
 val LocalCustomColorsPalette = staticCompositionLocalOf { CustomColorsPalette() }
