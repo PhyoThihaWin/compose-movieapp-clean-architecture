@@ -70,6 +70,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalet
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.movie.model.MovieCastVo
 import com.pthw.domain.movie.model.MovieDetailVo
+import com.pthw.shared.extension.roundTo
 
 /**
  * Created by P.T.H.W on 08/04/2024.
@@ -424,7 +425,7 @@ private fun MovieDetailInfoCardSection(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = movieDetail.voteAverage.toString(),
+                    text = movieDetail.voteAverage.roundTo(1).toString(),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(bottom = Dimens.MARGIN_XSMALL)
                 )

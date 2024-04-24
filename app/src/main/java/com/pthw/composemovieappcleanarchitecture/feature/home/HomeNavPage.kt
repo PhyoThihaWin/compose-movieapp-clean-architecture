@@ -75,6 +75,8 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
+import com.pthw.shared.extension.roundTo
+import com.pthw.shared.extension.simpleClickable
 import kotlin.math.absoluteValue
 
 /**
@@ -218,7 +220,9 @@ private fun HomePageContent(
                                 contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
                             ) {
                                 items(it.size) { index ->
-                                    ComingSoonMoviesItemView(modifier, it[index])
+                                    ComingSoonMoviesItemView(modifier, it[index]) {
+                                        onAction(UiEvent.ItemClick(it))
+                                    }
                                 }
                             }
                         }
@@ -249,7 +253,10 @@ private fun HomePageContent(
                                 CoilAsyncImage(
                                     modifier = modifier
                                         .fillMaxSize()
-                                        .clip(Shapes.small),
+                                        .clip(Shapes.small)
+                                        .simpleClickable {
+                                            onAction(UiEvent.ItemClick(it[index]))
+                                        },
                                     imageUrl = it[index].backdropPath,
                                 )
                             }
@@ -395,7 +402,10 @@ private fun NowPlayingMoviesSectionView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(Icons.Rounded.Star, "", tint = ColorPrimary)
-                TitleTextView(modifier = modifier, text = "4.8")
+                TitleTextView(
+                    modifier = modifier,
+                    text = movies[pagerState.currentPage].voteAverage.roundTo(1).toString()
+                )
             }
 
             Text(
@@ -418,7 +428,10 @@ private fun NowPlayingMoviesSectionView(
 }
 
 @Composable
-private fun CelebritiesItemView(modifier: Modifier, actorVo: ActorVo?) {
+private fun CelebritiesItemView(
+    modifier: Modifier,
+    actorVo: ActorVo?
+) {
     Column(
         modifier = modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
@@ -487,12 +500,16 @@ private fun HorizontalPagerItemView(
 @Composable
 private fun ComingSoonMoviesItemView(
     modifier: Modifier,
-    movieVo: MovieVo
+    movieVo: MovieVo,
+    itemClick: (movie: MovieVo) -> Unit
 ) {
     Column(
         modifier = modifier
             .width(180.dp)
             .padding(end = Dimens.MARGIN_MEDIUM_2)
+            .simpleClickable {
+                itemClick(movieVo)
+            }
     ) {
         CoilAsyncImage(
             imageUrl = movieVo.posterPath,

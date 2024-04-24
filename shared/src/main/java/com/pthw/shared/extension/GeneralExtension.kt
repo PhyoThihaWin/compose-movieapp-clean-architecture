@@ -22,3 +22,11 @@ val getDeviceModel get() = "${Build.MODEL}(Api-${Build.VERSION.SDK_INT})"
 val Context.androidSecureId
     @SuppressLint("HardwareIds")
     get() = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).toString()
+
+fun Float.roundTo(n : Int) : Float {
+    return "%.${n}f".format(this).toFloat()
+}
+
+fun Double.roundTo(n : Int) : Double {
+    return "%.${n}f".format(this).toDouble()
+}
