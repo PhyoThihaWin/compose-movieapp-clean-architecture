@@ -67,7 +67,8 @@ import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
-import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailNavPageNavigationRoute
+import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailPageNavigationRoute
+import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
@@ -102,7 +103,9 @@ fun HomeNavPage(
                 when (it) {
                     UiEvent.Refresh -> viewModel.refreshHomeData()
                     UiEvent.SeeAll -> navController.navigate(movieListingPageNavigationRoute)
-                    UiEvent.ItemClick -> navController.navigate(movieDetailNavPageNavigationRoute)
+                    is UiEvent.ItemClick -> {
+                        navController.navigateToMovieDetailPage(it.movie.id)
+                    }
                 }
             },
         )
@@ -127,7 +130,7 @@ private data class UiState(
 private sealed class UiEvent {
     data object Refresh : UiEvent()
     data object SeeAll : UiEvent()
-    data object ItemClick : UiEvent()
+    class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -194,7 +197,7 @@ private fun HomePageContent(
                                 modifier = modifier,
                                 movies = it.take(8)
                             ) {
-                                onAction(UiEvent.ItemClick)
+                                onAction(UiEvent.ItemClick(it))
                             }
                         })
 
@@ -338,7 +341,7 @@ private fun HomePageContent(
 private fun NowPlayingMoviesSectionView(
     modifier: Modifier,
     movies: List<MovieVo>,
-    itemClick: () -> Unit
+    itemClick: (movie: MovieVo) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {
         movies.size
@@ -356,7 +359,7 @@ private fun NowPlayingMoviesSectionView(
         ) { page ->
             HorizontalPagerItemView(
                 modifier = modifier.clickable {
-                    itemClick()
+                    itemClick(movies[page])
                 },
                 pagerState = pagerState,
                 currentPage = page,

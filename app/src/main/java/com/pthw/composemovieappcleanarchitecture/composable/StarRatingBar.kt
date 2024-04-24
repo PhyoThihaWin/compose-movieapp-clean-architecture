@@ -27,6 +27,7 @@ fun StarRatingBar(
     rating: Float,
     starSize: Dp = Dimens.MARGIN_LARGE,
     starSpacing: Dp = 0.5.dp,
+    enable: Boolean = false,
     onRatingChanged: (Float) -> Unit
 ) {
     Row(
@@ -43,6 +44,7 @@ fun StarRatingBar(
                 tint = iconTintColor,
                 modifier = Modifier
                     .selectable(
+                        enabled = enable,
                         selected = isSelected,
                         onClick = {
                             onRatingChanged(i.toFloat())

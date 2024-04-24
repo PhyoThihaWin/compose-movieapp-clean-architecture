@@ -1,6 +1,7 @@
 package com.pthw.data.network.di
 
 import com.pthw.data.network.feature.home.HomeService
+import com.pthw.data.network.feature.movie.MovieService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +19,11 @@ object MainServiceModule {
     @Provides
     fun provideHomeService(ktor: HttpClient): HomeService {
         return HomeService(ktor)
+    }
+
+    @Provides
+    fun provideMovieService(ktor: HttpClient): MovieService {
+        return MovieService(ktor)
     }
 
 }

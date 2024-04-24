@@ -28,6 +28,7 @@ fun CoilAsyncImage(
             .clip(shape),
         model = imageUrl,
         placeholder = ColorPainter(Color.DarkGray),
+        error = ColorPainter(Color.DarkGray),
         contentScale = ContentScale.Crop,
         contentDescription = null,
     )
