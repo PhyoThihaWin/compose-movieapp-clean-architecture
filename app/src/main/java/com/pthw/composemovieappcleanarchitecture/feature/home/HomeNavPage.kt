@@ -50,9 +50,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -317,10 +320,18 @@ private fun HomePageContent(
                                         )
                                         Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
                                         Text(
-                                            text = it[index].overview,
-                                            fontSize = Dimens.TEXT_REGULAR_2,
-                                            maxLines = 3,
-                                            overflow = TextOverflow.Ellipsis
+                                            text = buildAnnotatedString {
+                                                if (it[index].overview.length > 100) {
+                                                    append(it[index].overview.substring(0..100))
+                                                    append("... ")
+                                                    withStyle(style = SpanStyle(color = ColorPrimary)) {
+                                                        append("See more")
+                                                    }
+                                                } else {
+                                                    append(it[index].overview)
+                                                }
+                                            },
+                                            fontSize = Dimens.TEXT_SMALL,
                                         )
                                     }
                                 }
@@ -387,10 +398,18 @@ private fun NowPlayingMoviesSectionView(
         Spacer(modifier = modifier.padding(top = Dimens.MARGIN_SMALL))
 
         Text(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.MARGIN_XLARGE),
             textAlign = TextAlign.Center,
-            text = "2h29m • Action, adventure, sci-fi",
-            fontSize = Dimens.TEXT_REGULAR_2
+            text = "${movies[pagerState.currentPage].releaseDate} • ${
+                movies[pagerState.currentPage].genreIds.joinToString(
+                    ", "
+                )
+            }",
+            fontSize = Dimens.TEXT_REGULAR_2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
 
         Row(
@@ -535,7 +554,10 @@ private fun ComingSoonMoviesItemView(
         ) {
             Image(painter = painterResource(id = R.drawable.ic_video_info), "")
             Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
+            Text(
+                text = movieVo.genreIds.joinToString(", "), fontSize = Dimens.TEXT_SMALL,
+                maxLines = 1, overflow = TextOverflow.Ellipsis
+            )
         }
 
         Row(
@@ -543,7 +565,7 @@ private fun ComingSoonMoviesItemView(
         ) {
             Image(painter = painterResource(id = R.drawable.ic_calendar), "")
             Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(text = "20.1.2024", fontSize = Dimens.TEXT_SMALL)
+            Text(text = movieVo.releaseDate, fontSize = Dimens.TEXT_SMALL)
         }
     }
 }

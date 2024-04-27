@@ -70,6 +70,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalet
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.movie.model.MovieCastVo
 import com.pthw.domain.movie.model.MovieDetailVo
+import com.pthw.shared.extension.minutesToHoursAndMinutes
 import com.pthw.shared.extension.roundTo
 
 /**
@@ -179,12 +180,12 @@ private fun PageContent(
 
                         MovieInfoDescriptionTexts(
                             title = "Movie genre:",
-                            text = "Action, adventure, sci-fi Action, adventure, sci-fi"
+                            text = movieDetail.genres.map { it.name }.joinToString(", ")
                         )
                         Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
                         MovieInfoDescriptionTexts(
                             title = "Censorship:",
-                            text = "13+"
+                            text = if (movieDetail.adult) "18+" else "10+"
                         )
                         Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
                         MovieInfoDescriptionTexts(
@@ -403,7 +404,7 @@ private fun MovieDetailInfoCardSection(
         TitleTextView(text = movieDetail.title, textAlign = TextAlign.Start)
         Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_SMALL))
         Text(
-            text = "${movieDetail.runtime} • ${movieDetail.releaseDate}",
+            text = "${movieDetail.runtime.minutesToHoursAndMinutes()} • ${movieDetail.releaseDate}",
             color = Color.Gray,
             fontSize = Dimens.TEXT_REGULAR
         )
@@ -487,7 +488,7 @@ private fun MovieDetailInfoCardSection(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {

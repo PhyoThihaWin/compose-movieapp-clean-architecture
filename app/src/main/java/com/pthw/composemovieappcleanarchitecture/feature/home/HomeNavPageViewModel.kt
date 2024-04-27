@@ -3,6 +3,7 @@ package com.pthw.composemovieappcleanarchitecture.feature.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.viewstate.ObjViewState
 import com.pthw.domain.home.model.ActorVo
@@ -12,6 +13,7 @@ import com.pthw.domain.home.usecase.GetNowPlayingMoviesUseCase
 import com.pthw.domain.home.usecase.GetPopularMoviesUseCase
 import com.pthw.domain.home.usecase.GetPopularPeopleUseCase
 import com.pthw.domain.home.usecase.GetUpComingMoviesUseCase
+import com.pthw.domain.movie.usecase.GetMovieGenresUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +34,8 @@ class HomeNavPageViewModel @Inject constructor(
     private val getNowPlayingMoviesUseCase: GetNowPlayingMoviesUseCase,
     private val getUpComingMoviesUseCase: GetUpComingMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
-    private val getPopularPeopleUseCase: GetPopularPeopleUseCase
+    private val getPopularPeopleUseCase: GetPopularPeopleUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase
 ) : ViewModel() {
 
     var refreshing = mutableStateOf(false)
@@ -56,6 +59,7 @@ class HomeNavPageViewModel @Inject constructor(
 
         // from network
         fetchHomeData()
+        fetchMovieGenres()
     }
 
     private fun fetchHomeData() {
@@ -68,10 +72,22 @@ class HomeNavPageViewModel @Inject constructor(
         }
     }
 
+    private fun fetchMovieGenres() {
+        viewModelScope.launch {
+            runCatching {
+                getMovieGenresUseCase.execute(Unit)
+            }.getOrElse {
+                Timber.e(it)
+            }
+        }
+    }
+
     private fun getNowPlayingMovies() {
         viewModelScope.launch {
             getNowPlayingMoviesUseCase.execute(Unit).collectLatest {
-                nowPlayingMovies.value = ObjViewState.Success(it)
+                if (it.isNotEmpty()) {
+                    nowPlayingMovies.value = ObjViewState.Success(it)
+                }
             }
         }
     }

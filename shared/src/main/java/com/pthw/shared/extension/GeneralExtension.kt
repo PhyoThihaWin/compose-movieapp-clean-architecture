@@ -30,3 +30,9 @@ fun Float.roundTo(n : Int) : Float {
 fun Double.roundTo(n : Int) : Double {
     return "%.${n}f".format(this).toDouble()
 }
+
+fun Int.minutesToHoursAndMinutes(): String {
+    val hours = this / 60
+    val remainingMinutes = this % 60
+    return String.format("%dh %02dm", hours, remainingMinutes)
+}

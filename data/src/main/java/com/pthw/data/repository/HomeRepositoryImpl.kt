@@ -12,6 +12,7 @@ import com.pthw.data.network.feature.home.mapper.MovieVoMapper
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.home.repository.HomeRepository
+import com.pthw.domain.movie.model.GenreVo
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -40,7 +41,12 @@ class HomeRepositoryImpl @Inject constructor(
     private suspend fun getNowPlayingMovies() {
         val raw = service.getNowPlayingMovies()
         movieVoEntityMapper.prepareForNowPlaying()
-        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+        val genres = database.genreDao().getAllGenres().map {
+            GenreVo(it.id, it.name)
+        }
+        val data = raw.data?.map {
+            movieVoMapper.map(it, genres)
+        }?.map(movieVoEntityMapper::map)
         database.withTransaction {
             database.movieDao().deleteNowPlayingMovies()
             database.movieDao().insertMovies(data.orEmpty())
@@ -50,7 +56,12 @@ class HomeRepositoryImpl @Inject constructor(
     private suspend fun getUpComingMovies() {
         val raw = service.getUpComingMovies()
         movieVoEntityMapper.prepareForUpComing()
-        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+         val genres = database.genreDao().getAllGenres().map {
+            GenreVo(it.id, it.name)
+        }
+        val data = raw.data?.map {
+            movieVoMapper.map(it, genres)
+        }?.map(movieVoEntityMapper::map)
         database.withTransaction {
             database.movieDao().deleteUpComingMovies()
             database.movieDao().insertMovies(data.orEmpty())
@@ -60,7 +71,12 @@ class HomeRepositoryImpl @Inject constructor(
     private suspend fun getPopularMovies() {
         val raw = service.getPopularMovies()
         movieVoEntityMapper.prepareForPopular()
-        val data = raw.data?.map(movieVoMapper::map)?.map(movieVoEntityMapper::map)
+         val genres = database.genreDao().getAllGenres().map {
+            GenreVo(it.id, it.name)
+        }
+        val data = raw.data?.map {
+            movieVoMapper.map(it, genres)
+        }?.map(movieVoEntityMapper::map)
         database.withTransaction {
             database.movieDao().deletePopularMovies()
             database.movieDao().insertMovies(data.orEmpty())

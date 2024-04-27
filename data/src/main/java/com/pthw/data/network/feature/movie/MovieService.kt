@@ -1,8 +1,10 @@
 package com.pthw.data.network.feature.movie
 
+import com.pthw.data.network.feature.movie.response.GenresResponse
 import com.pthw.data.network.feature.movie.response.MovieDetailCreditsResponse
 import com.pthw.data.network.feature.movie.response.MovieDetailResponse
 import com.pthw.data.network.ktor.ENDPOINT_MOVIE_DETAIL
+import com.pthw.data.network.ktor.ENDPOINT_MOVIE_GENRES
 import com.pthw.data.network.ktor.toKtor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -29,5 +31,10 @@ class MovieService(private val client: HttpClient) {
                 appendPathSegments(movieId, "credits")
             }
         }.body()
+    }
+
+    suspend fun getMovieGenres(): GenresResponse {
+        val endpoint = ENDPOINT_MOVIE_GENRES.toKtor()
+        return client.get(endpoint).body()
     }
 }
