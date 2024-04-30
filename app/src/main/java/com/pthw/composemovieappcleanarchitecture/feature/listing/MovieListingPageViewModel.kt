@@ -16,12 +16,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieListingPageViewModel @Inject constructor(
     private val handler: ExceptionHandler,
-    private val getNowPlayingMoviesPagingUseCase: GetNowPlayingMoviesPagingUseCase,
-    private val getUpComingMoviesPagingUseCase: GetUpComingMoviesPagingUseCase
+    getNowPlayingMoviesPagingUseCase: GetNowPlayingMoviesPagingUseCase,
+    getUpComingMoviesPagingUseCase: GetUpComingMoviesPagingUseCase
 ) : ViewModel() {
 
-    val nowPlayingPagingFlow get() = getNowPlayingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
-    val upComingPagingFlow get() = getUpComingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
+    val nowPlayingPagingFlow = getNowPlayingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
+    val upComingPagingFlow = getUpComingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
 
 }
 
