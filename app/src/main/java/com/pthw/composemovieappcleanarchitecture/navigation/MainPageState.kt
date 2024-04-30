@@ -15,6 +15,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.home.navigateToHomeNavP
 import com.pthw.composemovieappcleanarchitecture.feature.movie.navigateToMovieNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.profile.navigateToProfileNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.navigateToTicketNavPage
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -26,18 +27,13 @@ import kotlinx.coroutines.CoroutineScope
 fun rememberMainPageState(
     windowSizeClass: WindowSizeClass,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = LocalNavController.current,
 ): MainPageState {
-//    NavigationTrackingSideEffect(navController)
-    return remember(
-        navController,
-        coroutineScope,
-        windowSizeClass,
-    ) {
+    return remember(navController, coroutineScope, windowSizeClass) {
         MainPageState(
-            navController,
-            coroutineScope,
-            windowSizeClass,
+            navController = navController,
+            coroutineScope = coroutineScope,
+            windowSizeClass = windowSizeClass,
         )
     }
 }
@@ -85,9 +81,14 @@ class MainPageState(
 
             when (topLevelDestination) {
                 TopLevelDestination.HOME -> navController.navigateToHomeNavPage(topLevelNavOptions)
-                TopLevelDestination.TICKET -> navController.navigateToTicketNavPage(topLevelNavOptions)
+                TopLevelDestination.TICKET -> navController.navigateToTicketNavPage(
+                    topLevelNavOptions
+                )
+
                 TopLevelDestination.MOVIE -> navController.navigateToMovieNavPage(topLevelNavOptions)
-                TopLevelDestination.PROFILE -> navController.navigateToProfileNavPage(topLevelNavOptions)
+                TopLevelDestination.PROFILE -> navController.navigateToProfileNavPage(
+                    topLevelNavOptions
+                )
             }
         }
     }

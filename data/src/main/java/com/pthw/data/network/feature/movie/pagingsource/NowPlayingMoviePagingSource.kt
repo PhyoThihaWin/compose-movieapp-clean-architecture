@@ -10,7 +10,7 @@ import timber.log.Timber
 private const val STARTING_PAGE_INDEX = 1
 private const val LOAD_DELAY_MILLIS = 6_000L
 
-class MoviePagingSource(
+class NowPlayingMoviePagingSource(
     private val query: String = "",
     private val service: HomeService,
 ) : PagingSource<Int, MovieResponse>() {
@@ -29,7 +29,7 @@ class MoviePagingSource(
             Timber.e("Success api-call: %s", results.size)
 
             // delay
-            delay(600)
+            delay(300)
 
             LoadResult.Page(
                 data = results,

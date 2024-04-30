@@ -21,9 +21,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +52,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -61,7 +62,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 @Composable
 fun CinemaSeatPage(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navController: NavController = LocalNavController.current
 ) {
     PageContent(modifier = modifier,
         onAction = {
@@ -202,7 +203,7 @@ private fun PageContent(
                     Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
                 }
             }
-            Divider(color = Color.DarkGray)
+            HorizontalDivider(color = Color.DarkGray)
             TotalAndBuyTicketSection {
                 onAction(UiEvent.Continue)
             }

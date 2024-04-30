@@ -11,11 +11,11 @@ import javax.inject.Inject
 /**
  * Created by P.T.H.W on 06/04/2024.
  */
-class GetNowPlayingMoviesPagingUseCase @Inject constructor(
+class GetUpComingMoviesPagingUseCase @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     private val movieRepository: MovieRepository
 ) : FlowUseCase<Unit, PagingData<MovieVo>>(dispatcherProvider) {
     override fun provide(params: Unit): Flow<PagingData<MovieVo>> {
-        return movieRepository.getNowPlayingMovies()
+        return movieRepository.getUpComingMovies()
     }
 }

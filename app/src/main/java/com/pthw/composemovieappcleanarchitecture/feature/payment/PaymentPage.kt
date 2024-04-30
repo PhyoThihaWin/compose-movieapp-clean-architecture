@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -47,6 +47,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -56,7 +57,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 @Composable
 fun PaymentPage(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController = LocalNavController.current
 ) {
     PageContent(modifier = modifier,
         onAction = {
@@ -105,7 +106,7 @@ private fun PageContent(
                 TicketInfoDesc(title = "Seat", text = "H7, H8")
 
                 DiscountCodeApplySection()
-                Divider(
+                HorizontalDivider(
                     color = Color.DarkGray,
                     modifier = Modifier.padding(top = Dimens.MARGIN_MEDIUM_2)
                 )

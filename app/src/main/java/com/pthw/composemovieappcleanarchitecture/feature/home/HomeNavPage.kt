@@ -70,16 +70,17 @@ import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
-import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailPageNavigationRoute
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.shared.extension.roundTo
 import com.pthw.shared.extension.simpleClickable
+import timber.log.Timber
 import kotlin.math.absoluteValue
 
 /**
@@ -90,8 +91,11 @@ import kotlin.math.absoluteValue
 fun HomeNavPage(
     modifier: Modifier = Modifier,
     viewModel: HomeNavPageViewModel = hiltViewModel(),
-    navController: NavController,
+    navController: NavController = LocalNavController.current,
 ) {
+
+    Timber.i("OnReached: HomeNavPage")
+
     val uiState = UiState(
         refreshing = viewModel.refreshing.value,
         nowPlayingMovies = viewModel.nowPlayingMovies.value,

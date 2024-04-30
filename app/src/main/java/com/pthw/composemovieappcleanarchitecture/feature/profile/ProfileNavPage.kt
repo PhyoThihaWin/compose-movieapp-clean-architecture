@@ -13,18 +13,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.IconAndTextInfoRow
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 
@@ -99,23 +105,23 @@ private fun PageContent(
 
                 Spacer(modifier = Modifier.height(Dimens.MARGIN_XXXLARGE))
                 ProfileSettingItem(
-                    painterResource = R.drawable.ic_mail,
+                    painterResource = R.drawable.ic_ticket_profile_item,
                     text = "My Ticket"
                 )
                 ProfileSettingItem(
-                    painterResource = R.drawable.ic_mail,
+                    painterResource = R.drawable.ic_shopping_cart_profile_item,
                     text = "Payment history"
                 )
                 ProfileSettingItem(
-                    painterResource = R.drawable.ic_mail,
+                    painterResource = R.drawable.ic_translate_profile_item,
                     text = "Change language"
                 )
                 ProfileSettingItem(
-                    painterResource = R.drawable.ic_mail,
+                    painterResource = R.drawable.ic_lock_profile_item,
                     text = "Change password"
                 )
-                ProfileSettingItem(
-                    painterResource = R.drawable.ic_mail,
+                ProfileSettingItemWithToggle(
+                    painterResource = R.drawable.ic_face_id_profile_item,
                     text = "Face ID / Touch ID"
                 )
 
@@ -158,7 +164,64 @@ fun ProfileSettingItem(
             )
 
         }
-        Divider(color = Color.DarkGray)
+        HorizontalDivider(color = Color.DarkGray)
+    }
+}
+
+@Composable
+fun ProfileSettingItemWithToggle(
+    @DrawableRes painterResource: Int,
+    text: String,
+    onClick: () -> Unit = {}
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                .height(80.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = painterResource),
+                modifier = Modifier.size(Dimens.MARGIN_XLARGE),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(Dimens.MARGIN_10))
+            Text(
+                text = text,
+                fontSize = Dimens.TEXT_REGULAR_2,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            SwitchWithCustomColors()
+        }
+        HorizontalDivider(color = Color.DarkGray)
+    }
+}
+
+@Composable
+fun SwitchWithCustomColors() {
+    var checked by remember { mutableStateOf(true) }
+
+    Switch(
+        checked = checked,
+        onCheckedChange = {
+            checked = it
+        },
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = ColorPrimary,
+            checkedTrackColor = Color.DarkGray,
+            uncheckedThumbColor = Color.LightGray,
+            uncheckedTrackColor = Color.DarkGray,
+        )
+    )
+}
+
+@Preview
+@Composable
+private fun SwitchWithCustomColorsPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        SwitchWithCustomColors()
     }
 }
 

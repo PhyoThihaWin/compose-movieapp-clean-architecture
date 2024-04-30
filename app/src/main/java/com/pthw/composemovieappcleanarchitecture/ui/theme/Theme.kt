@@ -12,11 +12,14 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -119,7 +122,8 @@ fun ComposeMovieAppCleanArchitectureTheme(
     }
 
     CompositionLocalProvider(
-        LocalCustomColorsPalette provides customColorsPalette
+        LocalCustomColorsPalette provides customColorsPalette,
+        LocalNavController provides rememberNavController()
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -130,3 +134,5 @@ fun ComposeMovieAppCleanArchitectureTheme(
     }
 
 }
+
+val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController found!") }

@@ -67,6 +67,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.movie.model.MovieCastVo
 import com.pthw.domain.movie.model.MovieDetailVo
@@ -80,7 +81,7 @@ import com.pthw.shared.extension.roundTo
 @Composable
 fun MovieDetailPage(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navController: NavController = LocalNavController.current,
     viewModel: MovieDetailPageViewModel = hiltViewModel(),
 ) {
 

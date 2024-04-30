@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface MovieRepository {
     fun getNowPlayingMovies(): Flow<PagingData<MovieVo>>
+    fun getUpComingMovies(): Flow<PagingData<MovieVo>>
     suspend fun getMovieDetails(movieId: String): MovieDetailVo
 
     // movie genre

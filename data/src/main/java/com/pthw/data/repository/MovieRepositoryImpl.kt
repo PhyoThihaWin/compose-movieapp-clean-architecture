@@ -11,7 +11,8 @@ import com.pthw.data.network.feature.home.HomeService
 import com.pthw.data.network.feature.home.mapper.MovieVoMapper
 import com.pthw.data.network.feature.movie.MovieService
 import com.pthw.data.network.feature.movie.mapper.MovieDetailVoMapper
-import com.pthw.data.network.feature.movie.pagingsource.MoviePagingSource
+import com.pthw.data.network.feature.movie.pagingsource.NowPlayingMoviePagingSource
+import com.pthw.data.network.feature.movie.pagingsource.UpComingMoviePagingSource
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.GenreVo
 import com.pthw.domain.movie.model.MovieDetailVo
@@ -41,7 +42,23 @@ class MovieRepositoryImpl @Inject constructor(
                 initialLoadSize = ITEMS_PER_PAGE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { MoviePagingSource(service = service) }
+            pagingSourceFactory = { NowPlayingMoviePagingSource(service = service) }
+        ).flow.map { pagingData ->
+            val genres = database.genreDao().getAllGenres().map {
+                GenreVo(it.id, it.name)
+            }
+            pagingData.map { movieVoMapper.map(it, genres) }
+        }
+    }
+
+    override fun getUpComingMovies(): Flow<PagingData<MovieVo>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                initialLoadSize = ITEMS_PER_PAGE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { UpComingMoviePagingSource(service = service) }
         ).flow.map { pagingData ->
             val genres = database.genreDao().getAllGenres().map {
                 GenreVo(it.id, it.name)

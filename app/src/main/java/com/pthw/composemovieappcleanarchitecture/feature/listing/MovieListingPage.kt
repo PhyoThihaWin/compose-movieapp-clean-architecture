@@ -36,9 +36,12 @@ import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
+import com.pthw.composemovieappcleanarchitecture.feature.listing.composable.MovieGridItemView
+import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.flow.flowOf
@@ -50,29 +53,36 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun MovieListingPage(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navController: NavController = LocalNavController.current,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     PageContent(
         modifier = modifier,
-        pagingItems = viewModel.pagingFlow.collectAsLazyPagingItems(),
-        onBack = {
-            navController.popBackStack()
+        pagingItems = viewModel.nowPlayingPagingFlow.collectAsLazyPagingItems(),
+        onAction = {
+            when (it) {
+                is UiEvent.GoBack -> navController.popBackStack()
+                is UiEvent.ItemClick -> navController.navigateToMovieDetailPage(it.movie.id)
+            }
         }
     )
 }
 
+private sealed class UiEvent {
+    data object GoBack : UiEvent()
+    class ItemClick(val movie: MovieVo) : UiEvent()
+}
 
 @Composable
 private fun PageContent(
     modifier: Modifier,
     pagingItems: LazyPagingItems<MovieVo>,
-    onBack: () -> Unit = {}
+    onAction: (UiEvent) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             TopAppBarView(title = "Movies") {
-                onBack()
+                onAction(UiEvent.GoBack)
             }
         },
     ) { innerPadding ->
@@ -89,7 +99,11 @@ private fun PageContent(
             horizontalArrangement = Arrangement.spacedBy(Dimens.MARGIN_MEDIUM_2)
         ) {
             items(pagingItems.itemCount) { index ->
-                pagingItems[index]?.let { MoviesItemView(modifier = modifier, movieVo = it) }
+                pagingItems[index]?.let {
+                    MovieGridItemView(modifier = modifier, movieVo = it) {
+                        onAction(UiEvent.ItemClick(it))
+                    }
+                }
             }
             pagingItems.apply {
                 when {
@@ -131,50 +145,6 @@ private fun PageContent(
     }
 }
 
-
-@Composable
-private fun MoviesItemView(
-    modifier: Modifier,
-    movieVo: MovieVo
-) {
-    Column(
-        modifier = modifier
-    ) {
-        CoilAsyncImage(
-            imageUrl = movieVo.posterPath,
-            modifier = modifier
-                .height(240.dp)
-                .clip(Shapes.small)
-        )
-
-        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-        Text(
-            text = movieVo.title,
-            fontSize = Dimens.TEXT_REGULAR_2,
-            fontWeight = FontWeight.Medium,
-            color = ColorPrimary,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(painter = painterResource(id = R.drawable.ic_video_info), "")
-            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL)
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(painter = painterResource(id = R.drawable.ic_calendar), "")
-            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(text = "20.1.2024", fontSize = Dimens.TEXT_SMALL)
-        }
-    }
-}
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

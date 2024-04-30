@@ -11,13 +11,11 @@ import com.pthw.composemovieappcleanarchitecture.feature.movie.MovieNavPage
  */
 
 const val homeNavPageNavigationRoute = "HOME"
-fun NavGraphBuilder.homeNavPage(
-    navController: NavController
-) {
+fun NavGraphBuilder.homeNavPage() {
     composable(
         route = homeNavPageNavigationRoute,
     ) {
-        HomeNavPage(navController = navController)
+        HomeNavPage()
     }
 }
 

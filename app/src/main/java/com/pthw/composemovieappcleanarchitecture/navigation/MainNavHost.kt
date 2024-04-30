@@ -1,7 +1,9 @@
 package com.pthw.composemovieappcleanarchitecture.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.cinemaSeatPage
 import com.pthw.composemovieappcleanarchitecture.feature.home.homeNavPage
@@ -25,21 +27,20 @@ fun MainNavHost(
     appState: MainPageState,
     startDestination: String = homeNavPageNavigationRoute
 ) {
-    val navController = appState.navController
 
     NavHost(
-        navController = navController,
+        navController = appState.navController,
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeNavPage(navController)
+        homeNavPage()
         ticketNavPage()
         movieNavPage()
         profileNavPage()
-        movieListingPage(navController)
-        movieDetailPage(navController)
-        cinemaSeatPage(navController)
-        paymentPage(navController)
-        invoiceTicketPage(navController)
+        movieListingPage()
+        movieDetailPage()
+        cinemaSeatPage()
+        paymentPage()
+        invoiceTicketPage()
     }
 }
