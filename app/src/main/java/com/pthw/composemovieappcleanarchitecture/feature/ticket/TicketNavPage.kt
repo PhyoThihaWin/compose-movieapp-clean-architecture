@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -15,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 fun TicketNavPage(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .background(Color.Yellow)
+            .background(LocalCustomColors.current.cardBackgroundColor)
             .fillMaxSize(),
     )
 }

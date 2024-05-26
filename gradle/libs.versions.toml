@@ -10,7 +10,8 @@ lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.2"
 androidxHiltNavigationCompose = "1.2.0"
 androidxNavigation = "2.7.7"
-composeBom = "2024.03.00"
+composeBom = "2024.05.00"
+composeAnimation = "1.7.0-beta01"
 composeMaterial3 = "1.2.1"
 composeMaterial = "1.6.5"
 lifecycleVersion = "2.7.0"
@@ -32,7 +33,7 @@ coil = "2.6.0"
 room_version = "2.6.1"
 paging = "3.2.1"
 pagingCompose = "3.3.0-beta01"
-constraintLayoutCompose= "1.1.0-alpha13"
+constraintLayoutCompose = "1.1.0-alpha13"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material = { group = "androidx.compose.material", name = "material" }
+androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core", version.ref = "composeAnimation" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }

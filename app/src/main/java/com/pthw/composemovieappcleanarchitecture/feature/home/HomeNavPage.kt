@@ -2,8 +2,11 @@ package com.pthw.composemovieappcleanarchitecture.feature.home
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,6 +77,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToM
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
@@ -86,12 +90,15 @@ import kotlin.math.absoluteValue
 /**
  * Created by P.T.H.W on 27/03/2024.
  */
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("ResourceAsColor")
 @Composable
 fun HomeNavPage(
     modifier: Modifier = Modifier,
     viewModel: HomeNavPageViewModel = hiltViewModel(),
     navController: NavController = LocalNavController.current,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
 ) {
 
     Timber.i("OnReached: HomeNavPage")
@@ -108,6 +115,8 @@ fun HomeNavPage(
         HomePageContent(
             modifier = modifier,
             uiState = uiState,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = animatedContentScope,
             onAction = {
                 when (it) {
                     UiEvent.Refresh -> viewModel.refreshHomeData()
@@ -142,11 +151,16 @@ private sealed class UiEvent {
     class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class, ExperimentalMaterialApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 private fun HomePageContent(
     modifier: Modifier,
     uiState: UiState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onAction: (UiEvent) -> Unit = {},
 ) {
     Scaffold(
@@ -227,7 +241,11 @@ private fun HomePageContent(
                                 contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
                             ) {
                                 items(it.size) { index ->
-                                    ComingSoonMoviesItemView(modifier, it[index]) {
+                                    ComingSoonMoviesItemView(
+                                        modifier, it[index],
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        animatedContentScope = animatedContentScope
+                                    ) {
                                         onAction(UiEvent.ItemClick(it))
                                     }
                                 }
@@ -520,56 +538,67 @@ private fun HorizontalPagerItemView(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ComingSoonMoviesItemView(
     modifier: Modifier,
     movieVo: MovieVo,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     itemClick: (movie: MovieVo) -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .width(180.dp)
-            .padding(end = Dimens.MARGIN_MEDIUM_2)
-            .simpleClickable {
-                itemClick(movieVo)
-            }
-    ) {
-        CoilAsyncImage(
-            imageUrl = movieVo.posterPath,
+    with(sharedTransitionScope) {
+        Column(
             modifier = modifier
-                .height(220.dp)
                 .width(180.dp)
-                .clip(Shapes.small)
-        )
-
-        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-
-        Text(
-            text = movieVo.title,
-            fontSize = Dimens.TEXT_REGULAR_2,
-            fontWeight = FontWeight.Medium,
-            color = ColorPrimary,
-            minLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+                .padding(end = Dimens.MARGIN_MEDIUM_2)
+                .sharedElement(
+                    state = rememberSharedContentState(
+                        key = "image-${movieVo.id}"
+                    ),
+                    animatedVisibilityScope = animatedContentScope,
+                )
+                .simpleClickable {
+                    itemClick(movieVo)
+                }
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_video_info), "")
-            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(
-                text = movieVo.genreIds.joinToString(", "), fontSize = Dimens.TEXT_SMALL,
-                maxLines = 1, overflow = TextOverflow.Ellipsis
+            CoilAsyncImage(
+                imageUrl = movieVo.posterPath,
+                modifier = modifier
+                    .height(220.dp)
+                    .width(180.dp)
+                    .clip(Shapes.small)
             )
-        }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(painter = painterResource(id = R.drawable.ic_calendar), "")
-            Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
-            Text(text = movieVo.releaseDate, fontSize = Dimens.TEXT_SMALL)
+            Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+            Text(
+                text = movieVo.title,
+                fontSize = Dimens.TEXT_REGULAR_2,
+                fontWeight = FontWeight.Medium,
+                color = ColorPrimary,
+                minLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_video_info), "")
+                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                Text(
+                    text = movieVo.genreIds.joinToString(", "), fontSize = Dimens.TEXT_SMALL,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_calendar), "")
+                Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                Text(text = movieVo.releaseDate, fontSize = Dimens.TEXT_SMALL)
+            }
         }
     }
 }
@@ -642,19 +671,17 @@ private fun HomeSearchBarView(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-            .clip(Shapes.small)
-            .background(color = Color.DarkGray)
+            .clip(Shapes.medium)
+            .background(color = LocalCustomColors.current.searchBoxColor)
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
 
     ) {
-        Image(
+        Icon(
             painter = painterResource(id = R.drawable.ic_search_normal),
             contentDescription = ""
         )
         OutlinedTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(color = Color.DarkGray),
+            modifier = modifier.fillMaxWidth(),
             value = "", onValueChange = {},
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
@@ -669,11 +696,12 @@ private fun HomeSearchBarView(
 
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun HomeNavPageNightPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        HomePageContent(modifier = Modifier, uiState = UiState())
+//        HomePageContent(modifier = Modifier, uiState = UiState(), sharedTransitionScope = SharedTransitionScope, animatedContentScope = AnimatedContentScope)
     }
 }
 
@@ -681,7 +709,7 @@ private fun HomeNavPageNightPreview() {
 @Composable
 private fun HomeNavPagePreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        HomePageContent(modifier = Modifier, uiState = UiState())
+//        HomePageContent(modifier = Modifier, uiState = UiState())
     }
 }
 

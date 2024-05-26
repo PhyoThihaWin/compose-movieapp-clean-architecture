@@ -40,7 +40,7 @@ import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
@@ -80,8 +80,8 @@ private fun PageContent(
             }
         },
     ) { innerPadding ->
-        val invoiceBgColor = LocalCustomColorsPalette.current.invoiceTicketBgColor
-        val invoiceTextColor = LocalCustomColorsPalette.current.invoiceTicketTextColor
+        val invoiceBgColor = LocalCustomColors.current.invoiceTicketBgColor
+        val invoiceTextColor = LocalCustomColors.current.invoiceTicketTextColor
 
         LazyColumn(
             modifier = Modifier

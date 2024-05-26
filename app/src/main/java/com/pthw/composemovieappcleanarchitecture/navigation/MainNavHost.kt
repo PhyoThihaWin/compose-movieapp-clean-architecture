@@ -1,5 +1,7 @@
 package com.pthw.composemovieappcleanarchitecture.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.ticket.ticketNavPage
  * Created by P.T.H.W on 25/03/2024.
  */
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainNavHost(
     modifier: Modifier,
@@ -28,19 +31,21 @@ fun MainNavHost(
     startDestination: String = homeNavPageNavigationRoute
 ) {
 
-    NavHost(
-        navController = appState.navController,
-        startDestination = startDestination,
-        modifier = modifier,
-    ) {
-        homeNavPage()
-        ticketNavPage()
-        movieNavPage()
-        profileNavPage()
-        movieListingPage()
-        movieDetailPage()
-        cinemaSeatPage()
-        paymentPage()
-        invoiceTicketPage()
+    SharedTransitionLayout {
+        NavHost(
+            navController = appState.navController,
+            startDestination = startDestination,
+            modifier = modifier,
+        ) {
+            homeNavPage(this@SharedTransitionLayout)
+            ticketNavPage()
+            movieNavPage()
+            profileNavPage()
+            movieListingPage()
+            movieDetailPage(this@SharedTransitionLayout)
+            cinemaSeatPage()
+            paymentPage()
+            invoiceTicketPage()
+        }
     }
 }

@@ -46,7 +46,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserve
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
@@ -192,7 +192,7 @@ private fun PaymentMethodListItem() {
         modifier = Modifier
             .padding(bottom = Dimens.MARGIN_12)
             .clip(Shapes.medium)
-            .background(color = LocalCustomColorsPalette.current.cardBackgroundColor)
+            .background(color = LocalCustomColors.current.cardBackgroundColor)
             .padding(Dimens.MARGIN_12),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -316,7 +316,7 @@ fun PaymentMovieInfoCard(
     Row(
         modifier = Modifier
             .clip(Shapes.medium)
-            .background(color = LocalCustomColorsPalette.current.cardBackgroundColor)
+            .background(color = LocalCustomColors.current.cardBackgroundColor)
     ) {
         CoilAsyncImage(
             imageUrl = "https://mlpnk72yciwc.i.optimole.com/cqhiHLc.IIZS~2ef73/w:auto/h:auto/q:75/https://bleedingcool.com/wp-content/uploads/2024/01/godzilla_x_kong_the_new_empire_ver5_xxlg.jpg",

@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,6 +52,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToM
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
@@ -184,14 +186,14 @@ fun MovieTypeTabRow(
         modifier = Modifier
             .padding(vertical = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.small)
-            .background(color = Color.DarkGray)
+            .background(color = LocalCustomColors.current.searchBoxColor)
             .padding(Dimens.MARGIN_SMALL)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() } // This is mandatory
             ) {},
         selectedTabIndex = tabIndex,
-        containerColor = Color.DarkGray,
+        containerColor = LocalCustomColors.current.searchBoxColor,
         indicator = {
             Box(
                 Modifier
@@ -218,7 +220,10 @@ fun MovieTypeTabRow(
                         text = title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = if (selected) Color.Black else Color.White,
+                        color = if (selected) Color.Black else {
+                            if (isSystemInDarkTheme()) Color.White
+                            else Color.Black
+                        },
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -228,7 +233,7 @@ fun MovieTypeTabRow(
 
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {

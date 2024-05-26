@@ -101,7 +101,7 @@ fun MovieGridItemView(
         Row(
             verticalAlignment = Alignment.Top
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_video_info), "")
+            Icon(painter = painterResource(id = R.drawable.ic_video_info), "")
             Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
             Text(
                 text = movieVo.genreIds.joinToString(", "),
@@ -112,7 +112,7 @@ fun MovieGridItemView(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_calendar), "")
+            Icon(painter = painterResource(id = R.drawable.ic_calendar), "")
             Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
             Text(text = movieVo.releaseDate, fontSize = Dimens.TEXT_SMALL)
         }

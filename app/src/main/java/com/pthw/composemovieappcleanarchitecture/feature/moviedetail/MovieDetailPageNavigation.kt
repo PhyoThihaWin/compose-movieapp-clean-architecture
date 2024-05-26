@@ -1,5 +1,7 @@
 package com.pthw.composemovieappcleanarchitecture.feature.moviedetail
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -10,11 +12,18 @@ import androidx.navigation.compose.composable
  */
 
 const val movieDetailPageNavigationRoute = "movie-detail/{movieId}"
-fun NavGraphBuilder.movieDetailPage() {
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+fun NavGraphBuilder.movieDetailPage(
+    sharedTransitionScope: SharedTransitionScope,
+) {
     composable(
         route = movieDetailPageNavigationRoute,
     ) {
-        MovieDetailPage()
+        MovieDetailPage(
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = this
+        )
     }
 }
 

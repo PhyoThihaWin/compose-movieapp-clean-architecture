@@ -51,7 +51,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserve
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColorsPalette
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
@@ -256,10 +256,10 @@ private fun TimeListItem(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.large)
-            .background(color = LocalCustomColorsPalette.current.cardBackgroundColor)
+            .background(color = LocalCustomColors.current.cardBackgroundColor)
             .border(
                 width = 1.dp,
-                color = if (isSelected) ColorPrimary else LocalCustomColorsPalette.current.cardBackgroundColor,
+                color = if (isSelected) ColorPrimary else LocalCustomColors.current.cardBackgroundColor,
                 shape = Shapes.large
             )
             .clickable {
@@ -286,7 +286,7 @@ private fun DateListItem(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM)
             .clip(Shapes.extraLarge)
-            .background(color = if (isSelected) ColorPrimary else LocalCustomColorsPalette.current.cardBackgroundColor)
+            .background(color = if (isSelected) ColorPrimary else LocalCustomColors.current.cardBackgroundColor)
             .clickable {
                 onSelected()
             }

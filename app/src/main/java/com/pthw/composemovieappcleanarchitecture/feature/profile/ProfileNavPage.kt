@@ -40,6 +40,7 @@ import com.pthw.composemovieappcleanarchitecture.composable.IconAndTextInfoRow
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 
 /**
  * Created by P.T.H.W on 27/03/2024.
@@ -124,7 +125,10 @@ private fun PageContent(
                     painterResource = R.drawable.ic_face_id_profile_item,
                     text = "Face ID / Touch ID"
                 )
-
+                ProfileSettingItemWithToggle(
+                    painterResource = R.drawable.ic_dark_mode,
+                    text = "Dark Mode"
+                )
             }
         }
     }
@@ -164,7 +168,7 @@ fun ProfileSettingItem(
             )
 
         }
-        HorizontalDivider(color = Color.DarkGray)
+        HorizontalDivider(color = LocalCustomColors.current.dividerColor)
     }
 }
 
@@ -195,7 +199,7 @@ fun ProfileSettingItemWithToggle(
             )
             SwitchWithCustomColors()
         }
-        HorizontalDivider(color = Color.DarkGray)
+        HorizontalDivider(color = LocalCustomColors.current.dividerColor)
     }
 }
 
@@ -210,9 +214,11 @@ fun SwitchWithCustomColors() {
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = ColorPrimary,
-            checkedTrackColor = Color.DarkGray,
+            checkedTrackColor = LocalCustomColors.current.searchBoxColor,
+            checkedBorderColor = LocalCustomColors.current.searchBoxColor,
             uncheckedThumbColor = Color.LightGray,
-            uncheckedTrackColor = Color.DarkGray,
+            uncheckedTrackColor = LocalCustomColors.current.searchBoxColor,
+            uncheckedBorderColor = LocalCustomColors.current.searchBoxColor,
         )
     )
 }
@@ -225,7 +231,7 @@ private fun SwitchWithCustomColorsPreview() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
