@@ -11,6 +11,8 @@ import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 /**
@@ -24,12 +26,16 @@ class MovieDetailPageViewModel @Inject constructor(
     private val getMovieDetailUseCase: GetMovieDetailUseCase
 ) : ViewModel() {
 
+    val backdropPath: String = URLDecoder.decode(
+        checkNotNull(savedStateHandle["backdropPath"]),
+        StandardCharsets.UTF_8.toString()
+    )
+    val movieId: String = checkNotNull(savedStateHandle["movieId"])
 
     var movieDetails = mutableStateOf<ObjViewState<MovieDetailVo>>(ObjViewState.Idle())
         private set
 
     init {
-        val movieId: String = checkNotNull(savedStateHandle["movieId"])
         getMovieDetails(movieId)
     }
 

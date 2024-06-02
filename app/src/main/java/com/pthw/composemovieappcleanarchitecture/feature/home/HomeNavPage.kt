@@ -122,7 +122,9 @@ fun HomeNavPage(
                     UiEvent.Refresh -> viewModel.refreshHomeData()
                     UiEvent.SeeAll -> navController.navigate(movieListingPageNavigationRoute)
                     is UiEvent.ItemClick -> {
-                        navController.navigateToMovieDetailPage(it.movie.id)
+                        navController.navigateToMovieDetailPage(
+                            movieId = it.movie.id, backdropPath = it.movie.backdropPath
+                        )
                     }
                 }
             },
