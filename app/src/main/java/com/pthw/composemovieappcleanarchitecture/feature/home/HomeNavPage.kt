@@ -2,9 +2,10 @@ package com.pthw.composemovieappcleanarchitecture.feature.home
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -40,11 +41,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +68,7 @@ import com.pthw.appbase.viewstate.ObjViewState
 import com.pthw.appbase.viewstate.RenderCompose
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
-import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
+import com.pthw.composemovieappcleanarchitecture.composable.CustomTextField
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
@@ -130,7 +129,13 @@ fun HomeNavPage(
             },
         )
     } else {
-        PageLoader(modifier.fillMaxSize())
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator()
+        }
     }
 
 }
@@ -172,10 +177,13 @@ private fun HomePageContent(
                     .padding(horizontal = Dimens.MARGIN_MEDIUM_2, vertical = Dimens.MARGIN_MEDIUM)
             ) {
                 Column(modifier.weight(1f)) {
-                    Text("Hi, Angelina \uD83D\uDC4B")
+                    Text(
+                        "Hi, Angelina \uD83D\uDC4B",
+                        fontSize = Dimens.TEXT_REGULAR
+                    )
                     Text(
                         text = "Welcome back",
-                        fontSize = Dimens.TEXT_HEADING,
+                        fontSize = Dimens.TEXT_XLARGE,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -355,6 +363,7 @@ private fun HomePageContent(
                                                     append(it[index].overview)
                                                 }
                                             },
+                                            minLines = 5,
                                             fontSize = Dimens.TEXT_SMALL,
                                         )
                                     }
@@ -682,36 +691,62 @@ private fun HomeSearchBarView(
             painter = painterResource(id = R.drawable.ic_search_normal),
             contentDescription = ""
         )
-        OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
-            value = "", onValueChange = {},
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            placeholder = { Text(text = "Search", color = Color.Gray) }
+        CustomTextField(
+            modifier = Modifier
+                .height(52.dp)
+                .fillMaxWidth()
+                .padding(start = Dimens.MARGIN_MEDIUM),
+            placeholderText = "Search"
         )
     }
 
 }
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun HomeNavPageNightPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-//        HomePageContent(modifier = Modifier, uiState = UiState(), sharedTransitionScope = SharedTransitionScope, animatedContentScope = AnimatedContentScope)
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = true, label = ""
+            ) {
+                Surface {
+                    HomePageContent(
+                        modifier = Modifier,
+                        uiState = UiState(),
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedContentScope = this
+                    )
+                }
+            }
+
+        }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun HomeNavPagePreview() {
     ComposeMovieAppCleanArchitectureTheme {
-//        HomePageContent(modifier = Modifier, uiState = UiState())
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = true, label = ""
+            ) {
+                Surface {
+                    HomePageContent(
+                        modifier = Modifier,
+                        uiState = UiState(),
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedContentScope = this
+                    )
+                }
+            }
+
+        }
     }
 }
 

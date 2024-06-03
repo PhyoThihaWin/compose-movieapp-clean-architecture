@@ -2,7 +2,11 @@ package com.pthw.composemovieappcleanarchitecture.navigation
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,8 +18,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -59,15 +65,27 @@ fun MainPage(
         bottomBar = {
             AnimatedVisibility(
                 visible = currentDestination.isTopLevelDestinationInHierarchy(destinations),
-                content = {
-                    NiaBottomBar(
-                        destinations = destinations,
-                        destinationsWithUnreadResources = emptySet(),
-                        onNavigateToDestination = appState::navigateToTopLevelDestination,
-                        currentDestination = currentDestination,
-                        modifier = Modifier.testTag("NiaBottomBar"),
-                    )
-                })
+                enter = slideInVertically(
+                    animationSpec = tween(durationMillis = 400),
+                    initialOffsetY = { it }
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(durationMillis = 400),
+                    targetOffsetY = { it }
+                )
+            ) {
+                NiaBottomBar(
+                    destinations = destinations,
+                    destinationsWithUnreadResources = emptySet(),
+                    onNavigateToDestination = appState::navigateToTopLevelDestination,
+                    currentDestination = currentDestination,
+                    modifier = Modifier.testTag("NiaBottomBar"),
+                )
+            }
+
+
+//            var bottomBarVisible by remember { mutableStateOf(false) }
+//            val bottomBarOffset by animateDpAsState(targetValue = if (bottomBarVisible) 0.dp else 50.dp)
         },
     ) { padding ->
         MainNavHost(

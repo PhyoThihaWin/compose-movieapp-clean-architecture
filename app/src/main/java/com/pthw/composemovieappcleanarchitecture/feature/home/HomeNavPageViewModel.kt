@@ -86,6 +86,7 @@ class HomeNavPageViewModel @Inject constructor(
         viewModelScope.launch {
             getNowPlayingMoviesUseCase.execute(Unit).collectLatest {
                 if (it.isNotEmpty()) {
+                    delay(200)
                     nowPlayingMovies.value = ObjViewState.Success(it)
                 }
             }
