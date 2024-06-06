@@ -1,6 +1,9 @@
 package com.pthw.composemovieappcleanarchitecture.feature.movie
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,6 +49,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
+import com.pthw.composemovieappcleanarchitecture.composable.SharedAnimatedContent
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageViewModel
 import com.pthw.composemovieappcleanarchitecture.feature.listing.composable.MovieGridItemView
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
@@ -68,15 +72,20 @@ private val tabLabels = listOf(
     "Coming soon",
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieNavPage(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     navController: NavController = LocalNavController.current,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
     PageContent(
         modifier = modifier,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         tabIndex = tabIndex,
         nowPlayingPagingItems = viewModel.nowPlayingPagingFlow.collectAsLazyPagingItems(),
         upComingPagingItems = viewModel.upComingPagingFlow.collectAsLazyPagingItems(),
@@ -96,9 +105,12 @@ private sealed class UiEvent {
     class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun PageContent(
     modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     tabIndex: Int = 0,
     nowPlayingPagingItems: LazyPagingItems<MovieVo>,
     upComingPagingItems: LazyPagingItems<MovieVo>,
@@ -134,7 +146,12 @@ private fun PageContent(
 
             items(pagingItems.itemCount) { index ->
                 pagingItems[index]?.let {
-                    MovieGridItemView(modifier = modifier, movieVo = it) {
+                    MovieGridItemView(
+                        modifier = modifier,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
+                        movieVo = it
+                    ) {
                         onAction(UiEvent.ItemClick(it))
                     }
                 }
@@ -235,14 +252,21 @@ fun MovieTypeTabRow(
 
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        PageContent(
-            modifier = Modifier,
-            nowPlayingPagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems(),
-            upComingPagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
-        )
+        SharedTransitionScope {
+            SharedAnimatedContent {
+                PageContent(
+                    modifier = Modifier,
+                    sharedTransitionScope = this,
+                    animatedContentScope = it,
+                    nowPlayingPagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems(),
+                    upComingPagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
+                )
+            }
+        }
     }
 }

@@ -39,9 +39,9 @@ fun MainNavHost(
         ) {
             homeNavPage(this@SharedTransitionLayout)
             ticketNavPage()
-            movieNavPage()
+            movieNavPage(this@SharedTransitionLayout)
             profileNavPage()
-            movieListingPage()
+            movieListingPage(this@SharedTransitionLayout)
             movieDetailPage(this@SharedTransitionLayout)
             cinemaSeatPage()
             paymentPage()

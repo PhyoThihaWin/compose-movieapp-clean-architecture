@@ -1,6 +1,9 @@
 package com.pthw.composemovieappcleanarchitecture.feature.listing
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +38,7 @@ import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
+import com.pthw.composemovieappcleanarchitecture.composable.SharedAnimatedContent
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
 import com.pthw.composemovieappcleanarchitecture.feature.listing.composable.MovieGridItemView
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
@@ -50,14 +54,19 @@ import kotlinx.coroutines.flow.flowOf
  * Created by P.T.H.W on 04/04/2024.
  */
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieListingPage(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     navController: NavController = LocalNavController.current,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     PageContent(
         modifier = modifier,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         pagingItems = viewModel.nowPlayingPagingFlow.collectAsLazyPagingItems(),
         onAction = {
             when (it) {
@@ -75,9 +84,12 @@ private sealed class UiEvent {
     class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun PageContent(
     modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     pagingItems: LazyPagingItems<MovieVo>,
     onAction: (UiEvent) -> Unit = {}
 ) {
@@ -102,7 +114,12 @@ private fun PageContent(
         ) {
             items(pagingItems.itemCount) { index ->
                 pagingItems[index]?.let {
-                    MovieGridItemView(modifier = modifier, movieVo = it) {
+                    MovieGridItemView(
+                        modifier = modifier,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
+                        movieVo = it
+                    ) {
                         onAction(UiEvent.ItemClick(it))
                     }
                 }
@@ -148,13 +165,18 @@ private fun PageContent(
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        PageContent(
-            modifier = Modifier,
-            pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
-        )
+            SharedAnimatedContent {
+                PageContent(
+                    modifier = Modifier,
+                    sharedTransitionScope = this,
+                    animatedContentScope = it,
+                    pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
+                )
+        }
     }
 }
