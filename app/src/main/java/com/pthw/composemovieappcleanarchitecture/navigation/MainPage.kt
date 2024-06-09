@@ -2,13 +2,9 @@ package com.pthw.composemovieappcleanarchitecture.navigation
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,16 +14,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
@@ -36,11 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.Navigator
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBar
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBarItem
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
-import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -82,10 +72,6 @@ fun MainPage(
                     modifier = Modifier.testTag("NiaBottomBar"),
                 )
             }
-
-
-//            var bottomBarVisible by remember { mutableStateOf(false) }
-//            val bottomBarOffset by animateDpAsState(targetValue = if (bottomBarVisible) 0.dp else 50.dp)
         },
     ) { padding ->
         MainNavHost(

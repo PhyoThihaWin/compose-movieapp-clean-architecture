@@ -6,6 +6,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
 import com.pthw.data.network.ktor.AuthTokenInterceptor
 import com.pthw.data.network.ktor.ktorHttpClient
+import com.pthw.shared.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,7 +38,7 @@ object NetworkModule {
             .maxContentLength(250_000L)
             .redactHeaders("Auth-Token", "Bearer")
             .alwaysReadResponseBody(true)
-            .createShortcut(true)
+            .createShortcut(BuildConfig.DEBUG)
             .build()
     }
 
@@ -47,7 +48,9 @@ object NetworkModule {
         authTokenInterceptor: AuthTokenInterceptor,
         chuckerInterceptor: ChuckerInterceptor,
     ): HttpClient {
-        return ktorHttpClient(listOf(authTokenInterceptor, chuckerInterceptor))
+        val interceptors =
+            listOfNotNull(authTokenInterceptor, chuckerInterceptor.takeIf { BuildConfig.DEBUG })
+        return ktorHttpClient(interceptors)
     }
 
 }

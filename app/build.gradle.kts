@@ -22,13 +22,43 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
+            storePassword = rootProject.ext["credentialStorePassword"] as String
+            keyAlias = rootProject.ext["credentialKeyAlias"] as String
+            keyPassword = rootProject.ext["credentialKeyPassword"] as String
+            enableV2Signing = true
+        }
+
+        getByName("debug") {
+            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
+            storePassword = rootProject.ext["credentialStorePassword"] as String
+            keyAlias = rootProject.ext["credentialKeyAlias"] as String
+            keyPassword = rootProject.ext["credentialKeyPassword"] as String
+        }
+    }
+
     buildTypes {
-        release {
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isShrinkResources = false
+            isDebuggable = true
+
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            resValue("string", "app_name", "[Dev] ComposeMoviesApp")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+
+            resValue("string", "app_name", "Compose MoviesApp")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {

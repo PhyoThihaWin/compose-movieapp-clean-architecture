@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -67,7 +68,8 @@ fun MovieListingPage(
         modifier = modifier,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        pagingItems = viewModel.nowPlayingPagingFlow.collectAsLazyPagingItems(),
+        title = viewModel.movieType.orEmpty(),
+        pagingItems = viewModel.getMovieListingFlow().collectAsLazyPagingItems(),
         onAction = {
             when (it) {
                 is UiEvent.GoBack -> navController.popBackStack()
@@ -90,12 +92,14 @@ private fun PageContent(
     modifier: Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    title: String,
     pagingItems: LazyPagingItems<MovieVo>,
     onAction: (UiEvent) -> Unit = {}
 ) {
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBarView(title = "Movies") {
+            TopAppBarView(title = title) {
                 onAction(UiEvent.GoBack)
             }
         },
@@ -170,13 +174,14 @@ private fun PageContent(
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-            SharedAnimatedContent {
-                PageContent(
-                    modifier = Modifier,
-                    sharedTransitionScope = this,
-                    animatedContentScope = it,
-                    pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
-                )
+        SharedAnimatedContent {
+            PageContent(
+                modifier = Modifier,
+                sharedTransitionScope = this,
+                animatedContentScope = it,
+                title = "Movies",
+                pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
+            )
         }
     }
 }

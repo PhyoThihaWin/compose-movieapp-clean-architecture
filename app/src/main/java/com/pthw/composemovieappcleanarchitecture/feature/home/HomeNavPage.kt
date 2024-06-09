@@ -71,7 +71,9 @@ import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.CustomTextField
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
-import com.pthw.composemovieappcleanarchitecture.feature.listing.movieListingPageNavigationRoute
+import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.COMING_SOON
+import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.NOW_PLAYING
+import com.pthw.composemovieappcleanarchitecture.feature.listing.navigateToMovieListingPage
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
@@ -119,7 +121,8 @@ fun HomeNavPage(
             onAction = {
                 when (it) {
                     UiEvent.Refresh -> viewModel.refreshHomeData()
-                    UiEvent.SeeAll -> navController.navigate(movieListingPageNavigationRoute)
+                    UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(NOW_PLAYING)
+                    UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
                     is UiEvent.ItemClick -> {
                         navController.navigateToMovieDetailPage(
                             movieId = it.movie.id, backdropPath = it.movie.backdropPath
@@ -154,7 +157,8 @@ private data class UiState(
 
 private sealed class UiEvent {
     data object Refresh : UiEvent()
-    data object SeeAll : UiEvent()
+    data object NowPlayingSeeAll : UiEvent()
+    data object ComingSoonSeeAll : UiEvent()
     class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
@@ -216,7 +220,7 @@ private fun HomePageContent(
                         modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Now playing"
                     ) {
-                        onAction(UiEvent.SeeAll)
+                        onAction(UiEvent.NowPlayingSeeAll)
                     }
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -240,7 +244,9 @@ private fun HomePageContent(
                     SectionTitleWithSeeAll(
                         modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
                         title = "Coming soon"
-                    )
+                    ) {
+                        onAction(UiEvent.ComingSoonSeeAll)
+                    }
 
                     RenderCompose(uiState.comingSoonMovies,
                         loading = {
@@ -267,9 +273,9 @@ private fun HomePageContent(
 
 
                     // Promo & Discount
-                    SectionTitleWithSeeAll(
-                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                        title = "Promo & Discount"
+                    TitleTextView(
+                        text = "Promo & Discount",
+                        modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
                     )
 
                     RenderCompose(uiState.popularMovies,
@@ -302,9 +308,9 @@ private fun HomePageContent(
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
                     // Service
-                    SectionTitleWithSeeAll(
-                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                        title = "Celebrities"
+                    TitleTextView(
+                        modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
+                        text = "Celebrities"
                     )
 
                     RenderCompose(uiState.popularActors,
@@ -324,9 +330,9 @@ private fun HomePageContent(
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
                     // Movie News
-                    SectionTitleWithSeeAll(
-                        modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                        title = "Movie News"
+                    TitleTextView(
+                        modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
+                        text = "Movie News"
                     )
 
 

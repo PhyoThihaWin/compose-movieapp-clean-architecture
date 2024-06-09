@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# App Module
+-keep class * extends androidx.fragment.app.Fragment{}
+-keepnames class * extends android.os.Parcelable
+-keepnames class * extends java.io.Serializable
+
+#
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
