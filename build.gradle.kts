@@ -11,6 +11,10 @@ plugins {
     alias(libs.plugins.crashlytics) apply false
 }
 
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
+
 fun credentialData(): java.util.Properties {
     val credentialProperties = java.util.Properties()
     credentialProperties.load(java.io.FileInputStream(project.rootProject.file("credential.properties")))
