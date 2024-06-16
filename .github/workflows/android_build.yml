@@ -1,0 +1,160 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - preprod
+      - uat
+  workflow_dispatch:
+
+env:
+  ANDROID_COMPILE_SDK: "33"
+  ANDROID_BUILD_TOOLS: "33.0.2"
+  ANDROID_SDK_TOOLS: "9477386"
+
+jobs:
+  setup-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install necessary packages
+        run: |
+          sudo apt-get --quiet update --yes
+          sudo apt-get --quiet install --yes wget unzip
+      - name: Set up Android SDK
+        run: |
+          export ANDROID_HOME=$GITHUB_WORKSPACE/android-sdk-root
+          mkdir -p $ANDROID_HOME
+          wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${{ env.ANDROID_SDK_TOOLS }}_latest.zip
+          unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
+          mv -T "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/tools"
+          echo "export PATH=\$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/cmdline-tools/tools/bin" >> $GITHUB_ENV
+          source $GITHUB_ENV
+          sdkmanager --version
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
+          sdkmanager "platform-tools"
+          sdkmanager "build-tools;${{ env.ANDROID_BUILD_TOOLS }}"
+      - name: Cache Gradle files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+      - name: Ensure gradlew is executable
+        run: chmod +x ./gradlew
+
+  build-uat:
+    runs-on: ubuntu-latest
+    needs: setup-android
+    if: github.ref == 'refs/heads/uat'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build UAT
+        run: ./gradlew assembleUat
+      - name: Store APK
+        run: mkdir -p artifact_output && mv app/build/outputs/apk/uat/*.apk artifact_output
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: uat-apk
+          path: artifact_output/*.apk
+
+  build-preprod:
+    runs-on: ubuntu-latest
+    needs: setup-android
+    if: github.ref == 'refs/heads/preprod'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build PreProd
+        run: ./gradlew assemblePreprod
+      - name: Store APK
+        run: mkdir -p artifact_output && mv app/build/outputs/apk/preprod/*.apk artifact_output
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: preprod-apk
+          path: artifact_output/*.apk
+
+  build-release:
+    runs-on: ubuntu-latest
+    needs: setup-android
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Release
+        run: ./gradlew assembleRelease
+      - name: Store APK
+        run: mkdir -p artifact_output && mv app/build/outputs/apk/release/*.apk artifact_output
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: artifact_output/*.apk
+
+  deploy-uat:
+    runs-on: ubuntu-latest
+    needs: build-uat
+    if: github.ref == 'refs/heads/uat'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: uat-apk
+          path: artifact_output
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Deploy to Firebase
+        run: |
+          APK_PATH=$(find artifact_output/ -name "*.apk" -print -quit)
+          if [ -f "$APK_PATH" ]; then firebase appdistribution:distribute "$APK_PATH" --app ${{ secrets.FIREBASE_APP_ID_UAT }} --release-notes "UAT Release" --groups "pthws-test" --token "${{ secrets.FIREBASE_TOKEN }}"; fi
+
+  deploy-preprod:
+    runs-on: ubuntu-latest
+    needs: build-preprod
+    if: github.ref == 'refs/heads/preprod'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: preprod-apk
+          path: artifact_output
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Deploy to Firebase
+        run: |
+          APK_PATH=$(find artifact_output/ -name "*.apk" -print -quit)
+          if [ -f "$APK_PATH" ]; then firebase appdistribution:distribute "$APK_PATH" --app ${{ secrets.FIREBASE_APP_ID_PREPROD }} --release-notes "PreProd Release" --groups "pthws-test" --token "${{ secrets.FIREBASE_TOKEN }}"; fi
+
+  deploy-release:
+    runs-on: ubuntu-latest
+    needs: build-release
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: release-apk
+          path: artifact_output
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Deploy to Firebase
+        run: |
+          APK_PATH=$(find artifact_output/ -name "*.apk" -print -quit)
+          if [ -f "$APK_PATH" ]; then firebase appdistribution:distribute "$APK_PATH" --app ${{ secrets.FIREBASE_APP_ID_RELEASE }} --release-notes "Production Release" --groups "pthws-test" --token "${{ secrets.FIREBASE_TOKEN }}"; fi
