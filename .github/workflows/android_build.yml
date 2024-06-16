@@ -8,10 +8,10 @@ on:
       - uat
   workflow_dispatch:
 
-env:
-  ANDROID_COMPILE_SDK: "33"
-  ANDROID_BUILD_TOOLS: "33.0.2"
-  ANDROID_SDK_TOOLS: "9477386"
+#env:
+#  ANDROID_COMPILE_SDK: "33"
+#  ANDROID_BUILD_TOOLS: "33.0.2"
+#  ANDROID_SDK_TOOLS: "9477386"
 
 jobs:
   setup-android:
@@ -28,7 +28,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
+        uses: android-actions/setup-android@v3
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
