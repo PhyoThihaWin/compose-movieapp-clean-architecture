@@ -24,18 +24,6 @@
     <string name="date_util_prefix_almost" translatable="false">almost</string>
 
     <string name="date_util_suffix" translatable="false">ago</string>
-    <string name="str_onprocessstarted">onProcessStarted..</string>
-    <string name="str_onupdateresult">onUpdateResult..</string>
-    <string name="str_no_rooted_device">No rooted device!</string>
-    <string name="str_going">Going..</string>
-    <string name="str_ch_state_unchecked">CH_STATE_UNCHECKED..</string>
-    <string name="str_ch_state_checked_error">CH_STATE_CHECKED_ERROR..</string>
-    <string name="str_tel">tel:%1$s</string>
-    <string name="str_fb_page">fb://page/%1$s</string>
-    <string name="str_https_www_facebook_com">https://www.facebook.com/%1$s</string>
-    <string name="str_mailto">mailto</string>
-    <string name="str_package">package</string>
-    <string name="str_message">message</string>
     <!--endregion-->
 
     <!--region : Network error-->
