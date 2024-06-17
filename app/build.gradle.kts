@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleService)
-    alias(libs.plugins.crashlytics)
+//    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -124,5 +124,5 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
+//    implementation(libs.firebase.crashlytics)
 }
