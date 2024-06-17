@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Build Pipeline
 
 on:
   push:
@@ -30,7 +30,6 @@ jobs:
 
   build-preprod:
     runs-on: ubuntu-latest
-    needs: setup-android
     if: github.ref == 'refs/heads/preprod'
     steps:
       - name: Checkout code
@@ -49,7 +48,6 @@ jobs:
 
   build-release:
     runs-on: ubuntu-latest
-    needs: setup-android
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
