@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up JDK
-        uses: ./.github/workflows/setup-java.yml
+        uses: ./.github/actions/setup-java
       - name: Build UAT
         run: ./gradlew assembleUat
       - name: Store APK
@@ -35,7 +35,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up JDK
-        uses: ./.github/workflows/setup-java.yml
+        uses: ./.github/actions/setup-java
       - name: Build PreProd
         run: ./gradlew assemblePreprod
       - name: Store APK
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up JDK
-        uses: ./.github/workflows/setup-java.yml
+        uses: ./.github/actions/setup-java
       - name: Build Release
         run: ./gradlew assembleRelease
       - name: Store APK
