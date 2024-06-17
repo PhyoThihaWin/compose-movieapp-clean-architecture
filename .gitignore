@@ -27,7 +27,7 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 
 # Keystore files
-*.jks
+#*.jks
 *.keystore
 #credential.properties
 
