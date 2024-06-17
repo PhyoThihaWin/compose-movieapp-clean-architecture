@@ -1,7 +1,7 @@
 name: Setup Java
 
 on:
-  workflow_call:
+  workflow_call: {}
 
 jobs:
   setup-java:
@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'adopt'
