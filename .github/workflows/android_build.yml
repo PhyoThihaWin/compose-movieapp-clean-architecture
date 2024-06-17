@@ -33,12 +33,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
 
-#      - name: Setup Android SDK
-#        uses: android-actions/setup-android@v3
-#        with:
-#          cmdline-tools-version: 9477386
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9477386
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
