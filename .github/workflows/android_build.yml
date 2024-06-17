@@ -9,11 +9,6 @@ on:
   workflow_dispatch:
 
 
-#name: Setup Java
-#
-#on:
-#  workflow_call: {}
-#
 #jobs:
 #  setup-java:
 #    runs-on: ubuntu-latest
