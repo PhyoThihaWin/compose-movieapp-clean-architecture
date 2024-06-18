@@ -112,7 +112,7 @@ jobs:
           fileName: 'credential.properties'
           encodedString: ${{ secrets.CREDENTIAL_FILE }}
 
-      - name: Decode Credential.Properties
+      - name: Decode GoogleServicesJson
         id: decode_google_services
         uses: timheuer/base64-to-file@v1
         with:
