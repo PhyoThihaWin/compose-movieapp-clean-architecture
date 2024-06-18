@@ -102,21 +102,24 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: './keystore/compose-movie-app.jks'
+          fileName: 'compose-movie-app.jks'
+          fileDir: './keystore/'
           encodedString: ${{ secrets.KEYSTORE_FILE }}
 
       - name: Decode Credential.Properties
         id: decode_credential
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: './credential.properties'
+          fileName: 'credential.properties'
+          fileDir: './'
           encodedString: ${{ secrets.CREDENTIAL_FILE }}
 
       - name: Decode GoogleServicesJson
         id: decode_google_services
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: './app/google-services.json'
+          fileName: 'google-services.json'
+          fileDir: './app/'
           encodedString: ${{ secrets.GOOGLE_SERVICES_FILE }}
 
       - name: Build Release
