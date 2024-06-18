@@ -98,6 +98,27 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/compose-movie-app.jks'
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
+
+      - name: Decode Credential.Properties
+        id: decode_credential
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'credential.properties'
+          encodedString: ${{ secrets.CREDENTIAL_FILE }}
+
+      - name: Decode Credential.Properties
+        id: decode_google_services
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'app/google-services.json'
+          encodedString: ${{ secrets.GOOGLE_SERVICES_FILE }}
+
       - name: Build Release
         run: ./gradlew assembleRelease
       - name: Store APK
