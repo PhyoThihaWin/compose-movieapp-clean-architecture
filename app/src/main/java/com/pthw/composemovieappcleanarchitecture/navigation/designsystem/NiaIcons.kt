@@ -1,6 +1,9 @@
 package com.pthw.composemovieappcleanarchitecture.navigation.designsystem
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Settings
@@ -22,11 +25,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
  */
 object NiaIcons {
     val Add = Icons.Rounded.Add
-    val ArrowBack = Icons.Rounded.ArrowBack
+    val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
     val Bookmark = Icons.Rounded.Person
     val BookmarkBorder = Icons.Rounded.Search
     val Bookmarks = Icons.Rounded.Settings
-    val BookmarksBorder = Icons.Outlined.KeyboardArrowRight
+    val BookmarksBorder = Icons.AutoMirrored.Outlined.KeyboardArrowRight
     val Check = Icons.Rounded.Check
     val Close = Icons.Rounded.Close
     val Grid3x3 = Icons.Rounded.Check
@@ -38,5 +41,5 @@ object NiaIcons {
     val ShortText = Icons.Rounded.Warning
     val Upcoming = Icons.Rounded.ThumbUp
     val UpcomingBorder = Icons.Outlined.ShoppingCart
-    val ViewDay = Icons.Rounded.Send
+    val ViewDay = Icons.AutoMirrored.Rounded.Send
 }

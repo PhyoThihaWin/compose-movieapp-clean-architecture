@@ -74,7 +74,7 @@ fun MovieListingPage(
             when (it) {
                 is UiEvent.GoBack -> navController.popBackStack()
                 is UiEvent.ItemClick -> navController.navigateToMovieDetailPage(
-                    movieId = it.movie.id, backdropPath = it.movie.backdropPath
+                    movieVo = it.movie
                 )
             }
         }

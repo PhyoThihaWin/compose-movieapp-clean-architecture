@@ -4,8 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.viewstate.ObjViewState
+import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,17 +28,13 @@ class MovieDetailPageViewModel @Inject constructor(
     private val getMovieDetailUseCase: GetMovieDetailUseCase
 ) : ViewModel() {
 
-    val backdropPath: String = URLDecoder.decode(
-        checkNotNull(savedStateHandle["backdropPath"]),
-        StandardCharsets.UTF_8.toString()
-    )
-    val movieId: String = checkNotNull(savedStateHandle["movieId"])
+    val movieVo: MovieVo = savedStateHandle.toRoute<MovieVo>()
 
     var movieDetails = mutableStateOf<ObjViewState<MovieDetailVo>>(ObjViewState.Idle())
         private set
 
     init {
-        getMovieDetails(movieId)
+        getMovieDetails(movieVo.id.toString())
     }
 
     private fun getMovieDetails(movieId: String) {

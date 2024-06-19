@@ -20,7 +20,7 @@ class MovieVoMapper @Inject constructor() {
             backdropPath = IMAGE_BASE_URL + item?.backdropPath.orEmpty(),
             posterPath = IMAGE_BASE_URL + item?.posterPath.orEmpty(),
             releaseDate = item?.releaseDate.orEmpty(),
-            voteAverage = item?.voteAverage.orZero(),
+            voteAverage = item?.voteAverage.orZero().toFloat(),
             genreIds = item?.genreIds?.map {
                 genres.find { genre -> genre.id == it }?.name.orEmpty()
             }.orEmpty(),

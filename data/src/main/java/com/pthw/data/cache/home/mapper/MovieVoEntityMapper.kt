@@ -23,7 +23,7 @@ class MovieVoEntityMapper @Inject constructor() : UnidirectionalMap<MovieVo, Mov
             backdropPath = item.backdropPath,
             releaseDate = item.releaseDate,
             posterPath = item.posterPath,
-            voteAverage = item.voteAverage,
+            voteAverage = item.voteAverage.toDouble(),
             genreIds = item.genreIds,
             isFavorite = item.isFavorite,
 

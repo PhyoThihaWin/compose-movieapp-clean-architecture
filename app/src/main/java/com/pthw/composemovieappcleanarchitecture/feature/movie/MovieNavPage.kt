@@ -93,7 +93,7 @@ fun MovieNavPage(
             when (it) {
                 is UiEvent.TapChanged -> tabIndex = it.index
                 is UiEvent.ItemClick -> navController.navigateToMovieDetailPage(
-                    movieId = it.movie.id, backdropPath = it.movie.backdropPath
+                    movieVo = it.movie
                 )
             }
         }

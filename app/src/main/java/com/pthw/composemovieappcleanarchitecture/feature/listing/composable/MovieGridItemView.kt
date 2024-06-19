@@ -153,7 +153,7 @@ private fun MovieGridItemViewPreview() {
                         posterPath = "/A7EByudX0eOzlkQ2FIbogzyazm2.jpg",
                         releaseDate = "2024-01-08",
                         title = "The Beekeeper",
-                        voteAverage = 7.461,
+                        voteAverage = 7.461.toFloat(),
                     ),
                     itemClick = {}
                 )

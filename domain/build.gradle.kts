@@ -1,5 +1,6 @@
 plugins {
     id("java-library")
+    alias(libs.plugins.koltinxSerilization)
     alias(libs.plugins.jetbrainsKotlinJvm)
 }
 
@@ -12,4 +13,5 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.coroutine.core)
     implementation(libs.paging.common)
+    implementation(libs.kotlinx.serialization)
 }

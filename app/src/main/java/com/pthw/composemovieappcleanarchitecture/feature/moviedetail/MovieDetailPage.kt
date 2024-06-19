@@ -95,8 +95,8 @@ fun MovieDetailPage(
 ) {
 
     val uiState = UiState(
-        movieId = viewModel.movieId,
-        backdropPath = viewModel.backdropPath,
+        movieId = viewModel.movieVo.id.toString(),
+        backdropPath = viewModel.movieVo.backdropPath,
         movieDetailVo = viewModel.movieDetails.value
     )
 

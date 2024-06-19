@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleService)
@@ -8,16 +9,17 @@ plugins {
 }
 
 android {
-    namespace = "com.pthw.composemovieappcleanarchitecture"
-    compileSdk = 34
+    namespace = BuildConfigConst.APPLICATION_ID
+    compileSdk = BuildConfigConst.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.pthw.composemovieappcleanarchitecture"
-        minSdk = 23
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = BuildConfigConst.APPLICATION_ID
+        minSdk = BuildConfigConst.MIN_SDK
+        targetSdk = BuildConfigConst.TARGET_SDK
+        versionCode = BuildConfigConst.APP_VERSION_CODE
+        versionName = BuildConfigConst.APP_VERSION_NAME
 
+        setProperty("archivesBaseName", "ComposeMovieApp-$versionName")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -44,20 +46,20 @@ android {
     buildTypes {
         debug {
             signingConfig = signingConfigs.getByName("debug")
-            isMinifyEnabled = false
-            isShrinkResources = false
-            isDebuggable = true
+            isMinifyEnabled = BuildConfigConst.DEV_MINIFY_ENABLED
+            isShrinkResources = BuildConfigConst.DEV_MINIFY_ENABLED
+            isDebuggable = !BuildConfigConst.DEV_MINIFY_ENABLED
 
-            applicationIdSuffix = ".dev"
+//            applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "[Dev] ComposeMoviesApp")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = false
+            isMinifyEnabled = BuildConfigConst.PROD_MINIFY_ENABLED
+            isShrinkResources = BuildConfigConst.PROD_MINIFY_ENABLED
+            isDebuggable = !BuildConfigConst.PROD_MINIFY_ENABLED
 
             resValue("string", "app_name", "Compose MoviesApp")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -125,4 +127,23 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+}
+
+object BuildConfigConst {
+    const val APPLICATION_ID = "com.pthw.composemovieappcleanarchitecture"
+    const val COMPILE_SDK = 34
+    const val MIN_SDK = 23
+    const val TARGET_SDK = 34
+
+    private const val VERSION_MAJOR = 1
+    private const val VERSION_MINOR = 0
+    private const val VERSION_PATCH = 0
+    private const val VERSION_BUILD = 2
+    const val APP_VERSION_NAME = "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
+    const val APP_VERSION_CODE = VERSION_MAJOR * 1000000 + VERSION_MINOR * 10000 + VERSION_PATCH * 100 + VERSION_BUILD
+
+    const val DEV_MINIFY_ENABLED = false
+    const val UAT_MINIFY_ENABLED = false
+    const val PREPROD_MINIFY_ENABLED = true
+    const val PROD_MINIFY_ENABLED = true
 }

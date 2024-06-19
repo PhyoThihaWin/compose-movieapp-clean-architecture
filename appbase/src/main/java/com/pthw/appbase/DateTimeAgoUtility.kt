@@ -1,7 +1,6 @@
 package com.pthw.appbase
 
 import android.content.Context
-import com.pocket.customer.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -135,6 +134,6 @@ object DateTimeAgoUtility {
 
     fun dateFormatter(date: Date?, format: String?): String {
         val formatter = SimpleDateFormat(format, Locale.ENGLISH)
-        return formatter.format(date)
+        return date?.let { formatter.format(it) }.toString()
     }
 }

@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.pthw.domain.home.model.MovieVo
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -19,9 +20,7 @@ const val movieDetailPageNavigationRoute = "movie-detail/{movieId}/{backdropPath
 fun NavGraphBuilder.movieDetailPage(
     sharedTransitionScope: SharedTransitionScope,
 ) {
-    composable(
-        route = movieDetailPageNavigationRoute,
-    ) {
+    composable<MovieVo> {
         MovieDetailPage(
             sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this
@@ -30,14 +29,8 @@ fun NavGraphBuilder.movieDetailPage(
 }
 
 fun NavController.navigateToMovieDetailPage(
-    movieId: Int,
-    backdropPath: String,
+    movieVo: MovieVo,
     navOptions: NavOptions? = null
-) = navigate(
-    "movie-detail/$movieId/${
-        URLEncoder.encode(
-            backdropPath,
-            StandardCharsets.UTF_8.toString()
-        )
-    }", navOptions
-)
+) {
+    navigate(movieVo)
+}

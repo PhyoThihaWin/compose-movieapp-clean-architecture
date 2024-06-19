@@ -1,7 +1,7 @@
 package com.pthw.appbase.exceptionmapper
 
 import android.content.Context
-import com.pocket.customer.R
+import com.pthw.appbase.R
 import com.pthw.appbase.utils.LocalBroadcastEventBus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.call.body

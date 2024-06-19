@@ -125,7 +125,7 @@ fun HomeNavPage(
                     UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
                     is UiEvent.ItemClick -> {
                         navController.navigateToMovieDetailPage(
-                            movieId = it.movie.id, backdropPath = it.movie.backdropPath
+                            movieVo = it.movie
                         )
                     }
                 }
