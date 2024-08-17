@@ -65,7 +65,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun fetchHomeData() {
         viewModelScope.launch {
             runCatching {
-                fetchHomeDataUseCase.execute(Unit)
+                fetchHomeDataUseCase()
             }.getOrElse {
                 Timber.e(it)
             }
@@ -75,7 +75,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun fetchMovieGenres() {
         viewModelScope.launch {
             runCatching {
-                getMovieGenresUseCase.execute(Unit)
+                getMovieGenresUseCase()
             }.getOrElse {
                 Timber.e(it)
             }
@@ -84,7 +84,7 @@ class HomeNavPageViewModel @Inject constructor(
 
     private fun getNowPlayingMovies() {
         viewModelScope.launch {
-            getNowPlayingMoviesUseCase.execute(Unit).collectLatest {
+            getNowPlayingMoviesUseCase().collectLatest {
                 if (it.isNotEmpty()) {
                     delay(200)
                     nowPlayingMovies.value = ObjViewState.Success(it)
@@ -95,7 +95,7 @@ class HomeNavPageViewModel @Inject constructor(
 
     private fun getUpComingMovies() {
         viewModelScope.launch {
-            getUpComingMoviesUseCase.execute(Unit).collectLatest {
+            getUpComingMoviesUseCase().collectLatest {
                 upComingMovies.value = ObjViewState.Success(it)
             }
         }
@@ -103,7 +103,7 @@ class HomeNavPageViewModel @Inject constructor(
 
     private fun getPopularMovies() {
         viewModelScope.launch {
-            getPopularMoviesUseCase.execute(Unit).collectLatest {
+            getPopularMoviesUseCase().collectLatest {
                 popularMovies.value = ObjViewState.Success(it)
             }
         }
@@ -111,7 +111,7 @@ class HomeNavPageViewModel @Inject constructor(
 
     private fun getPopularPeople() {
         viewModelScope.launch {
-            getPopularPeopleUseCase.execute(Unit).collectLatest {
+            getPopularPeopleUseCase().collectLatest {
                 popularPeople.value = ObjViewState.Success(it)
             }
         }

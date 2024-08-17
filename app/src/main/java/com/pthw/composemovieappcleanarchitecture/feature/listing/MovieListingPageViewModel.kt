@@ -29,8 +29,8 @@ class MovieListingPageViewModel @Inject constructor(
         if (movieType == MovieListingPageNavigation.NOW_PLAYING) nowPlayingPagingFlow else upComingPagingFlow
 
     val nowPlayingPagingFlow =
-        getNowPlayingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
-    val upComingPagingFlow = getUpComingMoviesPagingUseCase.execute(Unit).cachedIn(viewModelScope)
+        getNowPlayingMoviesPagingUseCase().cachedIn(viewModelScope)
+    val upComingPagingFlow = getUpComingMoviesPagingUseCase().cachedIn(viewModelScope)
 
 }
 

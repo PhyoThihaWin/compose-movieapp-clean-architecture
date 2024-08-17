@@ -41,7 +41,7 @@ class MovieDetailPageViewModel @Inject constructor(
         viewModelScope.launch {
             movieDetails.value = ObjViewState.Loading()
             runCatching {
-                val details = getMovieDetailUseCase.execute(movieId)
+                val details = getMovieDetailUseCase(movieId)
                 movieDetails.value = ObjViewState.Success(details)
             }.getOrElse {
                 Timber.e(it)
