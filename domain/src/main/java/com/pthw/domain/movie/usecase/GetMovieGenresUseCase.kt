@@ -1,6 +1,6 @@
 package com.pthw.domain.movie.usecase
 
-import com.pthw.domain.movie.repository.MovieRepository
+import com.pthw.domain.repository.MovieRepository
 import javax.inject.Inject
 
 /**

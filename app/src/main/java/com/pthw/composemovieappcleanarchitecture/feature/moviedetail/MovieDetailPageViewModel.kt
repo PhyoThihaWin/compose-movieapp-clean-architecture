@@ -6,15 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
-import com.pthw.appbase.viewstate.ObjViewState
+import com.pthw.appbase.utils.ResultState
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 /**
@@ -30,7 +28,7 @@ class MovieDetailPageViewModel @Inject constructor(
 
     val movieVo: MovieVo = savedStateHandle.toRoute<MovieVo>()
 
-    var movieDetails = mutableStateOf<ObjViewState<MovieDetailVo>>(ObjViewState.Idle())
+    var movieDetails = mutableStateOf<ResultState<MovieDetailVo>>(ResultState.Idle)
         private set
 
     init {
@@ -39,13 +37,13 @@ class MovieDetailPageViewModel @Inject constructor(
 
     private fun getMovieDetails(movieId: String) {
         viewModelScope.launch {
-            movieDetails.value = ObjViewState.Loading()
+            movieDetails.value = ResultState.Loading
             runCatching {
                 val details = getMovieDetailUseCase(movieId)
-                movieDetails.value = ObjViewState.Success(details)
+                movieDetails.value = ResultState.Success(details)
             }.getOrElse {
                 Timber.e(it)
-                movieDetails.value = ObjViewState.Error(handler.map(it))
+                movieDetails.value = ResultState.Error(handler.map(it))
             }
         }
     }

@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
-    alias(libs.plugins.koltinxSerilization)
-    alias(libs.plugins.jetbrainsKotlinJvm)
+    alias(libs.plugins.koltin.serilization)
+    alias(libs.plugins.jetbrains.kotlin.jvm)
 }
 
 java {

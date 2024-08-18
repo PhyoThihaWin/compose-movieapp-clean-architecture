@@ -62,8 +62,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.pthw.appbase.viewstate.ObjViewState
-import com.pthw.appbase.viewstate.RenderCompose
+import com.pthw.appbase.utils.ResultRender
+import com.pthw.appbase.utils.ResultState
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.StarRatingBar
@@ -117,7 +117,7 @@ fun MovieDetailPage(
 private data class UiState(
     val movieId: String,
     val backdropPath: String,
-    val movieDetailVo: ObjViewState<MovieDetailVo> = ObjViewState.Idle(),
+    val movieDetailVo: ResultState<MovieDetailVo> = ResultState.Idle,
 )
 
 private sealed class UiEvent {
@@ -165,7 +165,7 @@ private fun PageContent(
                         animatedVisibilityScope = animatedContentScope
                     )
             )
-            RenderCompose(state = uiState.movieDetailVo,
+            ResultRender(state = uiState.movieDetailVo,
                 loading = {
                     Box(modifier = Modifier.fillMaxSize()) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -539,7 +539,7 @@ private fun PageContentPreview() {
                         uiState = UiState(
                             movieId = "",
                             backdropPath = "",
-                            movieDetailVo = ObjViewState.Success(MovieDetailVo.fake())
+                            movieDetailVo = ResultState.Success(MovieDetailVo.fake())
                         ),
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this,

@@ -20,7 +20,7 @@ composeMaterial = "1.6.5"
 lifecycleVersion = "2.8.2"
 ktor = "2.3.8"
 kotlinxSerialization = "1.6.3"
-kotlinxSerializationPlugin = "1.9.22"
+kotlinSerializationPlugin = "1.9.22"
 daggerHilt = "2.50"
 timber = "5.0.1"
 chucker = "4.0.0"
@@ -95,12 +95,12 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 
 [plugins]
-androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
-koltinxSerilization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerializationPlugin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+koltin-serilization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerializationPlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 googleService = { id = "com.google.gms.google-services", version.ref = "googleService" }
@@ -108,5 +108,5 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 
 [bundles]
 ktor = ["ktor-client-okhttp", "ktor-client-logging", "ktor-content-negotiation", "ktor-kotlinx-serialization", "kotlinx-serialization"]
-paging = ["paging-runtime", "paging-compose"]
+paging-compose = ["paging-runtime", "paging-compose"]
 

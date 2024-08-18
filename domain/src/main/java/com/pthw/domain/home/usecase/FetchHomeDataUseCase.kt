@@ -1,7 +1,10 @@
 package com.pthw.domain.home.usecase
 
 import com.pthw.domain.DispatcherProvider
-import com.pthw.domain.home.repository.HomeRepository
+import com.pthw.domain.repository.ActorRepository
+import com.pthw.domain.repository.MovieRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -10,9 +13,15 @@ import javax.inject.Inject
  */
 class FetchHomeDataUseCase @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
-    private val homeRepository: HomeRepository,
+    private val movieRepository: MovieRepository,
+    private val actorRepository: ActorRepository
 ) {
     suspend operator fun invoke() = withContext(dispatcherProvider.io()) {
-        homeRepository.fetchHomeData()
+        coroutineScope {
+            async { movieRepository.fetchNowPlayingMovies() }.await()
+            async { movieRepository.fetchUpComingMovies() }.await()
+            async { movieRepository.fetchPopularMovies() }.await()
+            async { actorRepository.fetchPopularPeople() }.await()
+        }
     }
 }

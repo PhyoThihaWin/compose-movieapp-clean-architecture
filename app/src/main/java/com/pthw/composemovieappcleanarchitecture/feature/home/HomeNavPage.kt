@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,8 +63,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.pthw.appbase.viewstate.ObjViewState
-import com.pthw.appbase.viewstate.RenderCompose
+import com.pthw.appbase.utils.ResultRender
+import com.pthw.appbase.utils.ResultState
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.CustomTextField
@@ -145,14 +144,14 @@ fun HomeNavPage(
 
 private data class UiState(
     val refreshing: Boolean = false,
-    val nowPlayingMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val comingSoonMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val popularMovies: ObjViewState<List<MovieVo>> = ObjViewState.Idle(),
-    val popularActors: ObjViewState<List<ActorVo>> = ObjViewState.Idle()
+    val nowPlayingMovies: ResultState<List<MovieVo>> = ResultState.Idle,
+    val comingSoonMovies: ResultState<List<MovieVo>> = ResultState.Idle,
+    val popularMovies: ResultState<List<MovieVo>> = ResultState.Idle,
+    val popularActors: ResultState<List<ActorVo>> = ResultState.Idle
 ) {
     fun isReady() =
-        nowPlayingMovies is ObjViewState.Success && comingSoonMovies is ObjViewState.Success
-                && popularMovies is ObjViewState.Success && popularActors is ObjViewState.Success
+        nowPlayingMovies is ResultState.Success && comingSoonMovies is ResultState.Success
+                && popularMovies is ResultState.Success && popularActors is ResultState.Success
 }
 
 private sealed class UiEvent {
@@ -162,10 +161,7 @@ private sealed class UiEvent {
     class ItemClick(val movie: MovieVo) : UiEvent()
 }
 
-@OptIn(
-    ExperimentalFoundationApi::class, ExperimentalMaterialApi::class,
-    ExperimentalSharedTransitionApi::class
-)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun HomePageContent(
     modifier: Modifier,
@@ -225,7 +221,7 @@ private fun HomePageContent(
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
-                    RenderCompose(uiState.nowPlayingMovies,
+                    ResultRender(uiState.nowPlayingMovies,
                         loading = {
                             CircularProgressIndicator()
                         },
@@ -248,7 +244,7 @@ private fun HomePageContent(
                         onAction(UiEvent.ComingSoonSeeAll)
                     }
 
-                    RenderCompose(uiState.comingSoonMovies,
+                    ResultRender(uiState.comingSoonMovies,
                         loading = {
                             CircularProgressIndicator()
                         },
@@ -278,12 +274,12 @@ private fun HomePageContent(
                         modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
                     )
 
-                    RenderCompose(uiState.popularMovies,
+                    ResultRender(uiState.popularMovies,
                         loading = {
                             CircularProgressIndicator()
                         },
                         success = {
-                            if (it.isEmpty()) return@RenderCompose
+                            if (it.isEmpty()) return@ResultRender
                             HorizontalPager(
                                 state = promoPagerState,
                                 modifier = modifier
@@ -313,7 +309,7 @@ private fun HomePageContent(
                         text = "Celebrities"
                     )
 
-                    RenderCompose(uiState.popularActors,
+                    ResultRender(uiState.popularActors,
                         loading = {
                             CircularProgressIndicator()
                         },
@@ -336,7 +332,7 @@ private fun HomePageContent(
                     )
 
 
-                    RenderCompose(uiState.nowPlayingMovies,
+                    ResultRender(uiState.nowPlayingMovies,
                         loading = {
                             CircularProgressIndicator()
                         },
@@ -393,7 +389,6 @@ private fun HomePageContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun NowPlayingMoviesSectionView(
     modifier: Modifier,
@@ -409,9 +404,10 @@ private fun NowPlayingMoviesSectionView(
                 .heightIn(max = (LocalConfiguration.current.screenHeightDp / 2.8).dp)
                 .fillMaxWidth(),
             contentPadding = PaddingValues(
-                horizontal = 80.dp,
+                horizontal = 90.dp,
                 vertical = 8.dp
             ),
+            pageSpacing = Dimens.MARGIN_SMALL,
             state = pagerState
         ) { page ->
             HorizontalPagerItemView(
@@ -511,7 +507,6 @@ private fun CelebritiesItemView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HorizontalPagerItemView(
     modifier: Modifier,
@@ -524,7 +519,7 @@ private fun HorizontalPagerItemView(
         modifier = modifier
             .graphicsLayer {
                 alpha = lerp(
-                    start = 0.5f,
+                    start = 0.8f,
                     stop = 1f,
                     fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
                 )
@@ -548,7 +543,14 @@ private fun HorizontalPagerItemView(
 
         content = {
             CoilAsyncImage(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        lerp(1f, 1.2f, 1.2f - pageOffset.absoluteValue + 0.2f).also { scale ->
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                    },
                 imageUrl = movieVo.posterPath,
             )
         }

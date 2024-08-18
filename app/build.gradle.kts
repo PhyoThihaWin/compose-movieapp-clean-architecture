@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
@@ -27,19 +27,18 @@ android {
     }
 
     signingConfigs {
+        getByName("debug") {
+            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
+            storePassword = rootProject.ext["credentialStorePassword"] as String
+            keyAlias = rootProject.ext["credentialKeyAlias"] as String
+            keyPassword = rootProject.ext["credentialKeyPassword"] as String
+        }
         create("release") {
             storeFile = file(rootProject.ext["credentialStoreFile"] as String)
             storePassword = rootProject.ext["credentialStorePassword"] as String
             keyAlias = rootProject.ext["credentialKeyAlias"] as String
             keyPassword = rootProject.ext["credentialKeyPassword"] as String
             enableV2Signing = true
-        }
-
-        getByName("debug") {
-            storeFile = file(rootProject.ext["credentialStoreFile"] as String)
-            storePassword = rootProject.ext["credentialStorePassword"] as String
-            keyAlias = rootProject.ext["credentialKeyAlias"] as String
-            keyPassword = rootProject.ext["credentialKeyPassword"] as String
         }
     }
 
@@ -84,6 +83,16 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    composeCompiler {
+        enableStrongSkippingMode = true
+    }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
@@ -104,20 +113,22 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.animation)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.compose.viewmodel)
+    implementation(libs.bundles.paging.compose)
+    implementation(libs.constraint.compose)
+
+    // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
     // third parties
-    implementation(libs.compose.viewmodel)
     implementation(libs.timber)
     implementation(libs.coil)
-    implementation(libs.bundles.paging)
-    implementation(libs.constraint.compose)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

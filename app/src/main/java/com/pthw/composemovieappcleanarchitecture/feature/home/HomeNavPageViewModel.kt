@@ -3,9 +3,8 @@ package com.pthw.composemovieappcleanarchitecture.feature.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
-import com.pthw.appbase.viewstate.ObjViewState
+import com.pthw.appbase.utils.ResultState
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.home.usecase.FetchHomeDataUseCase
@@ -16,8 +15,6 @@ import com.pthw.domain.home.usecase.GetUpComingMoviesUseCase
 import com.pthw.domain.movie.usecase.GetMovieGenresUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -40,13 +37,13 @@ class HomeNavPageViewModel @Inject constructor(
 
     var refreshing = mutableStateOf(false)
         private set
-    var nowPlayingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
+    var nowPlayingMovies = mutableStateOf<ResultState<List<MovieVo>>>(ResultState.Idle)
         private set
-    var upComingMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
+    var upComingMovies = mutableStateOf<ResultState<List<MovieVo>>>(ResultState.Idle)
         private set
-    var popularMovies = mutableStateOf<ObjViewState<List<MovieVo>>>(ObjViewState.Idle())
+    var popularMovies = mutableStateOf<ResultState<List<MovieVo>>>(ResultState.Idle)
         private set
-    var popularPeople = mutableStateOf<ObjViewState<List<ActorVo>>>(ObjViewState.Idle())
+    var popularPeople = mutableStateOf<ResultState<List<ActorVo>>>(ResultState.Idle)
         private set
 
 
@@ -60,6 +57,8 @@ class HomeNavPageViewModel @Inject constructor(
         // from network
         fetchHomeData()
         fetchMovieGenres()
+
+        val gg = ResultState.Success<String>("")
     }
 
     private fun fetchHomeData() {
@@ -87,7 +86,7 @@ class HomeNavPageViewModel @Inject constructor(
             getNowPlayingMoviesUseCase().collectLatest {
                 if (it.isNotEmpty()) {
                     delay(200)
-                    nowPlayingMovies.value = ObjViewState.Success(it)
+                    nowPlayingMovies.value = ResultState.Success(it)
                 }
             }
         }
@@ -96,7 +95,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun getUpComingMovies() {
         viewModelScope.launch {
             getUpComingMoviesUseCase().collectLatest {
-                upComingMovies.value = ObjViewState.Success(it)
+                upComingMovies.value = ResultState.Success(it)
             }
         }
     }
@@ -104,7 +103,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun getPopularMovies() {
         viewModelScope.launch {
             getPopularMoviesUseCase().collectLatest {
-                popularMovies.value = ObjViewState.Success(it)
+                popularMovies.value = ResultState.Success(it)
             }
         }
     }
@@ -112,7 +111,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun getPopularPeople() {
         viewModelScope.launch {
             getPopularPeopleUseCase().collectLatest {
-                popularPeople.value = ObjViewState.Success(it)
+                popularPeople.value = ResultState.Success(it)
             }
         }
     }
