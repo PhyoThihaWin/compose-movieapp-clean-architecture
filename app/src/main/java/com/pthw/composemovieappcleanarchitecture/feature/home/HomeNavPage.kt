@@ -91,7 +91,6 @@ import kotlin.math.absoluteValue
  * Created by P.T.H.W on 27/03/2024.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
-@SuppressLint("ResourceAsColor")
 @Composable
 fun HomeNavPage(
     modifier: Modifier = Modifier,
@@ -100,8 +99,6 @@ fun HomeNavPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-
-    Timber.i("OnReached: HomeNavPage")
 
     val uiState = UiState(
         refreshing = viewModel.refreshing.value,
@@ -124,7 +121,8 @@ fun HomeNavPage(
                     UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
                     is UiEvent.ItemClick -> {
                         navController.navigateToMovieDetailPage(
-                            movieVo = it.movie
+                            sharedKey = "home-image-${it.movie.id}",
+                            movie = it.movie
                         )
                     }
                 }
@@ -197,6 +195,8 @@ private fun HomePageContent(
     ) { innerPadding ->
         val promoPagerState = rememberPagerState { 20 }
         val state = rememberPullRefreshState(uiState.refreshing, { onAction(UiEvent.Refresh) })
+
+        Timber.i("Reached: HomePageContent")
 
         Box(Modifier.pullRefresh(state)) {
             LazyColumn(
@@ -571,12 +571,6 @@ private fun ComingSoonMoviesItemView(
             modifier = modifier
                 .width(180.dp)
                 .padding(end = Dimens.MARGIN_MEDIUM_2)
-                .sharedElement(
-                    state = rememberSharedContentState(
-                        key = "image-${movieVo.id}"
-                    ),
-                    animatedVisibilityScope = animatedContentScope,
-                )
                 .simpleClickable {
                     itemClick(movieVo)
                 }
@@ -586,6 +580,12 @@ private fun ComingSoonMoviesItemView(
                 modifier = modifier
                     .height(220.dp)
                     .width(180.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState(
+                            key = "home-image-${movieVo.id}"
+                        ),
+                        animatedVisibilityScope = animatedContentScope,
+                    )
                     .clip(Shapes.small)
             )
 

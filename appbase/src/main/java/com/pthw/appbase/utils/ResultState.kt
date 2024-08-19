@@ -1,10 +1,12 @@
 package com.pthw.appbase.utils
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 
 /**
  * Created by P.T.H.W on 18/08/2024.
  */
+@Stable
 sealed class ResultState<out T> {
     data object Idle : ResultState<Nothing>()
     data object Loading : ResultState<Nothing>()

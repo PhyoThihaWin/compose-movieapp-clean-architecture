@@ -62,12 +62,6 @@ fun MovieGridItemView(
     with(sharedTransitionScope) {
         Column(
             modifier = modifier
-                .sharedElement(
-                    state = rememberSharedContentState(
-                        key = "image-${movieVo.id}"
-                    ),
-                    animatedVisibilityScope = animatedContentScope,
-                )
                 .simpleClickable {
                     itemClick()
                 }
@@ -76,6 +70,10 @@ fun MovieGridItemView(
                 imageUrl = movieVo.posterPath,
                 modifier = modifier
                     .height(240.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "listing-image-${movieVo.id}"),
+                        animatedVisibilityScope = animatedContentScope,
+                    )
                     .clip(Shapes.small)
             )
 

@@ -16,4 +16,4 @@ data class MovieVo(
     val voteAverage: Float,
     val genreIds: List<String>,
     val isFavorite: Boolean = false
-)
+): java.io.Serializable

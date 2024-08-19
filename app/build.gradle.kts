@@ -4,8 +4,10 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.koltin.serilization)
     alias(libs.plugins.googleService)
     alias(libs.plugins.crashlytics)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -127,6 +129,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     // third parties
+    implementation(libs.kotlinx.serialization)
     implementation(libs.timber)
     implementation(libs.coil)
 

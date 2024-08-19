@@ -7,10 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.utils.ResultState
-import com.pthw.domain.home.model.MovieVo
+import com.pthw.composemovieappcleanarchitecture.navigation.Routes
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,19 +27,20 @@ class MovieDetailPageViewModel @Inject constructor(
     private val getMovieDetailUseCase: GetMovieDetailUseCase
 ) : ViewModel() {
 
-    val movieVo: MovieVo = savedStateHandle.toRoute<MovieVo>()
+    val navArgs = savedStateHandle.toRoute<Routes.MovieDetail>()
 
     var movieDetails = mutableStateOf<ResultState<MovieDetailVo>>(ResultState.Idle)
         private set
 
     init {
-        getMovieDetails(movieVo.id.toString())
+        getMovieDetails(navArgs.id.toString())
     }
 
     private fun getMovieDetails(movieId: String) {
         viewModelScope.launch {
             movieDetails.value = ResultState.Loading
             runCatching {
+                delay(400)
                 val details = getMovieDetailUseCase(movieId)
                 movieDetails.value = ResultState.Success(details)
             }.getOrElse {

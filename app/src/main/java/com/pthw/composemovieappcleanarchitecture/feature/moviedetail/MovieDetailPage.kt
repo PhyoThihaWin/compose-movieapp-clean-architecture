@@ -8,8 +8,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +41,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -60,6 +65,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.MotionLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.pthw.appbase.utils.ResultRender
@@ -95,8 +103,8 @@ fun MovieDetailPage(
 ) {
 
     val uiState = UiState(
-        movieId = viewModel.movieVo.id.toString(),
-        backdropPath = viewModel.movieVo.backdropPath,
+        key = viewModel.navArgs.sharedKey,
+        backdropPath = viewModel.navArgs.backdropPath,
         movieDetailVo = viewModel.movieDetails.value
     )
 
@@ -115,7 +123,7 @@ fun MovieDetailPage(
 }
 
 private data class UiState(
-    val movieId: String,
+    val key: String,
     val backdropPath: String,
     val movieDetailVo: ResultState<MovieDetailVo> = ResultState.Idle,
 )
@@ -139,190 +147,259 @@ private fun PageContent(
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
     val bgImageHeight = LocalConfiguration.current.screenHeightDp / 3.6
-    val bgImageHeightInDp = animateDpAsState(
-        targetValue = if (isScrolledOnTop) bgImageHeight.dp else 0.dp,
-        animationSpec = tween(
-            durationMillis = 500,
-        ), label = "CoilAsyncImage"
-    )
-    val topMarginInDp = animateDpAsState(
-        targetValue = if (isScrolledOnTop) (bgImageHeight / 1.4).dp else 0.dp,
-        animationSpec = tween(
-            durationMillis = 500,
-        ), label = "CoilAsyncImage"
+
+    val progress by animateFloatAsState(
+        targetValue = if (isScrolledOnTop) 0f else 1f,
+        tween(500, easing = LinearOutSlowInEasing), label = ""
     )
 
-    //
-    with(sharedTransitionScope) {
-        Box {
+    val constraintSet = getConstraintSet(bgImageHeight)
+
+    MotionLayout(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.surface)
+            .fillMaxSize(),
+        start = constraintSet.first,
+        end = constraintSet.second,
+        progress = progress
+    ) {
+        with(sharedTransitionScope) {
             CoilAsyncImage(
                 imageUrl = uiState.backdropPath,
                 modifier = modifier
+                    .layoutId("poster")
                     .fillMaxWidth()
-                    .height(bgImageHeightInDp.value)
+                    .height(bgImageHeight.dp)
                     .sharedElement(
-                        sharedTransitionScope.rememberSharedContentState(key = "image-${uiState.movieId}"),
+                        state = rememberSharedContentState(key = "${uiState.key}"),
                         animatedVisibilityScope = animatedContentScope
                     )
+                    .clip(
+                        RoundedCornerShape(
+                            bottomEnd = Dimens.MARGIN_20,
+                            bottomStart = Dimens.MARGIN_20
+                        )
+                    )
             )
-            ResultRender(state = uiState.movieDetailVo,
-                loading = {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-                },
-                success = { movieDetail ->
-                    Box(
-                        modifier = modifier
-                    ) {
-                        AnimatedVisibility(visible = isScrolledOnTop) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_arrow_left),
-                                tint = Color.Black,
-                                modifier = Modifier
-                                    .padding(
-                                        start = Dimens.MARGIN_MEDIUM_2,
-                                        top = Dimens.MARGIN_MEDIUM_2
-                                    )
-                                    .clip(Shapes.small)
-                                    .background(color = Color.Black.copy(0.1f))
-                                    .clickable {
-                                        onAction(UiEvent.GoBack)
+        }
+
+        Icon(
+            painterResource(id = R.drawable.ic_arrow_left),
+            tint = Color.White,
+            modifier = Modifier
+                .layoutId("back_arrow")
+                .padding(
+                    start = Dimens.MARGIN_MEDIUM_2,
+                    top = Dimens.MARGIN_MEDIUM_2
+                )
+                .clip(Shapes.small)
+                .background(color = Color.Black.copy(0.3f))
+                .clickable {
+                    onAction(UiEvent.GoBack)
+                }
+                .padding(
+                    vertical = Dimens.MARGIN_MEDIUM,
+                    horizontal = Dimens.MARGIN_MEDIUM
+                )
+                .size(Dimens.MARGIN_LARGE),
+            contentDescription = null
+        )
+
+        AnimatedVisibility(
+            modifier = modifier.layoutId("content"),
+            visible = uiState.movieDetailVo is ResultState.Success,
+            enter = slideInVertically { it },
+            exit = slideOutVertically { it }
+        ) {
+            ResultRender(state = uiState.movieDetailVo) { movieDetail ->
+                LazyColumn(
+                    state = listState
+                ) {
+                    item {
+                        MovieDetailInfoCardSection(movieDetail)
+
+                        Column(
+                            modifier = Modifier.background(color = MaterialTheme.colorScheme.surface)
+                        ) {
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM_2))
+
+                            MovieInfoDescriptionTexts(
+                                title = "Movie genre:",
+                                text = movieDetail.genres.map { it.name }.joinToString(", ")
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
+                            MovieInfoDescriptionTexts(
+                                title = "Censorship:",
+                                text = if (movieDetail.adult) "18+" else "10+"
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
+                            MovieInfoDescriptionTexts(
+                                title = "Language:",
+                                text = "English"
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
+
+                            TitleTextView(
+                                text = "Storyline",
+                                modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
+
+                            // overview text with read more
+                            Text(
+                                text = buildAnnotatedString {
+                                    if (movieDetail.overview.length > 250) {
+                                        append(movieDetail.overview.substring(0..250))
+                                        append("... ")
+                                        withStyle(style = SpanStyle(color = ColorPrimary)) {
+                                            append("See more")
+                                        }
+                                    } else {
+                                        append(movieDetail.overview)
                                     }
-                                    .padding(
-                                        vertical = Dimens.MARGIN_MEDIUM,
-                                        horizontal = Dimens.MARGIN_MEDIUM
-                                    )
-                                    .size(Dimens.MARGIN_LARGE),
-                                contentDescription = null
+                                },
+                                modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2),
+                                fontSize = Dimens.TEXT_REGULAR,
+                            )
+
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
+
+                            TitleTextView(
+                                text = "Casts",
+                                modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            ) {
+                                items(movieDetail.casts.size) {
+                                    MovieDetailActorListItem(movieDetail.casts[it])
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
+
+                            TitleTextView(
+                                text = "Crews",
+                                modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            ) {
+                                items(movieDetail.crews.size) {
+                                    MovieDetailActorListItem(movieDetail.crews[it])
+                                }
+                            }
+
+                            Spacer(
+                                modifier =
+                                Modifier.padding(bottom = Dimens.MARGIN_LARGE)
+                            )
+
+                            TitleTextView(
+                                text = "Cinema",
+                                modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            )
+                            Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_10))
+                        }
+
+
+                    }
+
+                    // payment list items
+                    items(3) {
+                        MovieDetailPaymentListItem()
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                                .height(Dimens.BTN_COMMON_HEIGHT),
+                            colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
+                            onClick = {
+                                onAction(UiEvent.Continue)
+                            }) {
+                            Text(
+                                text = "Continue",
+                                fontSize = Dimens.TEXT_REGULAR_2,
+                                color = Color.Black
                             )
                         }
-
-                        LazyColumn(
-                            modifier = modifier.padding(top = topMarginInDp.value),
-                            state = listState
-                        ) {
-
-                            item {
-
-                                MovieDetailInfoCardSection(movieDetail)
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM_2))
-
-
-                                MovieInfoDescriptionTexts(
-                                    title = "Movie genre:",
-                                    text = movieDetail.genres.map { it.name }.joinToString(", ")
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
-                                MovieInfoDescriptionTexts(
-                                    title = "Censorship:",
-                                    text = if (movieDetail.adult) "18+" else "10+"
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
-                                MovieInfoDescriptionTexts(
-                                    title = "Language:",
-                                    text = "English"
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
-
-                                TitleTextView(
-                                    text = "Storyline",
-                                    modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
-
-                                // overview text with read more
-                                Text(
-                                    text = buildAnnotatedString {
-                                        if (movieDetail.overview.length > 250) {
-                                            append(movieDetail.overview.substring(0..250))
-                                            append("... ")
-                                            withStyle(style = SpanStyle(color = ColorPrimary)) {
-                                                append("See more")
-                                            }
-                                        } else {
-                                            append(movieDetail.overview)
-                                        }
-                                    },
-                                    modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2),
-                                    fontSize = Dimens.TEXT_REGULAR,
-                                )
-
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
-
-                                TitleTextView(
-                                    text = "Casts",
-                                    modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
-                                LazyRow(
-                                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                ) {
-                                    items(movieDetail.casts.size) {
-                                        MovieDetailActorListItem(movieDetail.casts[it])
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
-
-                                TitleTextView(
-                                    text = "Crews",
-                                    modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
-                                LazyRow(
-                                    contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                ) {
-                                    items(movieDetail.crews.size) {
-                                        MovieDetailActorListItem(movieDetail.crews[it])
-                                    }
-                                }
-
-                                Spacer(
-                                    modifier =
-                                    Modifier.padding(bottom = Dimens.MARGIN_LARGE)
-                                )
-
-                                TitleTextView(
-                                    text = "Cinema",
-                                    modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                )
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_10))
-
-                            }
-
-                            // payment list items
-                            items(3) {
-                                MovieDetailPaymentListItem()
-                            }
-
-                            item {
-                                Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                        .height(Dimens.BTN_COMMON_HEIGHT),
-                                    colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
-                                    onClick = {
-                                        onAction(UiEvent.Continue)
-                                    }) {
-                                    Text(
-                                        text = "Continue",
-                                        fontSize = Dimens.TEXT_REGULAR_2,
-                                        color = Color.Black
-                                    )
-                                }
-                                Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
-                            }
-
-                        }
+                        Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
                     }
 
-                })
+                }
+            }
+        }
+
+
+        Box(modifier = Modifier.layoutId("loading")) {
+            AnimatedVisibility(
+                visible = uiState.movieDetailVo is ResultState.Loading,
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+    }
+}
+
+private fun getConstraintSet(posterHeight: Double): Pair<ConstraintSet, ConstraintSet> {
+    val startConstraintSet = ConstraintSet {
+        val poster = createRefFor("poster")
+        constrain(poster) {
+            alpha = 1f
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+        val backArrow = createRefFor("back_arrow")
+        constrain(backArrow) {
+            top.linkTo(poster.top)
+            start.linkTo(poster.start)
+        }
+        val content = createRefFor("content")
+        constrain(content) {
+            height = Dimension.fillToConstraints
+            top.linkTo(poster.bottom, (-posterHeight / 4.5).dp)
+            bottom.linkTo(parent.bottom)
+        }
+        val loading = createRefFor("loading")
+        constrain(loading) {
+            centerTo(parent)
         }
     }
 
+    val endConstraintSet = ConstraintSet {
+        val poster = createRefFor("poster")
+        constrain(poster) {
+            alpha = 0f
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            bottom.linkTo(parent.top, 0.dp)
+        }
+        val backArrow = createRefFor("back_arrow")
+        constrain(backArrow) {
+            top.linkTo(poster.top)
+            start.linkTo(poster.start)
+        }
+        val content = createRefFor("content")
+        constrain(content) {
+            height = Dimension.fillToConstraints
+            top.linkTo(parent.top, 0.dp)
+            bottom.linkTo(parent.bottom)
+        }
+        val loading = createRefFor("loading")
+        constrain(loading) {
+            centerTo(parent)
+        }
+    }
+
+    return Pair(startConstraintSet, endConstraintSet)
 }
 
 @Composable
@@ -537,7 +614,7 @@ private fun PageContentPreview() {
                     PageContent(
                         modifier = Modifier,
                         uiState = UiState(
-                            movieId = "",
+                            key = "",
                             backdropPath = "",
                             movieDetailVo = ResultState.Success(MovieDetailVo.fake())
                         ),

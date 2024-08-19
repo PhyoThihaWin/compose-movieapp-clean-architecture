@@ -16,6 +16,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.movie.navigateToMovieNa
 import com.pthw.composemovieappcleanarchitecture.feature.profile.navigateToProfileNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.navigateToTicketNavPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
+import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.CoroutineScope
 
 /**
