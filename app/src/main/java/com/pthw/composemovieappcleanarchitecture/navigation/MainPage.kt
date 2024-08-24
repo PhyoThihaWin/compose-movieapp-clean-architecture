@@ -7,14 +7,12 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -75,9 +73,7 @@ fun MainPage(
         },
     ) { padding ->
         MainNavHost(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = Modifier.fillMaxSize(),
             appState = appState
         )
     }
@@ -157,7 +153,7 @@ private fun NiaBottomBarPreview() {
     testNav.route = "home"
     ComposeMovieAppCleanArchitectureTheme {
         NiaBottomBar(
-            destinations = listOf(TopLevelDestination.HOME, TopLevelDestination.MOVIE),
+            destinations = TopLevelDestination.entries,
             destinationsWithUnreadResources = emptySet(),
             onNavigateToDestination = {},
             currentDestination = testNav,
@@ -173,7 +169,7 @@ private fun NiaBottomBarNightPreview() {
     testNav.route = "home"
     ComposeMovieAppCleanArchitectureTheme {
         NiaBottomBar(
-            destinations = listOf(TopLevelDestination.HOME, TopLevelDestination.MOVIE),
+            destinations = TopLevelDestination.entries,
             destinationsWithUnreadResources = emptySet(),
             onNavigateToDestination = {},
             currentDestination = testNav,

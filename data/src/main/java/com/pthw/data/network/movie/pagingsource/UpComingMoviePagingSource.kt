@@ -2,6 +2,8 @@ package com.pthw.data.network.movie.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.pthw.data.network.ktor.LOAD_DELAY_MILLIS
+import com.pthw.data.network.ktor.STARTING_PAGE_INDEX
 import com.pthw.data.network.movie.MovieApiService
 import com.pthw.data.network.movie.response.MovieResponse
 import kotlinx.coroutines.delay
@@ -11,11 +13,7 @@ import timber.log.Timber
  * Created by P.T.H.W on 28/04/2024.
  */
 
-private const val STARTING_PAGE_INDEX = 1
-private const val LOAD_DELAY_MILLIS = 6_000L
-
 class UpComingMoviePagingSource(
-    private val query: String = "",
     private val apiService: MovieApiService,
 ) : PagingSource<Int, MovieResponse>() {
 

@@ -13,6 +13,7 @@ import com.pthw.data.network.movie.MovieApiService
 import com.pthw.data.network.movie.mapper.MovieDetailVoMapper
 import com.pthw.data.network.movie.mapper.MovieVoMapper
 import com.pthw.data.network.movie.pagingsource.NowPlayingMoviePagingSource
+import com.pthw.data.network.movie.pagingsource.SearchMoviePagingSource
 import com.pthw.data.network.movie.pagingsource.UpComingMoviePagingSource
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.GenreVo
@@ -20,6 +21,7 @@ import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.repository.MovieRepository
 import com.pthw.shared.extension.orZero
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -125,6 +127,24 @@ class MovieRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { UpComingMoviePagingSource(apiService = apiService) }
+        ).flow.map { pagingData ->
+            val genres = database.genreDao().getAllGenres().map {
+                GenreVo(it.id, it.name)
+            }
+            pagingData.map { movieVoMapper.map(it, genres) }
+        }
+    }
+
+    override fun searchPagingMovies(query: String): Flow<PagingData<MovieVo>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                initialLoadSize = ITEMS_PER_PAGE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchMoviePagingSource(query, apiService)
+            }
         ).flow.map { pagingData ->
             val genres = database.genreDao().getAllGenres().map {
                 GenreVo(it.id, it.name)

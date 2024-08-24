@@ -12,13 +12,17 @@ import com.pthw.data.network.ktor.ENDPOINT_MOVIE_DETAIL
 import com.pthw.data.network.ktor.ENDPOINT_MOVIE_GENRES
 import com.pthw.data.network.ktor.ENDPOINT_POPULAR_MOVIES
 import com.pthw.data.network.ktor.ENDPOINT_POPULAR_PERSON
+import com.pthw.data.network.ktor.ENDPOINT_SEARCH_MOVIES
 import com.pthw.data.network.ktor.PARAM_PAGE
+import com.pthw.data.network.ktor.PARAM_QUERY
 import com.pthw.data.network.ktor.toKtor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.url
 import io.ktor.http.appendPathSegments
+import io.ktor.http.parameters
 
 /**
  * Created by P.T.H.W on 24/04/2024.
@@ -33,21 +37,21 @@ class MovieApiService(private val client: HttpClient) {
 
     suspend fun getUpComingMovies(page: Int = 1): DataResponse<List<MovieResponse>> {
         val endpoint = ENDPOINT_GET_UP_COMING.toKtor()
-        return client.get(endpoint){
+        return client.get(endpoint) {
             parameter(PARAM_PAGE, page)
         }.body()
     }
 
     suspend fun getPopularMovies(page: Int = 1): DataResponse<List<MovieResponse>> {
         val endpoint = ENDPOINT_POPULAR_MOVIES.toKtor()
-        return client.get(endpoint){
+        return client.get(endpoint) {
             parameter(PARAM_PAGE, page)
         }.body()
     }
 
     suspend fun getPopularPeople(page: Int = 1): DataResponse<List<ActorResponse>> {
         val endpoint = ENDPOINT_POPULAR_PERSON.toKtor()
-        return client.get(endpoint){
+        return client.get(endpoint) {
             parameter(PARAM_PAGE, page)
         }.body()
     }
@@ -73,5 +77,13 @@ class MovieApiService(private val client: HttpClient) {
     suspend fun getMovieGenres(): GenresResponse {
         val endpoint = ENDPOINT_MOVIE_GENRES.toKtor()
         return client.get(endpoint).body()
+    }
+
+    suspend fun searchMovies(query: String, page: Int): DataResponse<List<MovieResponse>> {
+        val endpoint = ENDPOINT_SEARCH_MOVIES.toKtor()
+        return client.get(endpoint) {
+            parameter(PARAM_QUERY, query)
+            parameter(PARAM_PAGE, page)
+        }.body()
     }
 }

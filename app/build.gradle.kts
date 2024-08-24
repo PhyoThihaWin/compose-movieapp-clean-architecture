@@ -54,7 +54,10 @@ android {
 //            applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "[Dev] ComposeMoviesApp")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         release {
             signingConfig = signingConfigs.getByName("release")
@@ -63,7 +66,10 @@ android {
             isDebuggable = !BuildConfigConst.PROD_MINIFY_ENABLED
 
             resValue("string", "app_name", "Compose MoviesApp")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -103,16 +109,15 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.activity)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.compose.material3.windowSizeClass)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.animation)
     debugImplementation(libs.androidx.ui.tooling)
@@ -152,7 +157,8 @@ object BuildConfigConst {
     private const val VERSION_PATCH = 0
     private const val VERSION_BUILD = 2
     const val APP_VERSION_NAME = "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
-    const val APP_VERSION_CODE = VERSION_MAJOR * 1000000 + VERSION_MINOR * 10000 + VERSION_PATCH * 100 + VERSION_BUILD
+    const val APP_VERSION_CODE =
+        VERSION_MAJOR * 1000000 + VERSION_MINOR * 10000 + VERSION_PATCH * 100 + VERSION_BUILD
 
     const val DEV_MINIFY_ENABLED = false
     const val UAT_MINIFY_ENABLED = false

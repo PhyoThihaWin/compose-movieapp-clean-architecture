@@ -57,8 +57,6 @@ class HomeNavPageViewModel @Inject constructor(
         // from network
         fetchHomeData()
         fetchMovieGenres()
-
-        val gg = ResultState.Success<String>("")
     }
 
     private fun fetchHomeData() {
@@ -82,27 +80,30 @@ class HomeNavPageViewModel @Inject constructor(
     }
 
     private fun getNowPlayingMovies() {
+        nowPlayingMovies.value = ResultState.Loading
         viewModelScope.launch {
             getNowPlayingMoviesUseCase().collectLatest {
-                if (it.isNotEmpty()) {
-                    delay(200)
-                    nowPlayingMovies.value = ResultState.Success(it)
-                }
+                delay(2000)
+                nowPlayingMovies.value = ResultState.Success(it)
             }
         }
     }
 
     private fun getUpComingMovies() {
+        upComingMovies.value = ResultState.Loading
         viewModelScope.launch {
             getUpComingMoviesUseCase().collectLatest {
+                delay(2000)
                 upComingMovies.value = ResultState.Success(it)
             }
         }
     }
 
     private fun getPopularMovies() {
+        popularMovies.value = ResultState.Loading
         viewModelScope.launch {
             getPopularMoviesUseCase().collectLatest {
+                delay(2000)
                 popularMovies.value = ResultState.Success(it)
             }
         }

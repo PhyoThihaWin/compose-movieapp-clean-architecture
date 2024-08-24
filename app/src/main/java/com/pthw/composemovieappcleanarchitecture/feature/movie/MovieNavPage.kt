@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,12 +39,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
+import com.pthw.composemovieappcleanarchitecture.composable.PageEmpty
 import com.pthw.composemovieappcleanarchitecture.composable.PageLoader
 import com.pthw.composemovieappcleanarchitecture.composable.SharedAnimatedContent
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageViewModel
@@ -56,6 +59,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
+import com.pthw.composemovieappcleanarchitecture.AppConstant
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -88,7 +92,7 @@ fun MovieNavPage(
             when (it) {
                 is UiEvent.TapChanged -> tabIndex = it.index
                 is UiEvent.ItemClick -> navController.navigateToMovieDetailPage(
-                    sharedKey = "listing-image-${it.movie.id}",
+                    sharedKey = AppConstant.ListingMoviesKey.format(it.movie.id),
                     movie = it.movie
                 )
             }
@@ -115,6 +119,7 @@ private fun PageContent(
 ) {
     Scaffold { innerPadding ->
         val pagingItems = if (tabIndex == 0) nowPlayingPagingItems else upComingPagingItems
+        var pagingLoadState by remember { mutableStateOf<CombinedLoadStates?>(null) }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -153,13 +158,8 @@ private fun PageContent(
                 }
             }
             pagingItems.apply {
+                pagingLoadState = loadState
                 when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item(span = { GridItemSpan(2) }) {
-                            PageLoader(modifier = Modifier)
-                        }
-                    }
-
                     loadState.refresh is LoadState.Error -> {
                         val error = pagingItems.loadState.refresh as LoadState.Error
                         item(span = { GridItemSpan(2) }) {
@@ -169,7 +169,6 @@ private fun PageContent(
                                 onClickRetry = { retry() })
                         }
                     }
-
                     loadState.append is LoadState.Loading -> {
                         item(span = { GridItemSpan(2) }) {
                             LoadingNextPageItem(modifier = Modifier)
@@ -187,6 +186,16 @@ private fun PageContent(
                     }
                 }
             }
+        }
+
+        // loadState handle
+        when {
+            pagingLoadState?.refresh is LoadState.NotLoading && pagingItems.itemCount == 0 ->
+                PageEmpty(modifier.fillMaxSize())
+
+            pagingLoadState?.refresh is LoadState.Loading && pagingItems.itemCount == 0 -> PageLoader(
+                modifier.fillMaxSize()
+            )
         }
     }
 }

@@ -1,3 +1,8 @@
+@file:OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3Api::class
+)
+
 package com.pthw.composemovieappcleanarchitecture.feature.home
 
 import android.annotation.SuppressLint
@@ -28,24 +33,26 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -67,13 +74,13 @@ import com.pthw.appbase.utils.ResultRender
 import com.pthw.appbase.utils.ResultState
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
-import com.pthw.composemovieappcleanarchitecture.composable.CustomTextField
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.COMING_SOON
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.NOW_PLAYING
 import com.pthw.composemovieappcleanarchitecture.feature.listing.navigateToMovieListingPage
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
+import com.pthw.composemovieappcleanarchitecture.feature.search.navigateToSearchMoviesPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
@@ -82,7 +89,9 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
+import com.pthw.composemovieappcleanarchitecture.AppConstant
 import com.pthw.shared.extension.roundTo
+import com.pthw.shared.extension.showShimmer
 import com.pthw.shared.extension.simpleClickable
 import timber.log.Timber
 import kotlin.math.absoluteValue
@@ -90,7 +99,6 @@ import kotlin.math.absoluteValue
 /**
  * Created by P.T.H.W on 27/03/2024.
  */
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeNavPage(
     modifier: Modifier = Modifier,
@@ -108,35 +116,27 @@ fun HomeNavPage(
         popularActors = viewModel.popularPeople.value
     )
 
-    if (uiState.isReady()) {
-        HomePageContent(
-            modifier = modifier,
-            uiState = uiState,
-            sharedTransitionScope = sharedTransitionScope,
-            animatedContentScope = animatedContentScope,
-            onAction = {
-                when (it) {
-                    UiEvent.Refresh -> viewModel.refreshHomeData()
-                    UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(NOW_PLAYING)
-                    UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
-                    is UiEvent.ItemClick -> {
-                        navController.navigateToMovieDetailPage(
-                            sharedKey = "home-image-${it.movie.id}",
-                            movie = it.movie
-                        )
-                    }
+    HomePageContent(
+        modifier = modifier,
+        uiState = uiState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
+        onAction = {
+            when (it) {
+                UiEvent.Refresh -> viewModel.refreshHomeData()
+                UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(NOW_PLAYING)
+                UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
+                is UiEvent.ItemClick -> {
+                    navController.navigateToMovieDetailPage(
+                        sharedKey = it.sharedKey,
+                        movie = it.movie
+                    )
                 }
-            },
-        )
-    } else {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator()
-        }
-    }
+
+                UiEvent.GoSearch -> navController.navigateToSearchMoviesPage()
+            }
+        },
+    )
 
 }
 
@@ -146,20 +146,16 @@ private data class UiState(
     val comingSoonMovies: ResultState<List<MovieVo>> = ResultState.Idle,
     val popularMovies: ResultState<List<MovieVo>> = ResultState.Idle,
     val popularActors: ResultState<List<ActorVo>> = ResultState.Idle
-) {
-    fun isReady() =
-        nowPlayingMovies is ResultState.Success && comingSoonMovies is ResultState.Success
-                && popularMovies is ResultState.Success && popularActors is ResultState.Success
-}
+)
 
 private sealed class UiEvent {
     data object Refresh : UiEvent()
     data object NowPlayingSeeAll : UiEvent()
     data object ComingSoonSeeAll : UiEvent()
-    class ItemClick(val movie: MovieVo) : UiEvent()
+    data class ItemClick(val sharedKey: String, val movie: MovieVo) : UiEvent()
+    data object GoSearch : UiEvent()
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun HomePageContent(
     modifier: Modifier,
@@ -176,7 +172,7 @@ private fun HomePageContent(
             ) {
                 Column(modifier.weight(1f)) {
                     Text(
-                        "Hi, Angelina \uD83D\uDC4B",
+                        "Hi, three! \uD83D\uDC4B",
                         fontSize = Dimens.TEXT_REGULAR
                     )
                     Text(
@@ -194,20 +190,27 @@ private fun HomePageContent(
         },
     ) { innerPadding ->
         val promoPagerState = rememberPagerState { 20 }
-        val state = rememberPullRefreshState(uiState.refreshing, { onAction(UiEvent.Refresh) })
+        val state = rememberPullToRefreshState()
 
         Timber.i("Reached: HomePageContent")
 
-        Box(Modifier.pullRefresh(state)) {
+        PullToRefreshBox(
+            modifier = Modifier.padding(innerPadding),
+            state = state,
+            isRefreshing = uiState.refreshing,
+            onRefresh = {
+                onAction(UiEvent.Refresh)
+            },
+        ) {
             LazyColumn(
-                modifier = modifier
-                    .padding(innerPadding)
+                contentPadding = PaddingValues(bottom = Dimens.BTN_COMMON_HEIGHT)
             ) {
                 item {
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
-                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM_2))
-
-                    HomeSearchBarView(modifier = modifier)
+                    HomeSearchBarView(modifier = modifier) {
+                        onAction(UiEvent.GoSearch)
+                    }
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
@@ -219,18 +222,22 @@ private fun HomePageContent(
                         onAction(UiEvent.NowPlayingSeeAll)
                     }
 
-                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+                    Spacer(modifier = modifier.padding(top = Dimens.MARGIN_SMALL))
 
                     ResultRender(uiState.nowPlayingMovies,
                         loading = {
-                            CircularProgressIndicator()
+                            Timber.i("Reached: ResultRender loading")
+                            NowPlayingMoviesShimmer(movies = MovieVo.fakeMovies)
                         },
                         success = {
+                            Timber.i("Reached: ResultRender success")
                             NowPlayingMoviesSectionView(
                                 modifier = modifier,
+                                animatedContentScope = animatedContentScope,
+                                sharedTransitionScope = sharedTransitionScope,
                                 movies = it.take(8)
-                            ) {
-                                onAction(UiEvent.ItemClick(it))
+                            ) { key, movie ->
+                                onAction(UiEvent.ItemClick(key, movie))
                             }
                         })
 
@@ -246,7 +253,7 @@ private fun HomePageContent(
 
                     ResultRender(uiState.comingSoonMovies,
                         loading = {
-                            CircularProgressIndicator()
+                            ComingSoonMoviesShimmer()
                         },
                         success = {
                             LazyRow(
@@ -257,8 +264,8 @@ private fun HomePageContent(
                                         modifier, it[index],
                                         sharedTransitionScope = sharedTransitionScope,
                                         animatedContentScope = animatedContentScope
-                                    ) {
-                                        onAction(UiEvent.ItemClick(it))
+                                    ) { key, movie ->
+                                        onAction(UiEvent.ItemClick(key, movie))
                                     }
                                 }
                             }
@@ -276,27 +283,16 @@ private fun HomePageContent(
 
                     ResultRender(uiState.popularMovies,
                         loading = {
-                            CircularProgressIndicator()
+                            PromotionAndDiscountShimmer()
                         },
                         success = {
                             if (it.isEmpty()) return@ResultRender
-                            HorizontalPager(
-                                state = promoPagerState,
-                                modifier = modifier
-                                    .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
-                                pageSpacing = Dimens.MARGIN_MEDIUM_2,
-                                contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
-                            ) { index ->
-                                CoilAsyncImage(
-                                    modifier = modifier
-                                        .fillMaxSize()
-                                        .clip(Shapes.small)
-                                        .simpleClickable {
-                                            onAction(UiEvent.ItemClick(it[index]))
-                                        },
-                                    imageUrl = it[index].backdropPath,
-                                )
-                            }
+                            PromotionAndDiscountSection(
+                                promoPagerState, modifier,
+                                sharedTransitionScope,
+                                animatedContentScope,
+                                onAction, it
+                            )
                         }
                     )
 
@@ -341,34 +337,7 @@ private fun HomePageContent(
                                 contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2),
                             ) {
                                 items(it.size) { index ->
-                                    Column(
-                                        modifier = modifier
-                                            .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
-                                            .padding(end = Dimens.MARGIN_MEDIUM_2)
-                                    ) {
-                                        CoilAsyncImage(
-                                            modifier = modifier
-                                                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
-                                                .clip(Shapes.small),
-                                            imageUrl = it[index].backdropPath,
-                                        )
-                                        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
-                                        Text(
-                                            text = buildAnnotatedString {
-                                                if (it[index].overview.length > 100) {
-                                                    append(it[index].overview.substring(0..100))
-                                                    append("... ")
-                                                    withStyle(style = SpanStyle(color = ColorPrimary)) {
-                                                        append("See more")
-                                                    }
-                                                } else {
-                                                    append(it[index].overview)
-                                                }
-                                            },
-                                            minLines = 5,
-                                            fontSize = Dimens.TEXT_SMALL,
-                                        )
-                                    }
+                                    MovieNewsSection(modifier, it, index)
                                 }
                             }
                         })
@@ -377,14 +346,272 @@ private fun HomePageContent(
 
                 }
             }
+        }
+    }
+}
 
-            PullRefreshIndicator(
-                uiState.refreshing,
-                state,
-                Modifier
-                    .padding(innerPadding)
-                    .align(Alignment.TopCenter)
+@Composable
+private fun MovieNewsSection(
+    modifier: Modifier,
+    it: List<MovieVo>,
+    index: Int
+) {
+    Column(
+        modifier = modifier
+            .widthIn(max = (LocalConfiguration.current.screenHeightDp / 3).dp)
+            .padding(end = Dimens.MARGIN_MEDIUM_2)
+    ) {
+        CoilAsyncImage(
+            modifier = modifier
+                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 5).dp)
+                .clip(Shapes.small),
+            imageUrl = it[index].backdropPath,
+        )
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+        Text(
+            text = buildAnnotatedString {
+                if (it[index].overview.length > 100) {
+                    append(it[index].overview.substring(0..100))
+                    append("... ")
+                    withStyle(style = SpanStyle(color = ColorPrimary)) {
+                        append("See more")
+                    }
+                } else {
+                    append(it[index].overview)
+                }
+            },
+            minLines = 5,
+            fontSize = Dimens.TEXT_SMALL,
+        )
+    }
+}
+
+@Composable
+private fun PromotionAndDiscountShimmer() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Dimens.MARGIN_MEDIUM_2)
+            .heightIn((LocalConfiguration.current.screenHeightDp / 4).dp)
+            .showShimmer()
+    )
+}
+
+@Composable
+private fun PromotionAndDiscountSection(
+    promoPagerState: PagerState,
+    modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    onAction: (UiEvent) -> Unit,
+    it: List<MovieVo>
+) {
+    HorizontalPager(
+        state = promoPagerState,
+        modifier = modifier
+            .heightIn(max = (LocalConfiguration.current.screenHeightDp / 4).dp),
+        pageSpacing = Dimens.MARGIN_MEDIUM_2,
+        contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+    ) { index ->
+        with(sharedTransitionScope) {
+            CoilAsyncImage(
+                modifier = modifier
+                    .fillMaxSize()
+                    .sharedElement(
+                        state = rememberSharedContentState(
+                            key = AppConstant.PromotionMoviesKey.format(it[index].id)
+                        ),
+                        animatedVisibilityScope = animatedContentScope,
+                    )
+                    .clip(Shapes.small)
+                    .simpleClickable {
+                        onAction(
+                            UiEvent.ItemClick(
+                                AppConstant.PromotionMoviesKey.format(it[index].id),
+                                it[index]
+                            )
+                        )
+                    },
+                imageUrl = it[index].backdropPath,
             )
+        }
+    }
+}
+
+@Composable
+private fun NowPlayingMoviesShimmer(
+    modifier: Modifier = Modifier,
+    movies: List<MovieVo> = MovieVo.fakeMovies,
+) {
+    val pagerState = rememberPagerState(pageCount = {
+        movies.size
+    })
+    Column {
+        HorizontalPager(
+            modifier = modifier
+                .heightIn(max = (LocalConfiguration.current.screenHeightDp / 2.8).dp)
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(
+                horizontal = 90.dp,
+                vertical = 8.dp
+            ),
+            pageSpacing = Dimens.MARGIN_SMALL,
+            state = pagerState
+        ) { page ->
+            val pageOffset = pagerState.currentPage - page + pagerState.currentPageOffsetFraction
+            Card(
+                modifier = modifier
+                    .graphicsLayer {
+                        alpha = lerp(
+                            start = 0.8f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
+                        )
+
+                        cameraDistance = 8 * density
+                        rotationY = lerp(
+                            start = 0f,
+                            stop = 0f,
+                            fraction = pageOffset.coerceIn(-1f, 1f),
+                        )
+
+                        lerp(
+                            start = 0.8f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue + 0.2f,
+                        ).also { scale ->
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                    }
+                    .showShimmer(),
+                content = {
+                    Box(modifier = Modifier.fillMaxSize())
+                }
+            )
+
+        }
+
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+        TitleTextView(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.MARGIN_XXXLARGE)
+                .showShimmer(),
+            text = movies[pagerState.currentPage].title,
+            maxLines = 1
+        )
+
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_SMALL))
+
+        Text(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.MARGIN_XLARGE)
+                .showShimmer(),
+            textAlign = TextAlign.Center,
+            text = "${movies[pagerState.currentPage].releaseDate} • ${
+                movies[pagerState.currentPage].genreIds.joinToString(
+                    ", "
+                )
+            }",
+            fontSize = Dimens.TEXT_REGULAR_2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Row(
+            modifier = modifier.alpha(0f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Rounded.Star, "", tint = ColorPrimary)
+                TitleTextView(
+                    modifier = modifier,
+                    text = movies[pagerState.currentPage].voteAverage.roundTo(1).toString()
+                )
+            }
+
+            Text(
+                "(1.222)",
+                fontSize = Dimens.TEXT_XSMALL,
+                color = Color.White.copy(alpha = 0.7f)
+            )
+        }
+
+        Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+        HorizontalPagerIndicator(
+            modifier = Modifier
+                .width(100.dp)
+                .align(
+                    alignment = Alignment.CenterHorizontally
+                )
+                .showShimmer(),
+            pageCount = pagerState.pageCount,
+            currentPage = pagerState.currentPage,
+            targetPage = pagerState.targetPage,
+            currentPageOffsetFraction = pagerState.currentPageOffsetFraction
+        )
+    }
+}
+
+@Composable
+fun ComingSoonMoviesShimmer(modifier: Modifier = Modifier) {
+    val movieVo = MovieVo.fakeMovies.first()
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
+    ) {
+        items(4) { index ->
+            Column(
+                modifier = modifier
+                    .width(180.dp)
+                    .padding(end = Dimens.MARGIN_MEDIUM_2)
+
+            ) {
+                CoilAsyncImage(
+                    imageUrl = movieVo.posterPath,
+                    modifier = modifier
+                        .height(220.dp)
+                        .width(180.dp)
+                        .showShimmer()
+                        .clip(Shapes.small)
+                )
+
+                Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+                Text(
+                    text = movieVo.title,
+                    fontSize = Dimens.TEXT_REGULAR_2,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.showShimmer()
+                )
+
+                Row(
+                    modifier = Modifier.alpha(0f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.ic_video_info), "")
+                    Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                    Text(
+                        text = movieVo.genreIds.joinToString(", "), fontSize = Dimens.TEXT_SMALL,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.showShimmer(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.ic_calendar), "")
+                    Spacer(modifier = modifier.width(Dimens.MARGIN_MEDIUM))
+                    Text(text = movieVo.releaseDate, fontSize = Dimens.TEXT_SMALL)
+                }
+            }
         }
     }
 }
@@ -392,8 +619,10 @@ private fun HomePageContent(
 @Composable
 private fun NowPlayingMoviesSectionView(
     modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     movies: List<MovieVo>,
-    itemClick: (movie: MovieVo) -> Unit
+    itemClick: (sharedKey: String, movie: MovieVo) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = {
         movies.size
@@ -412,9 +641,11 @@ private fun NowPlayingMoviesSectionView(
         ) { page ->
             HorizontalPagerItemView(
                 modifier = modifier.clickable {
-                    itemClick(movies[page])
+                    itemClick(AppConstant.NowPlayingMoviesKey.format(movies[page].id), movies[page])
                 },
                 pagerState = pagerState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
                 currentPage = page,
                 movieVo = movies[page]
             )
@@ -489,12 +720,12 @@ private fun CelebritiesItemView(
     Column(
         modifier = modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
-            .width(100.dp),
+            .width(80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CoilAsyncImage(
             modifier = modifier
-                .size(100.dp)
+                .size(80.dp)
                 .clip(CircleShape),
             imageUrl = actorVo?.profilePath.toString(),
         )
@@ -507,54 +738,65 @@ private fun CelebritiesItemView(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun HorizontalPagerItemView(
     modifier: Modifier,
     pagerState: PagerState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     currentPage: Int,
     movieVo: MovieVo
 ) {
     val pageOffset = pagerState.currentPage - currentPage + pagerState.currentPageOffsetFraction
-    Card(
-        modifier = modifier
-            .graphicsLayer {
-                alpha = lerp(
-                    start = 0.8f,
-                    stop = 1f,
-                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
+    with(sharedTransitionScope) {
+        Card(
+            modifier = modifier
+                .sharedElement(
+                    state = rememberSharedContentState(
+                        key = AppConstant.NowPlayingMoviesKey.format(movieVo.id)
+                    ),
+                    animatedVisibilityScope = animatedContentScope,
                 )
+                .graphicsLayer {
+                    alpha = lerp(
+                        start = 0.8f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
+                    )
 
-                cameraDistance = 8 * density
-                rotationY = lerp(
-                    start = 0f,
-                    stop = 0f,
-                    fraction = pageOffset.coerceIn(-1f, 1f),
+                    cameraDistance = 8 * density
+                    rotationY = lerp(
+                        start = 0f,
+                        stop = 0f,
+                        fraction = pageOffset.coerceIn(-1f, 1f),
+                    )
+
+                    lerp(
+                        start = 0.8f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.absoluteValue + 0.2f,
+                    ).also { scale ->
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                },
+
+            content = {
+                CoilAsyncImage(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            lerp(1f, 1.2f, 1.2f - pageOffset.absoluteValue + 0.2f).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                        },
+                    imageUrl = movieVo.posterPath,
                 )
-
-                lerp(
-                    start = 0.8f,
-                    stop = 1f,
-                    fraction = 1f - pageOffset.absoluteValue + 0.2f,
-                ).also { scale ->
-                    scaleX = scale
-                    scaleY = scale
-                }
-            },
-
-        content = {
-            CoilAsyncImage(
-                modifier = modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        lerp(1f, 1.2f, 1.2f - pageOffset.absoluteValue + 0.2f).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                    },
-                imageUrl = movieVo.posterPath,
-            )
-        }
-    )
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -564,7 +806,7 @@ private fun ComingSoonMoviesItemView(
     movieVo: MovieVo,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    itemClick: (movie: MovieVo) -> Unit
+    itemClick: (sharedKey: String, movie: MovieVo) -> Unit
 ) {
     with(sharedTransitionScope) {
         Column(
@@ -572,7 +814,7 @@ private fun ComingSoonMoviesItemView(
                 .width(180.dp)
                 .padding(end = Dimens.MARGIN_MEDIUM_2)
                 .simpleClickable {
-                    itemClick(movieVo)
+                    itemClick(AppConstant.ComingSoonMoviesKey.format(movieVo.id), movieVo)
                 }
         ) {
             CoilAsyncImage(
@@ -582,7 +824,7 @@ private fun ComingSoonMoviesItemView(
                     .width(180.dp)
                     .sharedElement(
                         state = rememberSharedContentState(
-                            key = "home-image-${movieVo.id}"
+                            key = AppConstant.ComingSoonMoviesKey.format(movieVo.id)
                         ),
                         animatedVisibilityScope = animatedContentScope,
                     )
@@ -683,15 +925,18 @@ private fun HorizontalPagerIndicator(
 
 @Composable
 private fun HomeSearchBarView(
-    modifier: Modifier
+    modifier: Modifier,
+    onClick: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .height(Dimens.BTN_COMMON_HEIGHT)
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.medium)
             .background(color = LocalCustomColors.current.searchBoxColor)
+            .clickable { onClick() }
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
 
     ) {
@@ -699,12 +944,11 @@ private fun HomeSearchBarView(
             painter = painterResource(id = R.drawable.ic_search_normal),
             contentDescription = ""
         )
-        CustomTextField(
-            modifier = Modifier
-                .height(52.dp)
-                .fillMaxWidth()
-                .padding(start = Dimens.MARGIN_MEDIUM),
-            placeholderText = "Search"
+        Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
+        Text(
+            text = "Search",
+            fontSize = Dimens.TEXT_REGULAR,
+            color = Color.Gray,
         )
     }
 
@@ -723,7 +967,12 @@ private fun HomeNavPageNightPreview() {
                 Surface {
                     HomePageContent(
                         modifier = Modifier,
-                        uiState = UiState(),
+                        uiState = UiState(
+                            nowPlayingMovies = ResultState.Success(MovieVo.fakeMovies),
+                            comingSoonMovies = ResultState.Success(MovieVo.fakeMovies),
+                            popularMovies = ResultState.Success(MovieVo.fakeMovies),
+                            popularActors = ResultState.Success(ActorVo.fakeActors)
+                        ),
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this
                     )
@@ -731,6 +980,21 @@ private fun HomeNavPageNightPreview() {
             }
 
         }
+    }
+}
+
+@Preview
+@Composable
+private fun HomePageShimmerPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            NowPlayingMoviesShimmer()
+            ComingSoonMoviesShimmer()
+            PromotionAndDiscountShimmer()
+        }
+
     }
 }
 
@@ -747,33 +1011,18 @@ private fun HomeNavPagePreview() {
                 Surface {
                     HomePageContent(
                         modifier = Modifier,
-                        uiState = UiState(),
+                        uiState = UiState(
+                            nowPlayingMovies = ResultState.Success(MovieVo.fakeMovies),
+                            comingSoonMovies = ResultState.Success(MovieVo.fakeMovies),
+                            popularMovies = ResultState.Success(MovieVo.fakeMovies),
+                            popularActors = ResultState.Success(ActorVo.fakeActors)
+                        ),
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this
                     )
                 }
             }
 
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun SectionTitleWithSeeAllPreview() {
-    ComposeMovieAppCleanArchitectureTheme {
-        Surface {
-            SectionTitleWithSeeAll(modifier = Modifier, title = "Promo & Test")
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun CelebritiesItemViewPreview() {
-    ComposeMovieAppCleanArchitectureTheme {
-        Surface {
-            CelebritiesItemView(modifier = Modifier, null)
         }
     }
 }

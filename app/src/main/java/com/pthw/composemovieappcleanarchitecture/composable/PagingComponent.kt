@@ -1,8 +1,10 @@
 package com.pthw.composemovieappcleanarchitecture.composable
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -24,9 +26,9 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanAr
  */
 
 @Composable
-fun PageLoader(modifier: Modifier = Modifier) {
+fun PageLoader(modifier: Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -37,6 +39,18 @@ fun PageLoader(modifier: Modifier = Modifier) {
             overflow = TextOverflow.Ellipsis
         )
         CircularProgressIndicator(Modifier.padding(top = 10.dp))
+    }
+}
+
+@Composable
+fun PageEmpty(modifier: Modifier) {
+    Box(modifier = modifier) {
+        TitleTextView(
+            modifier = Modifier.align(Alignment.Center),
+            text = "No Movie",
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1,
+        )
     }
 }
 
@@ -100,6 +114,16 @@ private fun ErrorMessagePreview() {
     ComposeMovieAppCleanArchitectureTheme {
         Surface {
             ErrorMessage(message = "This is error message!", onClickRetry = {})
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PageEmptyPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            PageEmpty(Modifier)
         }
     }
 }

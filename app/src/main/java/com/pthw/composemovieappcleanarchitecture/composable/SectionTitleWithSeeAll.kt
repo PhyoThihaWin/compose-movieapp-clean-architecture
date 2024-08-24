@@ -43,6 +43,7 @@ fun SectionTitleWithSeeAll(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TitleTextView(text = title)
+        Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier
                 .clip(Shapes.small)
@@ -66,8 +67,8 @@ fun SectionTitleWithSeeAll(
                 contentDescription = "",
                 tint = ColorPrimary,
             )
-            Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_MEDIUM))
         }
+        Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_MEDIUM))
     }
 }
 

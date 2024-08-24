@@ -171,7 +171,7 @@ private fun PageContent(
                     .fillMaxWidth()
                     .height(bgImageHeight.dp)
                     .sharedElement(
-                        state = rememberSharedContentState(key = "${uiState.key}"),
+                        state = rememberSharedContentState(key = uiState.key),
                         animatedVisibilityScope = animatedContentScope
                     )
                     .clip(

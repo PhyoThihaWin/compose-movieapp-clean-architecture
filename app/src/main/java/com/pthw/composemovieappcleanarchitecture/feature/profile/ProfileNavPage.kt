@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.pthw.composemovieappcleanarchitecture.feature.profile
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -31,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,10 +43,12 @@ import androidx.compose.ui.unit.dp
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.IconAndTextInfoRow
+import com.pthw.composemovieappcleanarchitecture.feature.profile.composable.LanguageModalSheet
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
+import com.pthw.domain.general.Localization
 
 /**
  * Created by P.T.H.W on 27/03/2024.
@@ -56,6 +63,9 @@ fun ProfileNavPage(modifier: Modifier = Modifier) {
 private fun PageContent(
     modifier: Modifier = Modifier
 ) {
+    var toShowLanguageSheet by remember {
+        mutableStateOf(false)
+    }
     Scaffold {
         LazyColumn(
             modifier = Modifier.padding(it)
@@ -117,7 +127,9 @@ private fun PageContent(
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_translate_profile_item,
                     text = "Change language"
-                )
+                ) {
+                    toShowLanguageSheet = true
+                }
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_lock_profile_item,
                     text = "Change password"
@@ -131,6 +143,10 @@ private fun PageContent(
                     text = "Dark Mode"
                 )
             }
+        }
+
+        LanguageModalSheet(isShow = toShowLanguageSheet, localeCode = Localization.ENGLISH) {
+            toShowLanguageSheet = false
         }
     }
 }

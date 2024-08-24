@@ -9,7 +9,8 @@ import com.pthw.data.network.movie.response.MovieResponse
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-class NowPlayingMoviePagingSource(
+class SearchMoviePagingSource(
+    private val query: String = "",
     private val apiService: MovieApiService,
 ) : PagingSource<Int, MovieResponse>() {
 
@@ -22,7 +23,7 @@ class NowPlayingMoviePagingSource(
         }
 
         return runCatching {
-            val raw = apiService.getNowPlayingMovies(startKey)
+            val raw = apiService.searchMovies(query = query, page = startKey)
             val results = raw.data.orEmpty()
             Timber.e("Success api-call: %s", results.size)
 

@@ -4,20 +4,15 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,13 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.SharedAnimatedContent
@@ -43,6 +35,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanAr
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
+import com.pthw.composemovieappcleanarchitecture.AppConstant
 import com.pthw.shared.extension.roundTo
 import com.pthw.shared.extension.simpleClickable
 
@@ -71,7 +64,7 @@ fun MovieGridItemView(
                 modifier = modifier
                     .height(240.dp)
                     .sharedElement(
-                        state = rememberSharedContentState(key = "listing-image-${movieVo.id}"),
+                        state = rememberSharedContentState(key = AppConstant.ListingMoviesKey.format(movieVo.id)),
                         animatedVisibilityScope = animatedContentScope,
                     )
                     .clip(Shapes.small)
@@ -88,6 +81,8 @@ fun MovieGridItemView(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
+
+            // star
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -111,6 +106,7 @@ fun MovieGridItemView(
                 )
             }
 
+            // genre
             Row(
                 verticalAlignment = Alignment.Top
             ) {
@@ -122,6 +118,7 @@ fun MovieGridItemView(
                 )
             }
 
+            // data
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {

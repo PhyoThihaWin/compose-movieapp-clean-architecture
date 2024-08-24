@@ -1,6 +1,7 @@
-package com.pthw.composemovieappcleanarchitecture.feature.listing
+@file:OptIn(ExperimentalSharedTransitionApi::class)
 
-import android.content.res.Configuration
+package com.pthw.composemovieappcleanarchitecture.feature.search
+
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,31 +44,30 @@ import com.pthw.composemovieappcleanarchitecture.AppConstant
 import kotlinx.coroutines.flow.flowOf
 
 /**
- * Created by P.T.H.W on 04/04/2024.
+ * Created by P.T.H.W on 23/08/2024.
  */
-
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieListingPage(
+fun SearchMoviesPage(
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    viewModel: SearchMoviesViewModel = hiltViewModel(),
     navController: NavController = LocalNavController.current,
-    viewModel: MovieListingPageViewModel = hiltViewModel()
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
 ) {
     PageContent(
         modifier = modifier,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        title = viewModel.movieType.orEmpty(),
-        pagingItems = viewModel.getMovieListingFlow().collectAsLazyPagingItems(),
+        pagingItems = viewModel.moviesPagingFlow.collectAsLazyPagingItems(),
         onAction = {
             when (it) {
-                is UiEvent.GoBack -> navController.popBackStack()
+                UiEvent.GoBack -> navController.popBackStack()
                 is UiEvent.ItemClick -> navController.navigateToMovieDetailPage(
                     sharedKey = AppConstant.ListingMoviesKey.format(it.movie.id),
-                    movie = it.movie
+                    it.movie
                 )
+
+                is UiEvent.onSearch -> viewModel.updateSearchQuery(it.query)
             }
         }
     )
@@ -74,23 +75,22 @@ fun MovieListingPage(
 
 private sealed class UiEvent {
     data object GoBack : UiEvent()
-    class ItemClick(val movie: MovieVo) : UiEvent()
+    data class ItemClick(val movie: MovieVo) : UiEvent()
+    data class onSearch(val query: String) : UiEvent()
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun PageContent(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    title: String,
     pagingItems: LazyPagingItems<MovieVo>,
     onAction: (UiEvent) -> Unit = {}
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBarView(title = title) {
+            TopAppBarView(title = "Discover") {
                 onAction(UiEvent.GoBack)
             }
         },
@@ -99,7 +99,9 @@ private fun PageContent(
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = modifier.padding(innerPadding),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             contentPadding = PaddingValues(
                 start = Dimens.MARGIN_MEDIUM_2,
                 end = Dimens.MARGIN_MEDIUM_2,
@@ -109,6 +111,14 @@ private fun PageContent(
             verticalArrangement = Arrangement.spacedBy(Dimens.MARGIN_20),
             horizontalArrangement = Arrangement.spacedBy(Dimens.MARGIN_MEDIUM_2)
         ) {
+            item(span = { GridItemSpan(2) }) {
+                HomeSearchBarView(
+                    modifier = Modifier,
+                    hint = "Search",
+                ) {
+                    onAction(UiEvent.onSearch(it))
+                }
+            }
             items(pagingItems.itemCount) { index ->
                 pagingItems[index]?.let {
                     MovieGridItemView(
@@ -162,24 +172,22 @@ private fun PageContent(
                 modifier.fillMaxSize()
             )
         }
-
     }
 }
 
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {
-        SharedAnimatedContent {
-            PageContent(
-                modifier = Modifier,
-                sharedTransitionScope = this,
-                animatedContentScope = it,
-                title = "Movies",
-                pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
-            )
+        Surface {
+            SharedAnimatedContent {
+                PageContent(
+                    modifier = Modifier,
+                    sharedTransitionScope = this,
+                    animatedContentScope = it,
+                    pagingItems = flowOf(PagingData.from(emptyList<MovieVo>())).collectAsLazyPagingItems()
+                )
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ComposeMovieAppCleanArchitecture</string>
+    <string name="locale_english" translatable="false">&#127482;&#127480;\ \ \ \ \ \ English</string>
+    <string name="locale_myanmar" translatable="false">&#127474;&#127474;\ \ \ \ \ \ မြန်မာ</string>
 </resources>

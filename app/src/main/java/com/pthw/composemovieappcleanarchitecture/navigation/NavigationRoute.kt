@@ -12,6 +12,9 @@ sealed class Routes {
     data object HomePage : Routes()
 
     @Serializable
+    data object SearchMoviesPage : Routes()
+
+    @Serializable
     data class MovieDetail(
         val sharedKey: String,
         val id: Int,

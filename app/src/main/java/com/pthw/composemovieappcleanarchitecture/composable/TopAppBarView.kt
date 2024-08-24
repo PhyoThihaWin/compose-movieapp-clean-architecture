@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +32,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 fun TopAppBarView(
     title: String,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    onBack: (() -> Unit)? = null
 ) {
     Box(
         modifier = modifier
@@ -41,9 +42,10 @@ fun TopAppBarView(
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_left),
             modifier = Modifier
+                .alpha(if (onBack == null) 0f else 1f)
                 .clip(CircleShape)
                 .clickable {
-                    onBack()
+                    onBack?.invoke()
                 }
                 .padding(
                     Dimens.MARGIN_MEDIUM
@@ -59,6 +61,18 @@ fun TopAppBarView(
             textAlign = TextAlign.Center,
             fontSize = Dimens.TEXT_REGULAR_3, fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarViewWithBackPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            TopAppBarView("Title") {
+
+            }
+        }
     }
 }
 

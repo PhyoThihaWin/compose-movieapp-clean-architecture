@@ -16,6 +16,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.movie.movieNavPageNavig
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.movieDetailPage
 import com.pthw.composemovieappcleanarchitecture.feature.payment.paymentPage
 import com.pthw.composemovieappcleanarchitecture.feature.profile.profileNavPage
+import com.pthw.composemovieappcleanarchitecture.feature.search.searchMoviesPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.invoiceTicketPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.ticketNavPage
 
@@ -38,6 +39,7 @@ fun MainNavHost(
             modifier = modifier,
         ) {
             homeNavPage(this@SharedTransitionLayout)
+            searchMoviesPage(this@SharedTransitionLayout)
             ticketNavPage()
             movieNavPage(this@SharedTransitionLayout)
             profileNavPage()
