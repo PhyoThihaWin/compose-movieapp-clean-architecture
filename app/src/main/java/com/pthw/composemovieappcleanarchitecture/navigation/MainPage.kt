@@ -31,6 +31,7 @@ import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavi
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBarItem
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
+import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -53,8 +54,6 @@ fun MainPage(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            LocalLocalization.current.value
-
             AnimatedVisibility(
                 visible = currentDestination.isTopLevelDestinationInHierarchy(destinations),
                 enter = slideInVertically(
@@ -91,6 +90,7 @@ private fun NiaBottomBar(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
+    LocalLocalization.current.value
     NiaNavigationBar(
         modifier = modifier,
     ) {

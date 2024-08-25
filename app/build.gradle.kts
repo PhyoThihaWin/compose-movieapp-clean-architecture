@@ -93,7 +93,7 @@ android {
     }
 
     composeCompiler {
-        enableStrongSkippingMode = false
+        enableStrongSkippingMode = true
     }
 
     bundle {
