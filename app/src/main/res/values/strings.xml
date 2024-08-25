@@ -2,4 +2,53 @@
     <string name="app_name">ComposeMovieAppCleanArchitecture</string>
     <string name="locale_english" translatable="false">&#127482;&#127480;\ \ \ \ \ \ English</string>
     <string name="locale_myanmar" translatable="false">&#127474;&#127474;\ \ \ \ \ \ မြန်မာ</string>
+
+    <string name="nav_title_home">Home</string>
+    <string name="nav_title_ticket">Ticket</string>
+    <string name="nav_title_movie">Movie</string>
+    <string name="nav_title_profile">Profile</string>
+
+    <string name="txt_choose_language" translatable="false">Choose Language</string>
+    <string name="txt_language_change_desc" translatable="false">Which language do you want to use</string>
+    <string name="txt_choose_language_mm" translatable="false">ဘာသာစကားရွေးချယ်ရန်</string>
+    <string name="txt_language_change_desc_mm" translatable="false">မည်သည့်ဘာသာစကားကို အသုံးပြုချင်ပါသလဲ။</string>
+
+    <string name="txt_change_language">Change language</string>
+    <string name="txt_my_ticket">My Ticket</string>
+    <string name="txt_payment_history">Payment history</string>
+    <string name="txt_change_password">Change password</string>
+    <string name="txt_face_id_touch_id">Face ID / Touch ID</string>
+    <string name="txt_dark_mode">Dark Mode</string>
+    <string name="txt_select" translatable="false">Select</string>
+    <string name="txt_select_mm" translatable="false">ရွေးချယ်မည်</string>
+
+
+
+    <string name="txt_hi_three">Hi, three! 👋</string>
+    <string name="txt_welcome_back">Welcome back</string>
+    <string name="txt_now_playing">Now playing</string>
+    <string name="txt_coming_soon">Coming soon</string>
+    <string name="txt_promo_discount"><![CDATA[Promo & Discount]]></string>
+    <string name="txt_celebrities">Celebrities</string>
+    <string name="txt_movie_news">Movie News</string>
+    <string name="txt_see_all">See All</string>
+    <string name="tab_now_playing">Now playing</string>
+    <string name="tab_coming_soon">Coming soon</string>
+    <string name="txt_watch_trailer">Watch trailer</string>
+    <string name="txt_movie_genre">Movie genre:</string>
+    <string name="txt_censorship">Censorship:</string>
+    <string name="txt_language">Language:</string>
+    <string name="txt_storyline">Storyline</string>
+    <string name="txt_casts">Casts</string>
+    <string name="txt_crews">Crews</string>
+    <string name="txt_cinema">Cinema</string>
+    <string name="txt_discover">Discover</string>
+    <string name="txt_search">Search...</string>
+    <string name="txt_review">Review</string>
+    <string name="txt_loading_for_server">Loading for server...</string>
+    <string name="txt_no_movie">No Movie</string>
+    <string name="txt_retry">Retry</string>
+    <string name="txt_this_is_error_message">This is error message!</string>
+
+
 </resources>

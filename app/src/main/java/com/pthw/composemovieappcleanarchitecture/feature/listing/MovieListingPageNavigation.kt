@@ -15,8 +15,8 @@ const val movieListingPageNavigationRoute = "movie-listing/{movieType}"
 
 class MovieListingPageNavigation {
     companion object {
-        const val NOW_PLAYING = "Now Playing Movies"
-        const val COMING_SOON = "Coming Soon Movies"
+        const val NOW_PLAYING = "NowPlayingMovies"
+        const val COMING_SOON = "ComingSoonMovies"
     }
 }
 

@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,16 +61,12 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.R
 import kotlinx.coroutines.flow.flowOf
 
 /**
  * Created by P.T.H.W on 25/03/2024.
  */
-
-private val tabLabels = listOf(
-    "Now playing",
-    "Coming soon",
-)
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -117,6 +114,7 @@ private fun PageContent(
     onAction: (UiEvent) -> Unit = {}
 
 ) {
+    val context = LocalContext.current
     Scaffold { innerPadding ->
         val pagingItems = if (tabIndex == 0) nowPlayingPagingItems else upComingPagingItems
         var pagingLoadState by remember { mutableStateOf<CombinedLoadStates?>(null) }
@@ -134,6 +132,10 @@ private fun PageContent(
             horizontalArrangement = Arrangement.spacedBy(Dimens.MARGIN_MEDIUM_2)
         ) {
 
+            val tabLabels = listOf(
+                context.getString(R.string.tab_now_playing),
+                context.getString(R.string.tab_coming_soon),
+            )
             item(span = { GridItemSpan(2) }) {
                 Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM_2))
                 MovieTypeTabRow(
@@ -169,6 +171,7 @@ private fun PageContent(
                                 onClickRetry = { retry() })
                         }
                     }
+
                     loadState.append is LoadState.Loading -> {
                         item(span = { GridItemSpan(2) }) {
                             LoadingNextPageItem(modifier = Modifier)

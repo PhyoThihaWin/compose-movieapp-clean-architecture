@@ -3,7 +3,6 @@
 package com.pthw.composemovieappcleanarchitecture.feature.profile
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.IconAndTextInfoRow
@@ -48,29 +48,45 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
 import com.pthw.domain.general.Localization
+import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 27/03/2024.
  */
 
 @Composable
-fun ProfileNavPage(modifier: Modifier = Modifier) {
-    PageContent(modifier)
+fun ProfileNavPage(
+    viewModel: ProfileNavPageViewModel = hiltViewModel()
+) {
+
+    PageContent {
+        when (it) {
+            is UiEvent.LocaleSelected -> viewModel.updateLanguageCache(it.localeCode)
+        }
+    }
+}
+
+
+private sealed class UiEvent {
+    data class LocaleSelected(val localeCode: String) : UiEvent()
 }
 
 @Composable
 private fun PageContent(
-    modifier: Modifier = Modifier
+    onAction: (UiEvent) -> Unit = {}
 ) {
-    var toShowLanguageSheet by remember {
-        mutableStateOf(false)
-    }
+
+    var toShowLanguageSheet by remember { mutableStateOf(false) }
+
     Scaffold {
         LazyColumn(
             modifier = Modifier.padding(it)
         ) {
             item {
+                LocalLocalization.current.value
+
                 Spacer(modifier = Modifier.height(Dimens.MARGIN_XLARGE))
                 Row(
                     modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
@@ -118,35 +134,41 @@ private fun PageContent(
                 Spacer(modifier = Modifier.height(Dimens.MARGIN_XXXLARGE))
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_ticket_profile_item,
-                    text = "My Ticket"
+                    text = stringResource(R.string.txt_my_ticket)
                 )
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_shopping_cart_profile_item,
-                    text = "Payment history"
+                    text = stringResource(R.string.txt_payment_history)
                 )
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_translate_profile_item,
-                    text = "Change language"
+                    text = stringResource(R.string.txt_change_language)
                 ) {
                     toShowLanguageSheet = true
                 }
                 ProfileSettingItem(
                     painterResource = R.drawable.ic_lock_profile_item,
-                    text = "Change password"
+                    text = stringResource(R.string.txt_change_password)
                 )
                 ProfileSettingItemWithToggle(
                     painterResource = R.drawable.ic_face_id_profile_item,
-                    text = "Face ID / Touch ID"
+                    text = stringResource(R.string.txt_face_id_touch_id)
                 )
                 ProfileSettingItemWithToggle(
                     painterResource = R.drawable.ic_dark_mode,
-                    text = "Dark Mode"
+                    text = stringResource(R.string.txt_dark_mode)
                 )
             }
         }
 
-        LanguageModalSheet(isShow = toShowLanguageSheet, localeCode = Localization.ENGLISH) {
+        LanguageModalSheet(
+            isShow = toShowLanguageSheet,
+            localeCode = LocalConfiguration.current.locales[0].language
+        ) {
             toShowLanguageSheet = false
+            it?.let { localeCode ->
+                onAction(UiEvent.LocaleSelected(localeCode))
+            }
         }
     }
 }
@@ -248,7 +270,10 @@ private fun SwitchWithCustomColorsPreview() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
+    fontScale = 1.0f, locale = "my"
+)
 @Composable
 private fun PageContentPreview() {
     ComposeMovieAppCleanArchitectureTheme {

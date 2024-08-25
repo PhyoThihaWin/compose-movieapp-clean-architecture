@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,6 +40,9 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.R
+import com.pthw.shared.extension.or
+import com.pthw.shared.extension.then
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -54,11 +58,14 @@ fun MovieListingPage(
     navController: NavController = LocalNavController.current,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
+    val title = (viewModel.movieType == MovieListingPageNavigation.NOW_PLAYING) then
+            stringResource(id = R.string.txt_now_playing) or stringResource(id = R.string.txt_coming_soon)
+
     PageContent(
         modifier = modifier,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        title = viewModel.movieType.orEmpty(),
+        title = title,
         pagingItems = viewModel.getMovieListingFlow().collectAsLazyPagingItems(),
         onAction = {
             when (it) {

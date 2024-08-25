@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 
 /**
@@ -33,7 +35,7 @@ fun PageLoader(modifier: Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Loading for server...",
+            text = stringResource(R.string.txt_loading_for_server),
             color = MaterialTheme.colorScheme.primary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -47,7 +49,7 @@ fun PageEmpty(modifier: Modifier) {
     Box(modifier = modifier) {
         TitleTextView(
             modifier = Modifier.align(Alignment.Center),
-            text = "No Movie",
+            text = stringResource(R.string.txt_no_movie),
             color = MaterialTheme.colorScheme.primary,
             maxLines = 1,
         )
@@ -82,7 +84,7 @@ fun ErrorMessage(
             maxLines = 2
         )
         OutlinedButton(onClick = onClickRetry) {
-            Text(text = "Retry")
+            Text(text = stringResource(R.string.txt_retry))
         }
     }
 }
@@ -113,7 +115,7 @@ private fun PageLoaderPreview() {
 private fun ErrorMessagePreview() {
     ComposeMovieAppCleanArchitectureTheme {
         Surface {
-            ErrorMessage(message = "This is error message!", onClickRetry = {})
+            ErrorMessage(message = stringResource(R.string.txt_this_is_error_message), onClickRetry = {})
         }
     }
 }

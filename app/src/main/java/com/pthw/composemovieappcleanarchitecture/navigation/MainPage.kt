@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBar
 import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavigationBarItem
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -51,6 +53,8 @@ fun MainPage(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
+            LocalLocalization.current.value
+
             AnimatedVisibility(
                 visible = currentDestination.isTopLevelDestinationInHierarchy(destinations),
                 enter = slideInVertically(
@@ -108,7 +112,7 @@ private fun NiaBottomBar(
                         contentDescription = null,
                     )
                 },
-                label = { Text(destination.iconTextId) },
+                label = { Text(stringResource(id = destination.iconTextId)) },
                 modifier = if (hasUnread) Modifier.notificationDot() else Modifier,
             )
         }

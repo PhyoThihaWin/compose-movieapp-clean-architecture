@@ -54,6 +54,8 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.security.crypto)
+
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)

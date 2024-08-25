@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
@@ -54,7 +55,7 @@ fun SectionTitleWithSeeAll(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "See All",
+                text = stringResource(R.string.txt_see_all),
                 color = ColorPrimary,
                 fontSize = Dimens.TEXT_REGULAR
             )

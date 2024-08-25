@@ -12,8 +12,11 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -21,6 +24,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.composable.LocalizationUpdater
+import com.pthw.domain.general.Localization
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -89,6 +95,7 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun ComposeMovieAppCleanArchitectureTheme(
+    localization: MutableState<String> = mutableStateOf(Localization.ENGLISH),
     darkTheme: Boolean = isSystemInDarkTheme(),
     androidTheme: Boolean = false,
     dynamicColor: Boolean = false,
@@ -119,13 +126,15 @@ fun ComposeMovieAppCleanArchitectureTheme(
             window.navigationBarColor =
                 if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
+                !darkTheme
         }
     }
 
     CompositionLocalProvider(
         LocalCustomColors provides customColorsPalette,
-        LocalNavController provides rememberNavController()
+        LocalNavController provides rememberNavController(),
+        LocalLocalization provides localization
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -138,8 +147,12 @@ fun ComposeMovieAppCleanArchitectureTheme(
                 )
             }
         )
+
+        // update language
+        LocalizationUpdater(localeCode = localization.value)
     }
 
 }
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController found!") }
+val LocalLocalization = compositionLocalOf { mutableStateOf(Localization.ENGLISH) }

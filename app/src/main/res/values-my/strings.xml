@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_title_home">ပင်မ</string>
+    <string name="nav_title_ticket">လက်မှတ်</string>
+    <string name="nav_title_movie">ရုပ်ရှင်များ</string>
+    <string name="nav_title_profile">ပရိုဖိုင်</string>
+
+    <string name="txt_change_language">ဘာသာစကားပြောင်းရန်</string>
+    <string name="txt_my_ticket">လက်မှတ်များ</string>
+    <string name="txt_payment_history">ငွေပေးချမှုမှတ်တမ်း</string>
+    <string name="txt_change_password">လျှို့ဝှက်နံပါတ်ပြောင်းလဲရန်</string>
+    <string name="txt_face_id_touch_id">လုံခြုံရေး ဆက်တင်များ</string>
+    <string name="txt_dark_mode">အနက်ရောင်ပုံစံ</string>
+
+    <string name="txt_hi_three">မင်္ဂလာပါ။ 👋</string>
+    <string name="txt_welcome_back">ပြန်လည်ကြိုဆိုပါတယ်</string>
+    <string name="txt_now_playing">ရုံတင်နေသောရုပ်ရှင်များ</string>
+    <string name="txt_coming_soon">မကြာမီထွက်မည့်ရုပ်ရှင်များ</string>
+    <string name="txt_promo_discount">လူကြိုက်များသောရုပ်ရှင်များ</string>
+    <string name="txt_celebrities">ရုပ်ရှင်သရုပ်ဆောင်များ</string>
+    <string name="txt_movie_news">ခေတ်စားနေသောသတင်းများ</string>
+    <string name="txt_see_all">နောက်ထပ်</string>
+    <string name="tab_now_playing">ရုံတင်ပြသနေသော</string>
+    <string name="tab_coming_soon">မကြာင်မီလာမည်</string>
+    <string name="txt_watch_trailer">ထွေလာကြည့်ရန်</string>
+    <string name="txt_movie_genre">ရုပ်ရှင်အမျိုးအစား:</string>
+    <string name="txt_censorship">ရုပ်ရှင်ဆင်ဆာ:</string>
+    <string name="txt_language">ဘာသာစကား:</string>
+    <string name="txt_storyline">ဇာတ်လမ်းအကျဥ်း</string>
+    <string name="txt_casts">သရုပ်ဆောင်များ</string>
+    <string name="txt_crews">ဇာတ်လမ်းပါဝင်သူများ</string>
+    <string name="txt_cinema">ရုပ်ရှင်ရုံများ</string>
+    <string name="txt_discover">ဇာတ်လမ်းရှာဖွေရန်</string>
+    <string name="txt_search">ရှာရန်...</string>
+    <string name="txt_review">လူကြိုက်နှုန်း</string>
+    <string name="txt_loading_for_server">ဆာဗာမှ ရယူနေပါပြီ...</string>
+    <string name="txt_no_movie">ရုပ်ရှင်များမရှိသေးပါ</string>
+    <string name="txt_retry">ထပ်မံကြိုးစားရန်</string>
+    <string name="txt_this_is_error_message">တစ်ခုခုမှားယွင်းနေပါသည်။</string>
+
+</resources>

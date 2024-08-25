@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -224,23 +225,23 @@ private fun PageContent(
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM_2))
 
                             MovieInfoDescriptionTexts(
-                                title = "Movie genre:",
+                                title = stringResource(R.string.txt_movie_genre),
                                 text = movieDetail.genres.map { it.name }.joinToString(", ")
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
                             MovieInfoDescriptionTexts(
-                                title = "Censorship:",
+                                title = stringResource(R.string.txt_censorship),
                                 text = if (movieDetail.adult) "18+" else "10+"
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
                             MovieInfoDescriptionTexts(
-                                title = "Language:",
+                                title = stringResource(R.string.txt_language),
                                 text = "English"
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
 
                             TitleTextView(
-                                text = "Storyline",
+                                text = stringResource(R.string.txt_storyline),
                                 modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
@@ -252,7 +253,7 @@ private fun PageContent(
                                         append(movieDetail.overview.substring(0..250))
                                         append("... ")
                                         withStyle(style = SpanStyle(color = ColorPrimary)) {
-                                            append("See more")
+                                            append(stringResource(id = R.string.txt_see_all))
                                         }
                                     } else {
                                         append(movieDetail.overview)
@@ -265,7 +266,7 @@ private fun PageContent(
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
 
                             TitleTextView(
-                                text = "Casts",
+                                text = stringResource(R.string.txt_casts),
                                 modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
@@ -280,7 +281,7 @@ private fun PageContent(
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
 
                             TitleTextView(
-                                text = "Crews",
+                                text = stringResource(R.string.txt_crews),
                                 modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_MEDIUM))
@@ -298,7 +299,7 @@ private fun PageContent(
                             )
 
                             TitleTextView(
-                                text = "Cinema",
+                                text = stringResource(R.string.txt_cinema),
                                 modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                             )
                             Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_10))
@@ -314,23 +315,27 @@ private fun PageContent(
 
                     item {
                         Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-                                .height(Dimens.BTN_COMMON_HEIGHT),
-                            colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
-                            onClick = {
-                                onAction(UiEvent.Continue)
-                            }) {
-                            Text(
-                                text = "Continue",
-                                fontSize = Dimens.TEXT_REGULAR_2,
-                                color = Color.Black
-                            )
-                        }
-                        Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
                     }
+
+//                    item {
+//                        Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_LARGE))
+//                        Button(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+//                                .height(Dimens.BTN_COMMON_HEIGHT),
+//                            colors = ButtonDefaults.buttonColors(containerColor = ColorPrimary),
+//                            onClick = {
+//                                onAction(UiEvent.Continue)
+//                            }) {
+//                            Text(
+//                                text = "Continue",
+//                                fontSize = Dimens.TEXT_REGULAR_2,
+//                                color = Color.Black
+//                            )
+//                        }
+//                        Spacer(modifier = Modifier.padding(bottom = Dimens.MARGIN_LARGE))
+//                    }
 
                 }
             }
@@ -490,7 +495,6 @@ private fun MovieInfoDescriptionTexts(
             text = title,
             fontSize = Dimens.TEXT_REGULAR,
             modifier = Modifier.weight(1f),
-            color = Color.LightGray
         )
         Text(
             text = text,
@@ -525,7 +529,7 @@ private fun MovieDetailInfoCardSection(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Review")
+            Text(text = stringResource(R.string.txt_review))
             Spacer(modifier = Modifier.padding(end = Dimens.MARGIN_SMALL))
             Icon(
                 imageVector = Icons.Rounded.Star,
@@ -580,7 +584,8 @@ private fun MovieDetailInfoCardSection(
                     start = Dimens.MARGIN_SMALL,
                     end = Dimens.MARGIN_6
                 ),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Rounded.PlayArrow,
@@ -589,7 +594,7 @@ private fun MovieDetailInfoCardSection(
             )
             Spacer(modifier = Modifier.padding(start = Dimens.MARGIN_SMALL))
             Text(
-                text = "Watch trailer",
+                text = stringResource(R.string.txt_watch_trailer),
                 fontSize = Dimens.TEXT_SMALL,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
@@ -602,9 +607,37 @@ private fun MovieDetailInfoCardSection(
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @OptIn(ExperimentalSharedTransitionApi::class)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = true, label = ""
+            ) {
+                Surface {
+                    PageContent(
+                        modifier = Modifier,
+                        uiState = UiState(
+                            key = "",
+                            backdropPath = "",
+                            movieDetailVo = ResultState.Success(MovieDetailVo.fake())
+                        ),
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedContentScope = this,
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Composable
+private fun PageContentPreviewNight() {
     ComposeMovieAppCleanArchitectureTheme {
         SharedTransitionLayout {
             AnimatedContent(

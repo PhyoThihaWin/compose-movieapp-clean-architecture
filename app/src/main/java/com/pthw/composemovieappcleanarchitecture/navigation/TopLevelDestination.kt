@@ -16,31 +16,31 @@ import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaIcon
 enum class TopLevelDestination(
     val selectedIcon: Int,
     val unselectedIcon: Int,
-    val iconTextId: String,
-    val titleTextId: String,
+    val iconTextId: Int,
+    val titleTextId: Int,
 ) {
     HOME(
         selectedIcon = R.drawable.ic_home_selected,
         unselectedIcon = R.drawable.ic_home,
-        iconTextId = "Home",
-        titleTextId = "Home",
+        iconTextId = R.string.nav_title_home,
+        titleTextId = R.string.nav_title_home,
     ),
     TICKET(
         selectedIcon = R.drawable.ic_ticket_selected,
         unselectedIcon = R.drawable.ic_ticket,
-        iconTextId = "Ticket",
-        titleTextId = "Ticket",
+        iconTextId = R.string.nav_title_ticket,
+        titleTextId = R.string.nav_title_ticket,
     ),
     MOVIE(
         selectedIcon = R.drawable.ic_video_selected,
         unselectedIcon = R.drawable.ic_video,
-        iconTextId = "Movie",
-        titleTextId = "Movie",
+        iconTextId = R.string.nav_title_movie,
+        titleTextId = R.string.nav_title_movie,
     ),
     PROFILE(
         selectedIcon = R.drawable.ic_user_selected,
         unselectedIcon = R.drawable.ic_user,
-        iconTextId = "Profile",
-        titleTextId = "Profile",
+        iconTextId = R.string.nav_title_profile,
+        titleTextId = R.string.nav_title_profile,
     ),
 }

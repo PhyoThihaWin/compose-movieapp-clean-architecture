@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -41,6 +42,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.R
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -90,7 +92,7 @@ private fun PageContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBarView(title = "Discover") {
+            TopAppBarView(title = stringResource(R.string.txt_discover)) {
                 onAction(UiEvent.GoBack)
             }
         },
@@ -114,7 +116,7 @@ private fun PageContent(
             item(span = { GridItemSpan(2) }) {
                 HomeSearchBarView(
                     modifier = Modifier,
-                    hint = "Search",
+                    hint = stringResource(R.string.txt_search),
                 ) {
                     onAction(UiEvent.onSearch(it))
                 }

@@ -1,8 +1,10 @@
 package com.pthw.appbase.di
 
+import com.pthw.data.local.repository.CacheRepositoryImpl
 import com.pthw.data.repository.ActorRepositoryImpl
 import com.pthw.data.repository.MovieRepositoryImpl
 import com.pthw.domain.repository.ActorRepository
+import com.pthw.domain.repository.CacheRepository
 import com.pthw.domain.repository.MovieRepository
 import dagger.Binds
 import dagger.Module
@@ -21,4 +23,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindActorRepository(repository: ActorRepositoryImpl): ActorRepository
+
+    @Binds
+    abstract fun bindCacheRepository(repository: CacheRepositoryImpl): CacheRepository
 }

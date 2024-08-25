@@ -57,7 +57,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -76,8 +78,6 @@ import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
 import com.pthw.composemovieappcleanarchitecture.composable.SectionTitleWithSeeAll
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
-import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.COMING_SOON
-import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation.Companion.NOW_PLAYING
 import com.pthw.composemovieappcleanarchitecture.feature.listing.navigateToMovieListingPage
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.feature.search.navigateToSearchMoviesPage
@@ -90,6 +90,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation
 import com.pthw.shared.extension.roundTo
 import com.pthw.shared.extension.showShimmer
 import com.pthw.shared.extension.simpleClickable
@@ -107,6 +108,7 @@ fun HomeNavPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
+    val context = LocalContext.current
 
     val uiState = UiState(
         refreshing = viewModel.refreshing.value,
@@ -124,8 +126,8 @@ fun HomeNavPage(
         onAction = {
             when (it) {
                 UiEvent.Refresh -> viewModel.refreshHomeData()
-                UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(NOW_PLAYING)
-                UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(COMING_SOON)
+                UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(MovieListingPageNavigation.NOW_PLAYING)
+                UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(MovieListingPageNavigation.COMING_SOON)
                 is UiEvent.ItemClick -> {
                     navController.navigateToMovieDetailPage(
                         sharedKey = it.sharedKey,
@@ -172,11 +174,11 @@ private fun HomePageContent(
             ) {
                 Column(modifier.weight(1f)) {
                     Text(
-                        "Hi, three! \uD83D\uDC4B",
+                        stringResource(R.string.txt_hi_three),
                         fontSize = Dimens.TEXT_REGULAR
                     )
                     Text(
-                        text = "Welcome back",
+                        text = stringResource(R.string.txt_welcome_back),
                         fontSize = Dimens.TEXT_XLARGE,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -217,7 +219,7 @@ private fun HomePageContent(
                     // Now Playing
                     SectionTitleWithSeeAll(
                         modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                        title = "Now playing"
+                        title = stringResource(R.string.txt_now_playing)
                     ) {
                         onAction(UiEvent.NowPlayingSeeAll)
                     }
@@ -246,7 +248,7 @@ private fun HomePageContent(
                     // Coming Soon
                     SectionTitleWithSeeAll(
                         modifier = modifier.padding(vertical = Dimens.MARGIN_MEDIUM_2),
-                        title = "Coming soon"
+                        title = stringResource(R.string.txt_coming_soon)
                     ) {
                         onAction(UiEvent.ComingSoonSeeAll)
                     }
@@ -277,7 +279,7 @@ private fun HomePageContent(
 
                     // Promo & Discount
                     TitleTextView(
-                        text = "Promo & Discount",
+                        text = stringResource(R.string.txt_promo_discount),
                         modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
                     )
 
@@ -302,7 +304,7 @@ private fun HomePageContent(
                     // Service
                     TitleTextView(
                         modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
-                        text = "Celebrities"
+                        text = stringResource(R.string.txt_celebrities)
                     )
 
                     ResultRender(uiState.popularActors,
@@ -324,7 +326,7 @@ private fun HomePageContent(
                     // Movie News
                     TitleTextView(
                         modifier = modifier.padding(Dimens.MARGIN_MEDIUM_2),
-                        text = "Movie News"
+                        text = stringResource(R.string.txt_movie_news)
                     )
 
 
@@ -946,7 +948,7 @@ private fun HomeSearchBarView(
         )
         Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
         Text(
-            text = "Search",
+            text = stringResource(id = R.string.txt_search),
             fontSize = Dimens.TEXT_REGULAR,
             color = Color.Gray,
         )
