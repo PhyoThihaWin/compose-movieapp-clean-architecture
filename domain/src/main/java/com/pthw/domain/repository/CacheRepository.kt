@@ -7,7 +7,7 @@ interface CacheRepository {
     fun getLanguage(): Flow<String>
     suspend fun putLanguage(localeCode: String)
 
-//    fun getThemeModeNormal(): String
-//    fun getThemeMode(): Flow<String>
-//    suspend fun putThemeMode(theme: String)
+    fun getThemeModeNormal(): String
+    fun getThemeMode(): Flow<String>
+    suspend fun putThemeMode(theme: String)
 }

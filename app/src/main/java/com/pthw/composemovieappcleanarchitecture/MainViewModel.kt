@@ -1,8 +1,11 @@
 package com.pthw.composemovieappcleanarchitecture
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pthw.domain.general.AppThemeMode
 import com.pthw.domain.repository.CacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -15,11 +18,13 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
-): ViewModel() {
+) : ViewModel() {
     val currentLanguage = mutableStateOf(cacheRepository.getLanguageNormal())
+    val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
 
     init {
         getLanguageCache()
+        getThemeMode()
     }
 
     private fun getLanguageCache() {
@@ -29,4 +34,13 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    private fun getThemeMode() {
+        viewModelScope.launch {
+            cacheRepository.getThemeMode().collectLatest {
+                appThemeMode.value = it
+            }
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.pthw.domain.general.AppThemeMode
 import com.pthw.domain.general.Localization
 import com.pthw.domain.repository.CacheRepository
 import kotlinx.coroutines.flow.Flow
@@ -39,23 +40,23 @@ class CacheRepositoryImpl @Inject constructor(
         }
     }
 
-//    override fun getThemeModeNormal(): String {
-//        return runBlocking {
-//            dataStore.data.first()[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
-//        }
-//    }
-//
-//    override fun getThemeMode(): Flow<String> {
-//        return dataStore.data.map {
-//            it[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
-//        }
-//    }
-//
-//
-//    override suspend fun putThemeMode(theme: String) {
-//        dataStore.edit {
-//            it[PREF_KEY_THEME_MODE] = theme
-//        }
-//    }
+    override fun getThemeModeNormal(): String {
+        return runBlocking {
+            dataStore.data.first()[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
+        }
+    }
+
+    override fun getThemeMode(): Flow<String> {
+        return dataStore.data.map {
+            it[PREF_KEY_THEME_MODE] ?: AppThemeMode.SYSTEM_DEFAULT
+        }
+    }
+
+
+    override suspend fun putThemeMode(theme: String) {
+        dataStore.edit {
+            it[PREF_KEY_THEME_MODE] = theme
+        }
+    }
 
 }

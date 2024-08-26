@@ -49,6 +49,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanAr
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
+import com.pthw.domain.general.AppThemeMode
 import com.pthw.domain.general.Localization
 import timber.log.Timber
 
@@ -60,30 +61,35 @@ import timber.log.Timber
 fun ProfileNavPage(
     viewModel: ProfileNavPageViewModel = hiltViewModel()
 ) {
-
-    PageContent {
+    PageContent(
+        uiState = UiState(isDark = viewModel.appThemeMode.value == AppThemeMode.DARK_MODE)
+    ) {
         when (it) {
             is UiEvent.LocaleSelected -> viewModel.updateLanguageCache(it.localeCode)
+            is UiEvent.ThemeModeToggle -> viewModel.updateCachedThemeMode(if (it.isDark) AppThemeMode.DARK_MODE else AppThemeMode.SYSTEM_DEFAULT)
         }
     }
 }
 
+data class UiState(
+    val isDark: Boolean = false
+)
 
 private sealed class UiEvent {
     data class LocaleSelected(val localeCode: String) : UiEvent()
+    data class ThemeModeToggle(val isDark: Boolean) : UiEvent()
 }
 
 @Composable
 private fun PageContent(
+    uiState: UiState = UiState(false),
     onAction: (UiEvent) -> Unit = {}
 ) {
 
     var toShowLanguageSheet by remember { mutableStateOf(false) }
 
     Scaffold {
-        LazyColumn(
-            modifier = Modifier.padding(it)
-        ) {
+        LazyColumn(modifier = Modifier.padding(it)) {
             item {
                 LocalLocalization.current.value
 
@@ -156,20 +162,25 @@ private fun PageContent(
                 )
                 ProfileSettingItemWithToggle(
                     painterResource = R.drawable.ic_dark_mode,
-                    text = stringResource(R.string.txt_dark_mode)
-                )
+                    text = stringResource(R.string.txt_dark_mode),
+                    checked = uiState.isDark
+                ) {
+                    onAction(UiEvent.ThemeModeToggle(it))
+                }
             }
         }
 
+
         LanguageModalSheet(
             isShow = toShowLanguageSheet,
-            localeCode = LocalConfiguration.current.locales[0].language
+            localeCode = LocalLocalization.current.value
         ) {
             toShowLanguageSheet = false
             it?.let { localeCode ->
                 onAction(UiEvent.LocaleSelected(localeCode))
             }
         }
+
     }
 }
 
@@ -215,7 +226,8 @@ fun ProfileSettingItem(
 fun ProfileSettingItemWithToggle(
     @DrawableRes painterResource: Int,
     text: String,
-    onClick: () -> Unit = {}
+    checked: Boolean = false,
+    onToggle: (Boolean) -> Unit = {}
 ) {
     Column {
         Row(
@@ -236,20 +248,22 @@ fun ProfileSettingItemWithToggle(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.weight(1f)
             )
-            SwitchWithCustomColors()
+            SwitchWithCustomColors(checked, onToggle)
         }
         HorizontalDivider()
     }
 }
 
 @Composable
-fun SwitchWithCustomColors() {
-    var checked by remember { mutableStateOf(true) }
+fun SwitchWithCustomColors(
+    checked: Boolean = false,
+    onToggle: (Boolean) -> Unit = {}
+) {
 
     Switch(
         checked = checked,
         onCheckedChange = {
-            checked = it
+            onToggle(it)
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = ColorPrimary,

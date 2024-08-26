@@ -104,7 +104,9 @@ fun LanguageModalSheet(
                         stringResource(R.string.txt_select)
                     } else {
                         stringResource(R.string.txt_select_mm)
-                    }, fontSize = Dimens.TEXT_REGULAR_2
+                    },
+                    fontSize = Dimens.TEXT_REGULAR_2,
+                    color = Color.Black
                 )
             }
 

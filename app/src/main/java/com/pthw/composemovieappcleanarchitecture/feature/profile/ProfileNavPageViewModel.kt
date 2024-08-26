@@ -16,11 +16,11 @@ import javax.inject.Inject
 class ProfileNavPageViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
-    //    val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
-    val currentLanguage = mutableStateOf(cacheRepository.getLanguageNormal())
+
+    val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
 
     init {
-        getLanguageCache()
+        getThemeMode()
     }
 
     /**
@@ -32,11 +32,21 @@ class ProfileNavPageViewModel @Inject constructor(
         }
     }
 
-    private fun getLanguageCache() {
+    /**
+     * Update app chose theme to PreferenceDataStore
+     */
+    fun updateCachedThemeMode(theme: String) {
         viewModelScope.launch {
-            cacheRepository.getLanguage().collectLatest {
-                currentLanguage.value = it
+            cacheRepository.putThemeMode(theme)
+        }
+    }
+
+    private fun getThemeMode() {
+        viewModelScope.launch {
+            cacheRepository.getThemeMode().collectLatest {
+                appThemeMode.value = it
             }
         }
     }
+
 }

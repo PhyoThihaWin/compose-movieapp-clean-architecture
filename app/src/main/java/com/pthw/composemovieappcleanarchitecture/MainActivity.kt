@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.Composable
 import com.pthw.composemovieappcleanarchitecture.composable.LocalizationUpdater
 import com.pthw.composemovieappcleanarchitecture.navigation.MainPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
+import com.pthw.domain.general.AppThemeMode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,7 +24,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposeMovieAppCleanArchitectureTheme(
-                localization = viewModel.currentLanguage
+                localization = viewModel.currentLanguage,
+                darkTheme = isDarkMode(themeCode = viewModel.appThemeMode.value)
             ) {
                 MainPage(
                     windowSizeClass = calculateWindowSizeClass(this),
@@ -29,4 +33,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Composable
+fun isDarkMode(themeCode: String) = when (themeCode) {
+    AppThemeMode.LIGHT_MODE -> false
+    AppThemeMode.DARK_MODE -> true
+    else -> isSystemInDarkTheme()
 }
