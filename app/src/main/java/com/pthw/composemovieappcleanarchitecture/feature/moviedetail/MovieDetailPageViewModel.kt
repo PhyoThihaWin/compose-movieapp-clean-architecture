@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.utils.ResultState
 import com.pthw.composemovieappcleanarchitecture.navigation.Routes
+import com.pthw.domain.movie.usecase.FavoriteMovieUseCase
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class MovieDetailPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val handler: ExceptionHandler,
-    private val getMovieDetailUseCase: GetMovieDetailUseCase
+    private val getMovieDetailUseCase: GetMovieDetailUseCase,
+    private val favoriteMovieUseCase: FavoriteMovieUseCase
 ) : ViewModel() {
 
     val navArgs = savedStateHandle.toRoute<Routes.MovieDetail>()
@@ -33,10 +35,10 @@ class MovieDetailPageViewModel @Inject constructor(
         private set
 
     init {
-        getMovieDetails(navArgs.id.toString())
+        getMovieDetails(navArgs.id)
     }
 
-    private fun getMovieDetails(movieId: String) {
+    private fun getMovieDetails(movieId: Int) {
         viewModelScope.launch {
             movieDetails.value = ResultState.Loading
             runCatching {
@@ -47,6 +49,18 @@ class MovieDetailPageViewModel @Inject constructor(
                 Timber.e(it)
                 movieDetails.value = ResultState.Error(handler.map(it))
             }
+        }
+    }
+
+    fun favoriteMovie(movieId: Int) {
+        viewModelScope.launch {
+            val data = movieDetails.value
+            if (data is ResultState.Success) {
+                movieDetails.value =
+                    ResultState.Success(data.value.copy(isFavorite = !data.value.isFavorite))
+            }
+
+            favoriteMovieUseCase(movieId)
         }
     }
 

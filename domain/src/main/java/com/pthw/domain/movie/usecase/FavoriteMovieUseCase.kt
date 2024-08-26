@@ -6,13 +6,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * Created by P.T.H.W on 24/04/2024.
+ * Created by P.T.H.W on 26/08/2024.
  */
-class GetMovieDetailUseCase @Inject constructor(
+class FavoriteMovieUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
     private val dispatcherProvider: DispatcherProvider
 ) {
-    suspend operator fun invoke(params: Int) = withContext(dispatcherProvider.io()) {
-        movieRepository.getMovieDetails(params)
+    suspend operator fun invoke(movieId: Int) = withContext(dispatcherProvider.io()) {
+        movieRepository.favoriteDbMovie(movieId)
     }
 }

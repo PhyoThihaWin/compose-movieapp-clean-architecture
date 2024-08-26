@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.pthw.data.local.database.entities.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -37,4 +38,10 @@ interface MovieDao {
 
     @Query("DELETE FROM movie where isPopular = 1")
     suspend fun deletePopularMovies()
+
+    @Query("UPDATE movie SET isFavorite = NOT isFavorite WHERE id = :movieId")
+    suspend fun updateFavoriteMovie(movieId: Int)
+
+    @Query("SELECT * FROM movie WHERE isFavorite = 1 GROUP BY id")
+    fun getFavoriteMovies(): Flow<List<MovieEntity>>
 }

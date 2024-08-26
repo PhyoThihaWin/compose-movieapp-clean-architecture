@@ -56,20 +56,20 @@ class MovieApiService(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getMovieDetails(movieId: String): MovieDetailResponse {
+    suspend fun getMovieDetails(movieId: Int): MovieDetailResponse {
         val endpoint = ENDPOINT_MOVIE_DETAIL.toKtor()
         return client.get(endpoint) {
             url {
-                appendPathSegments(movieId)
+                appendPathSegments(movieId.toString())
             }
         }.body()
     }
 
-    suspend fun getMovieDetailCasts(movieId: String): MovieDetailCreditsResponse {
+    suspend fun getMovieDetailCasts(movieId: Int): MovieDetailCreditsResponse {
         val endpoint = ENDPOINT_MOVIE_DETAIL.toKtor()
         return client.get(endpoint) {
             url {
-                appendPathSegments(movieId, "credits")
+                appendPathSegments(movieId.toString(), "credits")
             }
         }.body()
     }

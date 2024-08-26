@@ -150,4 +150,4 @@ fun ComposeMovieAppCleanArchitectureTheme(
 }
 
 val LocalColorScheme = staticCompositionLocalOf { CustomColorsScheme() }
-val LocalLocalization = staticCompositionLocalOf { mutableStateOf(Localization.ENGLISH) }
+val LocalLocalization = compositionLocalOf { mutableStateOf(Localization.ENGLISH) }

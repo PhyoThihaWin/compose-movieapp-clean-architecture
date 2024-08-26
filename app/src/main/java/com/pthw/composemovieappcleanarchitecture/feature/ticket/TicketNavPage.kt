@@ -49,8 +49,8 @@ import com.pthw.shared.extension.roundTo
 fun TicketNavPage(
     viewModel: TicketNavPageViewModel = hiltViewModel()
 ) {
-    val movies = viewModel.nowPlayingMovies.collectAsState(initial = emptyList()).value
-    PageContent(movies = movies.shuffled().take(4))
+    val movies = viewModel.movies.collectAsState(initial = emptyList()).value
+    PageContent(movies = movies)
 }
 
 @Composable
@@ -62,7 +62,7 @@ private fun PageContent(movies: List<MovieVo>) {
     ) {
         LazyColumn(
             modifier = Modifier.padding(it),
-            contentPadding = PaddingValues(top = Dimens.MARGIN_MEDIUM)
+            contentPadding = PaddingValues(top = Dimens.MARGIN_MEDIUM, bottom = Dimens.BTN_COMMON_HEIGHT + Dimens.MARGIN_LARGE)
         ) {
             items(movies.size) {
                 MovieListItemView(movies[it])

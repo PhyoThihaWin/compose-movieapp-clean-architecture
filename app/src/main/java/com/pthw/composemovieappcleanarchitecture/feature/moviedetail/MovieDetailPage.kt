@@ -73,6 +73,7 @@ import com.pthw.appbase.utils.ResultRender
 import com.pthw.appbase.utils.ResultState
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.CoilAsyncImage
+import com.pthw.composemovieappcleanarchitecture.composable.MovieFavoriteIcon
 import com.pthw.composemovieappcleanarchitecture.composable.StarRatingBar
 import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.navigateToCinemaSeatPage
@@ -80,6 +81,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
+import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.MovieCastVo
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.shared.extension.minutesToHoursAndMinutes
@@ -114,6 +116,7 @@ fun MovieDetailPage(
             when (it) {
                 UiEvent.Continue -> navController.navigateToCinemaSeatPage()
                 UiEvent.GoBack -> navController.popBackStack()
+                is UiEvent.FavoriteMovie -> viewModel.favoriteMovie(it.movieId)
             }
         }
     )
@@ -128,6 +131,7 @@ private data class UiState(
 private sealed class UiEvent {
     data object GoBack : UiEvent()
     data object Continue : UiEvent()
+    data class FavoriteMovie(val movieId: Int) : UiEvent()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -213,7 +217,9 @@ private fun PageContent(
                     state = listState
                 ) {
                     item {
-                        MovieDetailInfoCardSection(movieDetail)
+                        MovieDetailInfoCardSection(movieDetail) {
+                            onAction(UiEvent.FavoriteMovie(movieDetail.id))
+                        }
 
                         Column(
                             modifier = Modifier.background(color = MaterialTheme.colorScheme.surface)
@@ -503,7 +509,8 @@ private fun MovieInfoDescriptionTexts(
 
 @Composable
 private fun MovieDetailInfoCardSection(
-    movieDetail: MovieDetailVo
+    movieDetail: MovieDetailVo,
+    onFavorite: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -513,7 +520,22 @@ private fun MovieDetailInfoCardSection(
             .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .padding(Dimens.MARGIN_MEDIUM_2)
     ) {
-        TitleTextView(text = movieDetail.title, textAlign = TextAlign.Start)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TitleTextView(
+                modifier = Modifier.weight(1f),
+                text = movieDetail.title, textAlign = TextAlign.Start
+            )
+            MovieFavoriteIcon(
+                modifier = Modifier,
+                isFavorite = movieDetail.isFavorite,
+            ) {
+                onFavorite()
+            }
+        }
         Spacer(modifier = Modifier.padding(top = Dimens.MARGIN_SMALL))
         Text(
             text = "${movieDetail.runtime.minutesToHoursAndMinutes()} • ${movieDetail.releaseDate}",

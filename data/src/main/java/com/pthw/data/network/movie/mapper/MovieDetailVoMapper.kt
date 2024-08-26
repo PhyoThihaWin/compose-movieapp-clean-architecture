@@ -39,7 +39,7 @@ class MovieDetailVoMapper @Inject constructor(
             }.orEmpty(),
             crews = casts?.crew?.map {
                 movieCastVoMapper.map(it)
-            }.orEmpty()
+            }.orEmpty(),
         )
     }
 

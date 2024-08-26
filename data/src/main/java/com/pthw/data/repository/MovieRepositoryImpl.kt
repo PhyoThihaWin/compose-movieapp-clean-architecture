@@ -22,6 +22,7 @@ import com.pthw.domain.repository.MovieRepository
 import com.pthw.shared.extension.orZero
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -49,9 +50,13 @@ class MovieRepositoryImpl @Inject constructor(
         val data = raw.data?.map {
             movieVoMapper.map(it, genres)
         }?.map(movieVoEntityMapper::map)
+
         database.withTransaction {
+            val favorites = database.movieDao().getFavoriteMovies().first()
             database.movieDao().deleteNowPlayingMovies()
-            database.movieDao().insertMovies(data.orEmpty())
+            database.movieDao().insertMovies(data?.map { item ->
+                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
+            }.orEmpty())
         }
     }
 
@@ -64,9 +69,13 @@ class MovieRepositoryImpl @Inject constructor(
         val data = raw.data?.map {
             movieVoMapper.map(it, genres)
         }?.map(movieVoEntityMapper::map)
+
         database.withTransaction {
+            val favorites = database.movieDao().getFavoriteMovies().first()
             database.movieDao().deleteUpComingMovies()
-            database.movieDao().insertMovies(data.orEmpty())
+            database.movieDao().insertMovies(data?.map { item ->
+                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
+            }.orEmpty())
         }
     }
 
@@ -79,9 +88,13 @@ class MovieRepositoryImpl @Inject constructor(
         val data = raw.data?.map {
             movieVoMapper.map(it, genres)
         }?.map(movieVoEntityMapper::map)
+
         database.withTransaction {
+            val favorites = database.movieDao().getFavoriteMovies().first()
             database.movieDao().deletePopularMovies()
-            database.movieDao().insertMovies(data.orEmpty())
+            database.movieDao().insertMovies(data?.map { item ->
+                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
+            }.orEmpty())
         }
     }
 
@@ -102,6 +115,17 @@ class MovieRepositoryImpl @Inject constructor(
             list.map(movieEntityVoMapper::map)
         }
     }
+
+    override fun getDbFavoriteMovies(): Flow<List<MovieVo>> {
+        return database.movieDao().getFavoriteMovies().map {
+            it.map(movieEntityVoMapper::map)
+        }
+    }
+
+    override suspend fun favoriteDbMovie(movieId: Int) {
+        database.movieDao().updateFavoriteMovie(movieId)
+    }
+
 
     override fun getNowPlayingPagingMovies(): Flow<PagingData<MovieVo>> {
         return Pager(
@@ -153,10 +177,13 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMovieDetails(movieId: String): MovieDetailVo {
+    override suspend fun getMovieDetails(movieId: Int): MovieDetailVo {
         val rawDetails = apiService.getMovieDetails(movieId)
         val rawCasts = apiService.getMovieDetailCasts(movieId)
+
+        val favorites = database.movieDao().getFavoriteMovies().first()
         return movieDetailVoMapper.map(rawDetails, rawCasts)
+            .copy(isFavorite = favorites.find { it.id == movieId } != null)
     }
 
     override suspend fun getMovieGenres() {

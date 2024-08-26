@@ -1,10 +1,8 @@
 package com.pthw.composemovieappcleanarchitecture.feature.ticket
 
 import androidx.lifecycle.ViewModel
-import com.pthw.domain.home.model.MovieVo
-import com.pthw.domain.home.usecase.GetNowPlayingMoviesUseCase
+import com.pthw.domain.movie.usecase.GetFavoriteMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -12,7 +10,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TicketNavPageViewModel @Inject constructor(
-    getNowPlayingMoviesUseCase: GetNowPlayingMoviesUseCase,
+    getFavoriteMoviesUseCase: GetFavoriteMoviesUseCase
 ) : ViewModel() {
-    val nowPlayingMovies: Flow<List<MovieVo>> = getNowPlayingMoviesUseCase()
+    val movies = getFavoriteMoviesUseCase()
 }

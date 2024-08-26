@@ -38,6 +38,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,7 +59,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -88,6 +89,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.composable.MovieFavoriteIcon
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.shared.extension.roundTo
@@ -107,7 +109,6 @@ fun HomeNavPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    val context = LocalContext.current
 
     val uiState = UiState(
         refreshing = viewModel.refreshing.value,
@@ -125,14 +126,22 @@ fun HomeNavPage(
         onAction = {
             when (it) {
                 UiEvent.Refresh -> viewModel.refreshHomeData()
-                UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(MovieListingPageNavigation.NOW_PLAYING)
-                UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(MovieListingPageNavigation.COMING_SOON)
+                UiEvent.NowPlayingSeeAll -> navController.navigateToMovieListingPage(
+                    MovieListingPageNavigation.NOW_PLAYING
+                )
+
+                UiEvent.ComingSoonSeeAll -> navController.navigateToMovieListingPage(
+                    MovieListingPageNavigation.COMING_SOON
+                )
+
                 is UiEvent.ItemClick -> {
                     navController.navigateToMovieDetailPage(
                         sharedKey = it.sharedKey,
                         movie = it.movie
                     )
                 }
+
+                is UiEvent.FavoriteMovie -> viewModel.favoriteMovie(it.movieId)
 
                 UiEvent.GoSearch -> navController.navigateToSearchMoviesPage()
             }
@@ -154,6 +163,7 @@ private sealed class UiEvent {
     data object NowPlayingSeeAll : UiEvent()
     data object ComingSoonSeeAll : UiEvent()
     data class ItemClick(val sharedKey: String, val movie: MovieVo) : UiEvent()
+    data class FavoriteMovie(val movieId: Int) : UiEvent()
     data object GoSearch : UiEvent()
 }
 
@@ -236,10 +246,9 @@ private fun HomePageContent(
                                 modifier = modifier,
                                 animatedContentScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
-                                movies = it.take(8)
-                            ) { key, movie ->
-                                onAction(UiEvent.ItemClick(key, movie))
-                            }
+                                movies = it.take(8),
+                                onAction = onAction
+                            )
                         })
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
@@ -264,10 +273,9 @@ private fun HomePageContent(
                                     ComingSoonMoviesItemView(
                                         modifier, it[index],
                                         sharedTransitionScope = sharedTransitionScope,
-                                        animatedContentScope = animatedContentScope
-                                    ) { key, movie ->
-                                        onAction(UiEvent.ItemClick(key, movie))
-                                    }
+                                        animatedContentScope = animatedContentScope,
+                                        onAction = onAction
+                                    )
                                 }
                             }
                         }
@@ -292,7 +300,8 @@ private fun HomePageContent(
                                 promoPagerState, modifier,
                                 sharedTransitionScope,
                                 animatedContentScope,
-                                onAction, it
+                                it,
+                                onAction
                             )
                         }
                     )
@@ -404,8 +413,8 @@ private fun PromotionAndDiscountSection(
     modifier: Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    movies: List<MovieVo>,
     onAction: (UiEvent) -> Unit,
-    it: List<MovieVo>
 ) {
     HorizontalPager(
         state = promoPagerState,
@@ -415,26 +424,34 @@ private fun PromotionAndDiscountSection(
         contentPadding = PaddingValues(horizontal = Dimens.MARGIN_MEDIUM_2)
     ) { index ->
         with(sharedTransitionScope) {
-            CoilAsyncImage(
-                modifier = modifier
-                    .fillMaxSize()
-                    .sharedElement(
-                        state = rememberSharedContentState(
-                            key = AppConstant.PromotionMoviesKey.format(it[index].id)
-                        ),
-                        animatedVisibilityScope = animatedContentScope,
-                    )
-                    .clip(Shapes.small)
-                    .simpleClickable {
-                        onAction(
-                            UiEvent.ItemClick(
-                                AppConstant.PromotionMoviesKey.format(it[index].id),
-                                it[index]
-                            )
+            Box {
+                CoilAsyncImage(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .sharedElement(
+                            state = rememberSharedContentState(
+                                key = AppConstant.PromotionMoviesKey.format(movies[index].id)
+                            ),
+                            animatedVisibilityScope = animatedContentScope,
                         )
-                    },
-                imageUrl = it[index].backdropPath,
-            )
+                        .clip(Shapes.small)
+                        .simpleClickable {
+                            onAction(
+                                UiEvent.ItemClick(
+                                    AppConstant.PromotionMoviesKey.format(movies[index].id),
+                                    movies[index]
+                                )
+                            )
+                        },
+                    imageUrl = movies[index].backdropPath,
+                )
+                MovieFavoriteIcon(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    isFavorite = movies[index].isFavorite,
+                ) {
+                    onAction(UiEvent.FavoriteMovie(movies[index].id))
+                }
+            }
         }
     }
 }
@@ -623,7 +640,7 @@ private fun NowPlayingMoviesSectionView(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     movies: List<MovieVo>,
-    itemClick: (sharedKey: String, movie: MovieVo) -> Unit
+    onAction: (UiEvent) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         movies.size
@@ -642,13 +659,19 @@ private fun NowPlayingMoviesSectionView(
         ) { page ->
             HorizontalPagerItemView(
                 modifier = modifier.clickable {
-                    itemClick(AppConstant.NowPlayingMoviesKey.format(movies[page].id), movies[page])
+                    onAction(
+                        UiEvent.ItemClick(
+                            AppConstant.NowPlayingMoviesKey.format(movies[page].id),
+                            movies[page]
+                        )
+                    )
                 },
                 pagerState = pagerState,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
                 currentPage = page,
-                movieVo = movies[page]
+                movieVo = movies[page],
+                onAction = onAction
             )
         }
 
@@ -747,7 +770,8 @@ private fun HorizontalPagerItemView(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     currentPage: Int,
-    movieVo: MovieVo
+    movieVo: MovieVo,
+    onAction: (UiEvent) -> Unit,
 ) {
     val pageOffset = pagerState.currentPage - currentPage + pagerState.currentPageOffsetFraction
     with(sharedTransitionScope) {
@@ -784,17 +808,29 @@ private fun HorizontalPagerItemView(
                 },
 
             content = {
-                CoilAsyncImage(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            lerp(1f, 1.2f, 1.2f - pageOffset.absoluteValue + 0.2f).also { scale ->
-                                scaleX = scale
-                                scaleY = scale
-                            }
-                        },
-                    imageUrl = movieVo.posterPath,
-                )
+                Box {
+                    CoilAsyncImage(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                lerp(
+                                    1f,
+                                    1.2f,
+                                    1.2f - pageOffset.absoluteValue + 0.2f
+                                ).also { scale ->
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
+                            },
+                        imageUrl = movieVo.posterPath,
+                    )
+                    MovieFavoriteIcon(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        isFavorite = movieVo.isFavorite,
+                    ) {
+                        onAction(UiEvent.FavoriteMovie(movieVo.id))
+                    }
+                }
             }
         )
     }
@@ -807,7 +843,7 @@ private fun ComingSoonMoviesItemView(
     movieVo: MovieVo,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    itemClick: (sharedKey: String, movie: MovieVo) -> Unit
+    onAction: (UiEvent) -> Unit
 ) {
     with(sharedTransitionScope) {
         Column(
@@ -815,22 +851,36 @@ private fun ComingSoonMoviesItemView(
                 .width(180.dp)
                 .padding(end = Dimens.MARGIN_MEDIUM_2)
                 .simpleClickable {
-                    itemClick(AppConstant.ComingSoonMoviesKey.format(movieVo.id), movieVo)
+                    onAction(
+                        UiEvent.ItemClick(
+                            AppConstant.ComingSoonMoviesKey.format(movieVo.id),
+                            movieVo
+                        )
+                    )
                 }
         ) {
-            CoilAsyncImage(
-                imageUrl = movieVo.posterPath,
-                modifier = modifier
-                    .height(220.dp)
-                    .width(180.dp)
-                    .sharedElement(
-                        state = rememberSharedContentState(
-                            key = AppConstant.ComingSoonMoviesKey.format(movieVo.id)
-                        ),
-                        animatedVisibilityScope = animatedContentScope,
-                    )
-                    .clip(Shapes.small)
-            )
+
+            Box {
+                CoilAsyncImage(
+                    imageUrl = movieVo.posterPath,
+                    modifier = modifier
+                        .height(220.dp)
+                        .width(180.dp)
+                        .sharedElement(
+                            state = rememberSharedContentState(
+                                key = AppConstant.ComingSoonMoviesKey.format(movieVo.id)
+                            ),
+                            animatedVisibilityScope = animatedContentScope,
+                        )
+                        .clip(Shapes.small)
+                )
+                MovieFavoriteIcon(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    isFavorite = movieVo.isFavorite,
+                ) {
+                    onAction(UiEvent.FavoriteMovie(movieVo.id))
+                }
+            }
 
             Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 

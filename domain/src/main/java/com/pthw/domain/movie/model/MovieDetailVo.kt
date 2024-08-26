@@ -16,7 +16,8 @@ data class MovieDetailVo(
     val originalLanguage: String,
     val overview: String,
     val casts: List<MovieCastVo>,
-    val crews: List<MovieCastVo>
+    val crews: List<MovieCastVo>,
+    val isFavorite: Boolean = false
 ) {
     data class Genre(
         val id: Int,
@@ -37,7 +38,8 @@ data class MovieDetailVo(
             title = "Jack's POV 14",
             voteAverage = 7.8,
             casts = MovieCastVo.fakeMovieCastList,
-            crews = MovieCastVo.fakeMovieCastList
+            crews = MovieCastVo.fakeMovieCastList,
+            isFavorite = false
         )
     }
 }
