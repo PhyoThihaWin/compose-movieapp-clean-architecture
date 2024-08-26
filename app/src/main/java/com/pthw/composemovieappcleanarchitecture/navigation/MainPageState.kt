@@ -15,8 +15,6 @@ import com.pthw.composemovieappcleanarchitecture.feature.home.navigateToHomeNavP
 import com.pthw.composemovieappcleanarchitecture.feature.movie.navigateToMovieNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.profile.navigateToProfileNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.ticket.navigateToTicketNavPage
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
-import com.pthw.domain.home.model.MovieVo
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -28,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 fun rememberMainPageState(
     windowSizeClass: WindowSizeClass,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = LocalNavController.current,
+    navController: NavHostController = rememberNavController(),
 ): MainPageState {
     return remember(navController, coroutineScope, windowSizeClass) {
         MainPageState(

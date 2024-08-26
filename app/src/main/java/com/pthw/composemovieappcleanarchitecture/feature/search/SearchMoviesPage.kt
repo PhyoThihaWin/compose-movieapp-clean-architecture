@@ -29,6 +29,8 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageEmpty
@@ -39,10 +41,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.listing.composable.Movi
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.domain.home.model.MovieVo
-import com.pthw.composemovieappcleanarchitecture.AppConstant
-import com.pthw.composemovieappcleanarchitecture.R
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -52,7 +51,7 @@ import kotlinx.coroutines.flow.flowOf
 fun SearchMoviesPage(
     modifier: Modifier = Modifier,
     viewModel: SearchMoviesViewModel = hiltViewModel(),
-    navController: NavController = LocalNavController.current,
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {

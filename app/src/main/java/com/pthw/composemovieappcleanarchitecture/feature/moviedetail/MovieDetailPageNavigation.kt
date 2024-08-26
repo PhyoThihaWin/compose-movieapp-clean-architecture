@@ -17,10 +17,12 @@ const val movieDetailPageNavigationRoute = "movie-detail/{movieId}/{backdropPath
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.movieDetailPage(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable<Routes.MovieDetail> {
         MovieDetailPage(
+            navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this
         )

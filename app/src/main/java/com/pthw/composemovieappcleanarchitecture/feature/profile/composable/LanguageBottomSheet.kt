@@ -2,6 +2,7 @@
 
 package com.pthw.composemovieappcleanarchitecture.feature.profile.composable
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -138,7 +139,7 @@ private fun LanguageRadioGroup(
                     text = stringResource(id = item.title),
                     fontSize = Dimens.TEXT_REGULAR_3,
                     fontWeight = FontWeight.Medium,
-                    color = if (item.localeCode == localeCode) ColorPrimary else Color.Black,
+                    color = if (item.localeCode == localeCode) ColorPrimary else Color.Unspecified,
                     modifier = Modifier.weight(1f)
                 )
                 RadioButton(
@@ -153,7 +154,7 @@ private fun LanguageRadioGroup(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun LanguageBottomSheetPreview() {
     ComposeMovieAppCleanArchitectureTheme {

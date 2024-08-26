@@ -38,16 +38,16 @@ fun MainNavHost(
             startDestination = startDestination,
             modifier = modifier,
         ) {
-            homeNavPage(this@SharedTransitionLayout)
-            searchMoviesPage(this@SharedTransitionLayout)
+            homeNavPage(appState.navController, this@SharedTransitionLayout)
+            searchMoviesPage(appState.navController, this@SharedTransitionLayout)
             ticketNavPage()
-            movieNavPage(this@SharedTransitionLayout)
+            movieNavPage(appState.navController, this@SharedTransitionLayout)
             profileNavPage()
-            movieListingPage(this@SharedTransitionLayout)
-            movieDetailPage(this@SharedTransitionLayout)
-            cinemaSeatPage()
-            paymentPage()
-            invoiceTicketPage()
+            movieListingPage(appState.navController, this@SharedTransitionLayout)
+            movieDetailPage(appState.navController, this@SharedTransitionLayout)
+            cinemaSeatPage(appState.navController)
+            paymentPage(appState.navController)
+            invoiceTicketPage(appState.navController)
         }
     }
 }

@@ -37,8 +37,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -81,8 +79,6 @@ import com.pthw.composemovieappcleanarchitecture.feature.cinemaseat.navigateToCi
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.movie.model.MovieCastVo
 import com.pthw.domain.movie.model.MovieDetailVo
@@ -97,7 +93,7 @@ import com.pthw.shared.extension.roundTo
 @Composable
 fun MovieDetailPage(
     modifier: Modifier = Modifier,
-    navController: NavController = LocalNavController.current,
+    navController: NavController,
     viewModel: MovieDetailPageViewModel = hiltViewModel(),
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
@@ -458,7 +454,7 @@ private fun MovieDetailActorListItem(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM)
             .clip(Shapes.medium)
-            .background(color = LocalCustomColors.current.cardBackgroundColor)
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .padding(
                 vertical = Dimens.MARGIN_MEDIUM,
                 horizontal = Dimens.MARGIN_MEDIUM_2
@@ -514,7 +510,7 @@ private fun MovieDetailInfoCardSection(
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.medium)
             .fillMaxWidth()
-            .background(color = LocalCustomColors.current.cardBackgroundColor)
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .padding(Dimens.MARGIN_MEDIUM_2)
     ) {
         TitleTextView(text = movieDetail.title, textAlign = TextAlign.Start)

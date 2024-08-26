@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,8 +41,6 @@ import com.pthw.composemovieappcleanarchitecture.composable.TitleTextView
 import com.pthw.composemovieappcleanarchitecture.composable.TopAppBarView
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -51,7 +50,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 @Composable
 fun InvoiceTicketPage(
     modifier: Modifier = Modifier,
-    navController: NavController = LocalNavController.current
+    navController: NavController
 ) {
     PageContent(modifier,
         onAction = {
@@ -80,8 +79,6 @@ private fun PageContent(
             }
         },
     ) { innerPadding ->
-        val invoiceBgColor = LocalCustomColors.current.invoiceTicketBgColor
-        val invoiceTextColor = LocalCustomColors.current.invoiceTicketTextColor
 
         LazyColumn(
             modifier = Modifier
@@ -93,11 +90,11 @@ private fun PageContent(
                     modifier = Modifier
                         .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
                         .clip(Shapes.medium)
-                        .background(color = invoiceBgColor)
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .padding(vertical = Dimens.MARGIN_MEDIUM_2)
                 ) {
                     // info card
-                    InvoiceMovieInfoDetailSection(textColor = invoiceTextColor)
+                    InvoiceMovieInfoDetailSection()
 
                     Spacer(modifier = Modifier.height(Dimens.MARGIN_XLARGE))
 
@@ -107,20 +104,17 @@ private fun PageContent(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_invoice_calendar),
-                            tint = invoiceTextColor,
                             contentDescription = ""
                         )
                         Spacer(modifier = Modifier.width(Dimens.MARGIN_SMALL))
                         Column {
                             Text(
                                 text = "14h15’",
-                                color = invoiceTextColor,
                                 fontSize = Dimens.TEXT_REGULAR,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
                                 text = "10.12.2022",
-                                color = invoiceTextColor,
                                 fontSize = Dimens.TEXT_REGULAR,
                                 fontWeight = FontWeight.Medium
                             )
@@ -130,20 +124,17 @@ private fun PageContent(
 
                         Icon(
                             painter = painterResource(id = R.drawable.ic_seat_cinema),
-                            tint = invoiceTextColor,
                             contentDescription = ""
                         )
                         Spacer(modifier = Modifier.width(Dimens.MARGIN_SMALL))
                         Column {
                             Text(
                                 text = "Section 4",
-                                color = invoiceTextColor,
                                 fontSize = Dimens.TEXT_REGULAR,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
                                 text = "Seat H7, H8",
-                                color = invoiceTextColor,
                                 fontSize = Dimens.TEXT_REGULAR,
                                 fontWeight = FontWeight.Medium
                             )
@@ -163,7 +154,6 @@ private fun PageContent(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_money_send),
-                            tint = invoiceTextColor,
                             contentDescription = ""
                         )
                         Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
@@ -171,7 +161,6 @@ private fun PageContent(
                             text = "210.000 VND",
                             fontSize = Dimens.TEXT_REGULAR_2,
                             fontWeight = FontWeight.Medium,
-                            color = invoiceTextColor
                         )
                     }
 
@@ -183,7 +172,6 @@ private fun PageContent(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_location),
-                            tint = invoiceTextColor,
                             contentDescription = ""
                         )
                         Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
@@ -191,13 +179,11 @@ private fun PageContent(
                             Text(
                                 text = "Vincom Ocean Park",
                                 fontSize = Dimens.TEXT_REGULAR_2,
-                                color = invoiceTextColor,
                                 fontWeight = FontWeight.Medium,
                             )
                             Text(
                                 text = "4th floor, Vincom Ocean Park, Da Ton, Gia Lam, Ha Noi",
                                 fontSize = Dimens.TEXT_REGULAR,
-                                color = invoiceTextColor
                             )
                         }
                     }
@@ -210,21 +196,17 @@ private fun PageContent(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_note),
-                            tint = invoiceTextColor,
                             contentDescription = ""
                         )
                         Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
                         Text(
                             text = "4th floor, Vincom Ocean Park, Da Ton, Gia Lam, Ha Noi",
                             fontSize = Dimens.TEXT_REGULAR,
-                            color = invoiceTextColor
                         )
                     }
 
 
-                    CircleDotDashedSectionView(
-                        invoiceTextColor = invoiceTextColor
-                    )
+                    CircleDotDashedSectionView()
 
                     Spacer(modifier = Modifier.height(Dimens.MARGIN_LARGE))
 
@@ -234,14 +216,13 @@ private fun PageContent(
                             .padding(horizontal = Dimens.MARGIN_LARGE),
                         contentScale = ContentScale.Crop,
                         painter = painterResource(id = R.drawable.img_barcode),
-                        colorFilter = ColorFilter.tint(invoiceTextColor),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                         contentDescription = ""
                     )
 
                     Text(
                         text = "Oder ID: 78889377726",
                         fontSize = Dimens.TEXT_REGULAR,
-                        color = invoiceTextColor,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = Dimens.MARGIN_MEDIUM),
@@ -255,9 +236,7 @@ private fun PageContent(
 }
 
 @Composable
-fun CircleDotDashedSectionView(
-    invoiceTextColor: Color
-) {
+fun CircleDotDashedSectionView() {
     Box(
         modifier = Modifier,
     ) {
@@ -275,7 +254,6 @@ fun CircleDotDashedSectionView(
                 .offset(x = -Dimens.MARGIN_LARGE)
                 .size(Dimens.MARGIN_XXXLARGE)
                 .clip(CircleShape)
-                .background(invoiceTextColor)
                 .align(Alignment.CenterStart)
         )
 
@@ -284,16 +262,13 @@ fun CircleDotDashedSectionView(
                 .offset(x = Dimens.MARGIN_LARGE)
                 .size(Dimens.MARGIN_XXXLARGE)
                 .clip(CircleShape)
-                .background(invoiceTextColor)
                 .align(Alignment.CenterEnd)
         )
     }
 }
 
 @Composable
-private fun InvoiceMovieInfoDetailSection(
-    textColor: Color
-) {
+private fun InvoiceMovieInfoDetailSection() {
     Row(
         modifier = Modifier.padding(horizontal = Dimens.MARGIN_MEDIUM_2)
     ) {
@@ -315,7 +290,6 @@ private fun InvoiceMovieInfoDetailSection(
             TitleTextView(
                 text = "Avengers: Infinity War",
                 textAlign = TextAlign.Start,
-                color = textColor
             )
             Spacer(modifier = Modifier.height(Dimens.MARGIN_MEDIUM))
             Row(
@@ -324,12 +298,10 @@ private fun InvoiceMovieInfoDetailSection(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_video_info),
                     contentDescription = null,
-                    tint = textColor
                 )
                 Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM))
                 Text(
                     text = "Adventure, Sci-fi", fontSize = Dimens.TEXT_SMALL,
-                    color = textColor
                 )
             }
             Row(
@@ -338,12 +310,10 @@ private fun InvoiceMovieInfoDetailSection(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_video_info),
                     contentDescription = null,
-                    tint = textColor
                 )
                 Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM))
                 Text(
                     text = "Vincom Ocean Park CGV", fontSize = Dimens.TEXT_SMALL,
-                    color = textColor
                 )
             }
             Row(
@@ -352,21 +322,29 @@ private fun InvoiceMovieInfoDetailSection(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_video_info),
                     contentDescription = null,
-                    tint = textColor
                 )
                 Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM))
                 Text(
                     text = "10.12.2022 • 14:15", fontSize = Dimens.TEXT_SMALL,
-                    color = textColor
                 )
             }
         }
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun PageContentPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Surface {
+            PageContent(modifier = Modifier)
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Composable
+private fun PageContentPreviewNight() {
     ComposeMovieAppCleanArchitectureTheme {
         Surface {
             PageContent(modifier = Modifier)

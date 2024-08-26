@@ -14,10 +14,12 @@ import com.pthw.composemovieappcleanarchitecture.navigation.Routes
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.searchMoviesPage(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable<Routes.SearchMoviesPage> {
         SearchMoviesPage(
+            navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this
         )

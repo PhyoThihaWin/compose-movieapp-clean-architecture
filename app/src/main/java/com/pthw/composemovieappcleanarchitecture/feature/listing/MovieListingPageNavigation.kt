@@ -22,12 +22,17 @@ class MovieListingPageNavigation {
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.movieListingPage(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable(
         route = movieListingPageNavigationRoute,
     ) {
-        MovieListingPage(sharedTransitionScope = sharedTransitionScope, animatedContentScope = this)
+        MovieListingPage(
+            navController = navController,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = this
+        )
     }
 }
 

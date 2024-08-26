@@ -9,31 +9,17 @@ import androidx.compose.ui.graphics.Color
  */
 
 @Immutable
-data class CustomColorsPalette(
-    val navigationBarColor: Color = Color.Unspecified,
-    val cardBackgroundColor: Color = Color.Unspecified,
+data class CustomColorsScheme(
     val searchBoxColor: Color = Color.Unspecified,
-    val invoiceTicketBgColor: Color = Color.Unspecified,
-    val invoiceTicketTextColor: Color = Color.Unspecified,
-    val dividerColor: Color = Color.Unspecified
-)
+) {
+    companion object {
+        val OnLight = CustomColorsScheme(
+            searchBoxColor = Color(color = 0xFFEEEEEE),
+        )
 
-val OnLightCustomColorsPalette = CustomColorsPalette(
-    navigationBarColor = Color(color = 0xFFFFFFFF),
-    cardBackgroundColor = Color(color = 0xFFFFFFFF),
-    searchBoxColor = Color(color = 0xFFEEEEEE),
-    invoiceTicketBgColor = Color(color = 0xFF000000),
-    invoiceTicketTextColor = Color(color = 0xFFFFFFFF),
-    dividerColor = Color(color = 0xFFE6E6E6)
-)
+        val OnDark = CustomColorsScheme(
+            searchBoxColor = Color.DarkGray,
+        )
+    }
+}
 
-val OnDarkCustomColorsPalette = CustomColorsPalette(
-    navigationBarColor = Color(color = 0xFF17181D),
-    cardBackgroundColor = Color(color = 0xFF292727),
-    searchBoxColor = Color.DarkGray,
-    invoiceTicketBgColor = Color(color = 0xFFFFFFFF),
-    invoiceTicketTextColor = Color(color = 0xFF000000),
-    dividerColor = Color.DarkGray
-)
-
-val LocalCustomColors = staticCompositionLocalOf { CustomColorsPalette() }

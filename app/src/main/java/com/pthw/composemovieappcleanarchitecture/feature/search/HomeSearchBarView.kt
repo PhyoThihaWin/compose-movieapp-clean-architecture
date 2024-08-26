@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 @Composable
@@ -42,7 +42,7 @@ fun HomeSearchBarView(
         modifier = modifier
             .fillMaxWidth()
             .clip(Shapes.medium)
-            .background(color = LocalCustomColors.current.searchBoxColor)
+            .background(color = LocalColorScheme.current.searchBoxColor)
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
     ) {
         Icon(

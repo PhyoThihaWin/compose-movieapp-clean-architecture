@@ -47,7 +47,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.profile.composable.Lang
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
 import com.pthw.domain.general.Localization
 import timber.log.Timber
@@ -207,7 +207,7 @@ fun ProfileSettingItem(
             )
 
         }
-        HorizontalDivider(color = LocalCustomColors.current.dividerColor)
+        HorizontalDivider()
     }
 }
 
@@ -238,7 +238,7 @@ fun ProfileSettingItemWithToggle(
             )
             SwitchWithCustomColors()
         }
-        HorizontalDivider(color = LocalCustomColors.current.dividerColor)
+        HorizontalDivider()
     }
 }
 
@@ -253,11 +253,11 @@ fun SwitchWithCustomColors() {
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = ColorPrimary,
-            checkedTrackColor = LocalCustomColors.current.searchBoxColor,
-            checkedBorderColor = LocalCustomColors.current.searchBoxColor,
+            checkedTrackColor = LocalColorScheme.current.searchBoxColor,
+            checkedBorderColor = LocalColorScheme.current.searchBoxColor,
             uncheckedThumbColor = Color.LightGray,
-            uncheckedTrackColor = LocalCustomColors.current.searchBoxColor,
-            uncheckedBorderColor = LocalCustomColors.current.searchBoxColor,
+            uncheckedTrackColor = LocalColorScheme.current.searchBoxColor,
+            uncheckedBorderColor = LocalColorScheme.current.searchBoxColor,
         )
     )
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 
 /**
@@ -37,7 +38,7 @@ fun StarRatingBar(
         for (i in 1..maxStars) {
             val isSelected = i <= rating
             val icon = if (isSelected) Icons.Filled.Star else Icons.Default.Star
-            val iconTintColor = if (isSelected) Color(0xFFFFC700) else Color(0x20B6B3B3)
+            val iconTintColor = if (isSelected) ColorPrimary else Color(0x206F6A6A)
             Icon(
                 imageVector = icon,
                 contentDescription = null,

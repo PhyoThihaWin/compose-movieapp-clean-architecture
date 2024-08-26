@@ -27,6 +27,8 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.pthw.composemovieappcleanarchitecture.AppConstant
+import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.composemovieappcleanarchitecture.composable.ErrorMessage
 import com.pthw.composemovieappcleanarchitecture.composable.LoadingNextPageItem
 import com.pthw.composemovieappcleanarchitecture.composable.PageEmpty
@@ -37,10 +39,7 @@ import com.pthw.composemovieappcleanarchitecture.feature.listing.composable.Movi
 import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToMovieDetailPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.domain.home.model.MovieVo
-import com.pthw.composemovieappcleanarchitecture.AppConstant
-import com.pthw.composemovieappcleanarchitecture.R
 import com.pthw.shared.extension.or
 import com.pthw.shared.extension.then
 import kotlinx.coroutines.flow.flowOf
@@ -55,7 +54,7 @@ fun MovieListingPage(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    navController: NavController = LocalNavController.current,
+    navController: NavController,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     val title = (viewModel.movieType == MovieListingPageNavigation.NOW_PLAYING) then

@@ -17,12 +17,14 @@ const val homeNavPageNavigationRoute = "HOME"
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.homeNavPage(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable(
         route = homeNavPageNavigationRoute,
     ) {
         HomeNavPage(
+            navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this
         )

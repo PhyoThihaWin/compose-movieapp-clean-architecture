@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,8 +48,6 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserve
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -58,7 +57,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 @Composable
 fun PaymentPage(
     modifier: Modifier = Modifier,
-    navController: NavController = LocalNavController.current
+    navController: NavController
 ) {
     PageContent(modifier = modifier,
         onAction = {
@@ -193,7 +192,7 @@ private fun PaymentMethodListItem() {
         modifier = Modifier
             .padding(bottom = Dimens.MARGIN_12)
             .clip(Shapes.medium)
-            .background(color = LocalCustomColors.current.cardBackgroundColor)
+            .background(color = MaterialTheme.colorScheme.onBackground)
             .padding(Dimens.MARGIN_12),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -317,7 +316,7 @@ fun PaymentMovieInfoCard(
     Row(
         modifier = Modifier
             .clip(Shapes.medium)
-            .background(color = LocalCustomColors.current.cardBackgroundColor)
+            .background(color = MaterialTheme.colorScheme.onBackground)
     ) {
         CoilAsyncImage(
             imageUrl = "https://mlpnk72yciwc.i.optimole.com/cqhiHLc.IIZS~2ef73/w:auto/h:auto/q:75/https://bleedingcool.com/wp-content/uploads/2024/01/godzilla_x_kong_the_new_empire_ver5_xxlg.jpg",

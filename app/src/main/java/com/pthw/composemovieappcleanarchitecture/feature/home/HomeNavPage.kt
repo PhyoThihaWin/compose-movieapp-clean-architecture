@@ -84,13 +84,12 @@ import com.pthw.composemovieappcleanarchitecture.feature.search.navigateToSearch
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.ActorVo
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.shared.extension.roundTo
 import com.pthw.shared.extension.showShimmer
 import com.pthw.shared.extension.simpleClickable
@@ -104,7 +103,7 @@ import kotlin.math.absoluteValue
 fun HomeNavPage(
     modifier: Modifier = Modifier,
     viewModel: HomeNavPageViewModel = hiltViewModel(),
-    navController: NavController = LocalNavController.current,
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
@@ -937,7 +936,7 @@ private fun HomeSearchBarView(
             .height(Dimens.BTN_COMMON_HEIGHT)
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.medium)
-            .background(color = LocalCustomColors.current.searchBoxColor)
+            .background(color = LocalColorScheme.current.searchBoxColor)
             .clickable { onClick() }
             .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
 
@@ -985,21 +984,6 @@ private fun HomeNavPageNightPreview() {
     }
 }
 
-@Preview
-@Composable
-private fun HomePageShimmerPreview() {
-    ComposeMovieAppCleanArchitectureTheme {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            NowPlayingMoviesShimmer()
-            ComingSoonMoviesShimmer()
-            PromotionAndDiscountShimmer()
-        }
-
-    }
-}
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -1026,5 +1010,20 @@ private fun HomeNavPagePreview() {
             }
 
         }
+    }
+}
+
+@Preview
+@Composable
+private fun HomePageShimmerPreview() {
+    ComposeMovieAppCleanArchitectureTheme {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            NowPlayingMoviesShimmer()
+            ComingSoonMoviesShimmer()
+            PromotionAndDiscountShimmer()
+        }
+
     }
 }

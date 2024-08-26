@@ -10,11 +10,13 @@ import androidx.navigation.compose.composable
  */
 
 const val paymentPageNavigationRoute = "payment-page"
-fun NavGraphBuilder.paymentPage() {
+fun NavGraphBuilder.paymentPage(
+    navController: NavController
+) {
     composable(
         route = paymentPageNavigationRoute
     ) {
-        PaymentPage()
+        PaymentPage(navController = navController)
     }
 }
 

@@ -36,8 +36,8 @@ data class MovieDetailVo(
             runtime = 139,
             title = "Jack's POV 14",
             voteAverage = 7.8,
-            casts = emptyList(),
-            crews = emptyList()
+            casts = MovieCastVo.fakeMovieCastList,
+            crews = MovieCastVo.fakeMovieCastList
         )
     }
 }

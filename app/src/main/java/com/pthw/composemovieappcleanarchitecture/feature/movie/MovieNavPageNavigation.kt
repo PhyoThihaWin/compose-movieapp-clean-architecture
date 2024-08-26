@@ -15,12 +15,14 @@ const val movieNavPageNavigationRoute = "MOVIE"
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.movieNavPage(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope
 ) {
     composable(
         route = movieNavPageNavigationRoute,
     ) {
         MovieNavPage(
+            navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this
         )

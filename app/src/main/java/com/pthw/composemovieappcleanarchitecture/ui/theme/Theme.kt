@@ -29,7 +29,7 @@ import com.pthw.composemovieappcleanarchitecture.composable.LocalizationUpdater
 import com.pthw.domain.general.Localization
 
 private val LightColorScheme = lightColorScheme(
-    primary = md_theme_light_primary,
+    primary = ColorPrimary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
     onPrimaryContainer = md_theme_light_onPrimaryContainer,
@@ -62,7 +62,7 @@ private val LightColorScheme = lightColorScheme(
 
 
 private val DarkColorScheme = darkColorScheme(
-    primary = md_theme_dark_primary,
+    primary = ColorPrimary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
     onPrimaryContainer = md_theme_dark_onPrimaryContainer,
@@ -114,26 +114,21 @@ fun ComposeMovieAppCleanArchitectureTheme(
     }
 
     // custom colorScheme
-    val customColorsPalette =
-        if (darkTheme) OnDarkCustomColorsPalette else OnLightCustomColorsPalette
+    val customColorsScheme = if (darkTheme) CustomColorsScheme.OnDark else CustomColorsScheme.OnLight
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor =
-                if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
-            window.navigationBarColor =
-                if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
+            window.statusBarColor = if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
+            window.navigationBarColor = if (darkTheme) md_theme_dark_background.toArgb() else md_theme_light_background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 
     CompositionLocalProvider(
-        LocalCustomColors provides customColorsPalette,
-        LocalNavController provides rememberNavController(),
+        LocalColorScheme provides customColorsScheme,
         LocalLocalization provides localization
     ) {
         MaterialTheme(
@@ -154,5 +149,5 @@ fun ComposeMovieAppCleanArchitectureTheme(
 
 }
 
-val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController found!") }
-val LocalLocalization = compositionLocalOf { mutableStateOf(Localization.ENGLISH) }
+val LocalColorScheme = staticCompositionLocalOf { CustomColorsScheme() }
+val LocalLocalization = staticCompositionLocalOf { mutableStateOf(Localization.ENGLISH) }

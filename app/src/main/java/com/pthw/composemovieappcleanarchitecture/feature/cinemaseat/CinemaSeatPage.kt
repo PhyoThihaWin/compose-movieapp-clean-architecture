@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,8 +52,6 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorCinemaSeatReserve
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 
 /**
@@ -62,7 +61,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 @Composable
 fun CinemaSeatPage(
     modifier: Modifier = Modifier,
-    navController: NavController = LocalNavController.current
+    navController: NavController
 ) {
     PageContent(modifier = modifier,
         onAction = {
@@ -256,10 +255,10 @@ private fun TimeListItem(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.large)
-            .background(color = LocalCustomColors.current.cardBackgroundColor)
+            .background(color = MaterialTheme.colorScheme.onBackground)
             .border(
                 width = 1.dp,
-                color = if (isSelected) ColorPrimary else LocalCustomColors.current.cardBackgroundColor,
+                color = if (isSelected) ColorPrimary else MaterialTheme.colorScheme.onBackground,
                 shape = Shapes.large
             )
             .clickable {
@@ -286,7 +285,7 @@ private fun DateListItem(
         modifier = Modifier
             .padding(end = Dimens.MARGIN_MEDIUM)
             .clip(Shapes.extraLarge)
-            .background(color = if (isSelected) ColorPrimary else LocalCustomColors.current.cardBackgroundColor)
+            .background(color = if (isSelected) ColorPrimary else MaterialTheme.colorScheme.background)
             .clickable {
                 onSelected()
             }

@@ -56,12 +56,11 @@ import com.pthw.composemovieappcleanarchitecture.feature.moviedetail.navigateToM
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalNavController
 import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
 import com.pthw.composemovieappcleanarchitecture.R
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -74,7 +73,7 @@ fun MovieNavPage(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    navController: NavController = LocalNavController.current,
+    navController: NavController,
     viewModel: MovieListingPageViewModel = hiltViewModel()
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
@@ -213,14 +212,14 @@ fun MovieTypeTabRow(
         modifier = Modifier
             .padding(vertical = Dimens.MARGIN_MEDIUM_2)
             .clip(Shapes.small)
-            .background(color = LocalCustomColors.current.searchBoxColor)
+            .background(color = LocalColorScheme.current.searchBoxColor)
             .padding(Dimens.MARGIN_SMALL)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() } // This is mandatory
             ) {},
         selectedTabIndex = tabIndex,
-        containerColor = LocalCustomColors.current.searchBoxColor,
+        containerColor = LocalColorScheme.current.searchBoxColor,
         indicator = {
             Box(
                 Modifier

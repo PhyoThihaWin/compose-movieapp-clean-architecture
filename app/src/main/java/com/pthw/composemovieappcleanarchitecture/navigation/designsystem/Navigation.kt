@@ -3,6 +3,7 @@ package com.pthw.composemovieappcleanarchitecture.navigation.designsystem
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -16,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorBtnIndicator
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
-import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalCustomColors
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ColorPrimary
+import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 
 /**
  * Now in Android navigation bar item with icon and label content slots. Wraps Material 3
@@ -77,7 +78,7 @@ fun NiaNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = LocalCustomColors.current.navigationBarColor,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = NiaNavigationDefaults.navigationContentColor(),
         tonalElevation = 4.dp,
         content = content,

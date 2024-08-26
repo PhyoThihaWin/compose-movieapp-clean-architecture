@@ -10,11 +10,13 @@ import androidx.navigation.compose.composable
  */
 
 const val invoiceTicketPageNavigationRoute = "invoice-ticket"
-fun NavGraphBuilder.invoiceTicketPage() {
+fun NavGraphBuilder.invoiceTicketPage(
+    navController: NavController
+) {
     composable(
         route = invoiceTicketPageNavigationRoute,
     ) {
-        InvoiceTicketPage()
+        InvoiceTicketPage(navController = navController)
     }
 }
 
