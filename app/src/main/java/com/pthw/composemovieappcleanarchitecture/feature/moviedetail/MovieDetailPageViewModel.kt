@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.pthw.appbase.exceptionmapper.ExceptionHandler
 import com.pthw.appbase.utils.ResultState
-import com.pthw.composemovieappcleanarchitecture.navigation.Routes
+import com.pthw.composemovieappcleanarchitecture.navigation.NavRoute
 import com.pthw.domain.movie.usecase.FavoriteMovieUseCase
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.movie.usecase.GetMovieDetailUseCase
@@ -29,7 +29,7 @@ class MovieDetailPageViewModel @Inject constructor(
     private val favoriteMovieUseCase: FavoriteMovieUseCase
 ) : ViewModel() {
 
-    val navArgs = savedStateHandle.toRoute<Routes.MovieDetail>()
+    val navArgs = savedStateHandle.toRoute<NavRoute.MovieDetail>()
 
     var movieDetails = mutableStateOf<ResultState<MovieDetailVo>>(ResultState.Idle)
         private set

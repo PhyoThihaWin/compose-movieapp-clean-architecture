@@ -1,5 +1,6 @@
 package com.pthw.composemovieappcleanarchitecture.navigation
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +34,7 @@ import com.pthw.composemovieappcleanarchitecture.navigation.designsystem.NiaNavi
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
 import timber.log.Timber
+import java.util.Locale
 
 /**
  * Created by P.T.H.W on 25/03/2024.
@@ -40,6 +43,7 @@ import timber.log.Timber
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainPage(
+    localeCode: String,
     windowSizeClass: WindowSizeClass,
     appState: MainPageState = rememberMainPageState(
         windowSizeClass = windowSizeClass,
@@ -47,6 +51,10 @@ fun MainPage(
 ) {
     val currentDestination = appState.currentDestination
     val destinations = appState.topLevelDestinations
+    val context = LocalContext.current
+
+    // update localization
+    context.updateLocalization(localeCode)
 
     Scaffold(
         modifier = Modifier.semantics {
@@ -82,6 +90,14 @@ fun MainPage(
     }
 }
 
+private fun Context.updateLocalization(localeCode: String) {
+    val beforeLocale = resources.configuration.locales[0]
+    val locale = Locale(localeCode)
+    resources.configuration.setLocale(locale)
+    resources.updateConfiguration(resources.configuration, resources.displayMetrics)
+    Timber.i("Locale, before: $beforeLocale, after: ${resources.configuration.locales[0]}")
+}
+
 @Composable
 private fun NiaBottomBar(
     destinations: List<TopLevelDestination>,
@@ -90,7 +106,7 @@ private fun NiaBottomBar(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    LocalLocalization.current.value
+    LocalLocalization.current
     NiaNavigationBar(
         modifier = modifier,
     ) {
@@ -140,13 +156,13 @@ private fun Modifier.notificationDot(): Modifier =
 
 private fun NavDestination?.isTopLevelDestinationInHierarchy(destinations: List<TopLevelDestination>) =
     this?.hierarchy?.any { destination ->
-        destinations.map { it.name }.contains(destination.route)
+        destinations.map { it.route.javaClass.canonicalName }.contains(destination.route)
     } ?: false
 
 
 private fun NavDestination?.isNavigationBarItemSelected(destination: TopLevelDestination) =
     this?.hierarchy?.any {
-        it.route == destination.name
+        it.route == destination.route.javaClass.canonicalName
     } ?: false
 
 

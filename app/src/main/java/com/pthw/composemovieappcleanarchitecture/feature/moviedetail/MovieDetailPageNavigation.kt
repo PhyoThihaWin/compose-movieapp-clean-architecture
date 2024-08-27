@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.pthw.composemovieappcleanarchitecture.navigation.Routes
+import com.pthw.composemovieappcleanarchitecture.navigation.NavRoute
 import com.pthw.domain.home.model.MovieVo
 
 /**
@@ -20,7 +20,7 @@ fun NavGraphBuilder.movieDetailPage(
     navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
-    composable<Routes.MovieDetail> {
+    composable<NavRoute.MovieDetail> {
         MovieDetailPage(
             navController = navController,
             sharedTransitionScope = sharedTransitionScope,
@@ -35,7 +35,7 @@ fun NavController.navigateToMovieDetailPage(
     navOptions: NavOptions? = null
 ) {
     navigate(
-        Routes.MovieDetail(
+        NavRoute.MovieDetail(
             sharedKey = sharedKey,
             id = movie.id,
             backdropPath = movie.backdropPath

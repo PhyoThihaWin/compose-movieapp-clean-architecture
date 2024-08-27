@@ -3,7 +3,6 @@ package com.pthw.composemovieappcleanarchitecture.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.darkColorScheme
@@ -12,20 +11,12 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.pthw.composemovieappcleanarchitecture.AppConstant
-import com.pthw.composemovieappcleanarchitecture.composable.LocalizationUpdater
 import com.pthw.domain.general.Localization
 
 private val LightColorScheme = lightColorScheme(
@@ -95,11 +86,11 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun ComposeMovieAppCleanArchitectureTheme(
-    localization: MutableState<String> = mutableStateOf(Localization.ENGLISH),
+    localeCode: String = Localization.ENGLISH,
     darkTheme: Boolean = isSystemInDarkTheme(),
     androidTheme: Boolean = false,
     dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable (localeCode: String) -> Unit
 ) {
 
     // default colorScheme
@@ -129,7 +120,7 @@ fun ComposeMovieAppCleanArchitectureTheme(
 
     CompositionLocalProvider(
         LocalColorScheme provides customColorsScheme,
-        LocalLocalization provides localization
+        LocalLocalization provides localeCode
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -138,16 +129,15 @@ fun ComposeMovieAppCleanArchitectureTheme(
             content = {
                 ProvideTextStyle(
                     value = MaterialTheme.typography.bodyMedium,
-                    content = content
+                    content = {
+                        content(localeCode)
+                    }
                 )
             }
         )
-
-        // update language
-        LocalizationUpdater(localeCode = localization.value)
     }
 
 }
 
-val LocalColorScheme = staticCompositionLocalOf { CustomColorsScheme() }
-val LocalLocalization = compositionLocalOf { mutableStateOf(Localization.ENGLISH) }
+val LocalColorScheme = compositionLocalOf { CustomColorsScheme() }
+val LocalLocalization = compositionLocalOf { Localization.ENGLISH }

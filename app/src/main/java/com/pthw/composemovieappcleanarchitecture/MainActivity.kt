@@ -8,7 +8,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import com.pthw.composemovieappcleanarchitecture.composable.LocalizationUpdater
 import com.pthw.composemovieappcleanarchitecture.navigation.MainPage
 import com.pthw.composemovieappcleanarchitecture.ui.theme.ComposeMovieAppCleanArchitectureTheme
 import com.pthw.domain.general.AppThemeMode
@@ -24,10 +23,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposeMovieAppCleanArchitectureTheme(
-                localization = viewModel.currentLanguage,
+                localeCode = viewModel.currentLanguage.value,
                 darkTheme = isDarkMode(themeCode = viewModel.appThemeMode.value)
-            ) {
+            ) { localeCode ->
                 MainPage(
+                    localeCode = localeCode,
                     windowSizeClass = calculateWindowSizeClass(this),
                 )
             }

@@ -6,19 +6,25 @@ import kotlinx.serialization.Serializable
  * Created by P.T.H.W on 19/08/2024.
  */
 @Serializable
-sealed class Routes {
+sealed class NavRoute {
 
     @Serializable
-    data object HomePage : Routes()
+    data object HomePage : NavRoute()
+    @Serializable
+    data object FavoritePage : NavRoute()
+    @Serializable
+    data object MoviePage : NavRoute()
+    @Serializable
+    data object ProfilePage : NavRoute()
 
     @Serializable
-    data object SearchMoviesPage : Routes()
+    data object SearchMoviesPage : NavRoute()
 
     @Serializable
     data class MovieDetail(
         val sharedKey: String,
         val id: Int,
         val backdropPath: String
-    ) : Routes()
+    ) : NavRoute()
 
 }

@@ -4,20 +4,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.pthw.composemovieappcleanarchitecture.feature.movie.MovieNavPage
+import com.pthw.composemovieappcleanarchitecture.navigation.NavRoute
 
 /**
  * Created by P.T.H.W on 27/03/2024.
  */
 
-const val profileNavPageNavigationRoute = "PROFILE"
 fun NavGraphBuilder.profileNavPage() {
-    composable(
-        route = profileNavPageNavigationRoute,
-    ) {
+    composable<NavRoute.ProfilePage> {
         ProfileNavPage()
     }
 }
 
 fun NavController.navigateToProfileNavPage(navOptions: NavOptions? = null) =
-    navigate(profileNavPageNavigationRoute, navOptions)
+    navigate(NavRoute.ProfilePage, navOptions)

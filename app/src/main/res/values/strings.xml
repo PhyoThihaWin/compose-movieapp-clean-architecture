@@ -4,7 +4,7 @@
     <string name="locale_myanmar" translatable="false">&#127474;&#127474;\ \ \ \ \ \ မြန်မာ</string>
 
     <string name="nav_title_home">Home</string>
-    <string name="nav_title_ticket">Ticket</string>
+    <string name="nav_title_favorite">Favorite</string>
     <string name="nav_title_movie">Movie</string>
     <string name="nav_title_profile">Profile</string>
 
@@ -15,6 +15,7 @@
 
     <string name="txt_change_language">Change language</string>
     <string name="txt_my_ticket">My Ticket</string>
+    <string name="txt_favorite_movies">Favorite Movies</string>
     <string name="txt_payment_history">Payment history</string>
     <string name="txt_change_password">Change password</string>
     <string name="txt_face_id_touch_id">Face ID / Touch ID</string>

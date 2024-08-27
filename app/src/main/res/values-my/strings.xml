@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="nav_title_home">ပင်မ</string>
-    <string name="nav_title_ticket">လက်မှတ်</string>
+    <string name="nav_title_favorite">နှစ်သက်သော</string>
     <string name="nav_title_movie">ရုပ်ရှင်များ</string>
     <string name="nav_title_profile">ပရိုဖိုင်</string>
 
     <string name="txt_change_language">ဘာသာစကားပြောင်းရန်</string>
     <string name="txt_my_ticket">လက်မှတ်များ</string>
+    <string name="txt_favorite_movies">နှစ်သက်သောရုပ်ရှင်များ</string>
     <string name="txt_payment_history">ငွေပေးချမှုမှတ်တမ်း</string>
     <string name="txt_change_password">လျှို့ဝှက်နံပါတ်ပြောင်းလဲရန်</string>
     <string name="txt_face_id_touch_id">လုံခြုံရေး ဆက်တင်များ</string>

@@ -1,4 +1,4 @@
-package com.pthw.composemovieappcleanarchitecture.feature.ticket
+package com.pthw.composemovieappcleanarchitecture.feature.favorite
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -46,8 +46,8 @@ import com.pthw.shared.extension.roundTo
  */
 
 @Composable
-fun TicketNavPage(
-    viewModel: TicketNavPageViewModel = hiltViewModel()
+fun FavoriteNavPage(
+    viewModel: FavoriteNavPageViewModel = hiltViewModel()
 ) {
     val movies = viewModel.movies.collectAsState(initial = emptyList()).value
     PageContent(movies = movies)
@@ -57,7 +57,7 @@ fun TicketNavPage(
 private fun PageContent(movies: List<MovieVo>) {
     Scaffold(
         topBar = {
-            TopAppBarView(stringResource(id = R.string.txt_my_ticket))
+            TopAppBarView(stringResource(id = R.string.txt_favorite_movies))
         }
     ) {
         LazyColumn(

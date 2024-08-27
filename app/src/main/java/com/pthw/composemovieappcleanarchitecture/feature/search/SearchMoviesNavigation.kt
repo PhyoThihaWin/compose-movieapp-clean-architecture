@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.pthw.composemovieappcleanarchitecture.navigation.Routes
+import com.pthw.composemovieappcleanarchitecture.navigation.NavRoute
 
 /**
  * Created by P.T.H.W on 23/08/2024.
@@ -17,7 +17,7 @@ fun NavGraphBuilder.searchMoviesPage(
     navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
-    composable<Routes.SearchMoviesPage> {
+    composable<NavRoute.SearchMoviesPage> {
         SearchMoviesPage(
             navController = navController,
             sharedTransitionScope = sharedTransitionScope,
@@ -27,4 +27,4 @@ fun NavGraphBuilder.searchMoviesPage(
 }
 
 fun NavController.navigateToSearchMoviesPage(navOptions: NavOptions? = null) =
-    navigate(Routes.SearchMoviesPage, navOptions)
+    navigate(NavRoute.SearchMoviesPage, navOptions)

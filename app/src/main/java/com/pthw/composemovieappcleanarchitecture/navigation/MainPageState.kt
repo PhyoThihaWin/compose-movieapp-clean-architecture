@@ -14,7 +14,7 @@ import androidx.navigation.navOptions
 import com.pthw.composemovieappcleanarchitecture.feature.home.navigateToHomeNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.movie.navigateToMovieNavPage
 import com.pthw.composemovieappcleanarchitecture.feature.profile.navigateToProfileNavPage
-import com.pthw.composemovieappcleanarchitecture.feature.ticket.navigateToTicketNavPage
+import com.pthw.composemovieappcleanarchitecture.feature.favorite.navigateToFavoriteNavPage
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -79,15 +79,10 @@ class MainPageState(
             }
 
             when (topLevelDestination) {
-                TopLevelDestination.HOME -> navController.navigateToHomeNavPage(topLevelNavOptions)
-                TopLevelDestination.TICKET -> navController.navigateToTicketNavPage(
-                    topLevelNavOptions
-                )
-
-                TopLevelDestination.MOVIE -> navController.navigateToMovieNavPage(topLevelNavOptions)
-                TopLevelDestination.PROFILE -> navController.navigateToProfileNavPage(
-                    topLevelNavOptions
-                )
+                TopLevelDestination.HomePage -> navController.navigateToHomeNavPage(topLevelNavOptions)
+                TopLevelDestination.FavoritePage -> navController.navigateToFavoriteNavPage(topLevelNavOptions)
+                TopLevelDestination.MoviePage -> navController.navigateToMovieNavPage(topLevelNavOptions)
+                TopLevelDestination.ProfilePage -> navController.navigateToProfileNavPage(topLevelNavOptions)
             }
         }
     }

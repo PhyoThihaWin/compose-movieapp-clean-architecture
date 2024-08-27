@@ -16,11 +16,12 @@ import javax.inject.Inject
 class ProfileNavPageViewModel @Inject constructor(
     private val cacheRepository: CacheRepository
 ) : ViewModel() {
-
+    val currentLanguage = mutableStateOf(cacheRepository.getLanguageNormal())
     val appThemeMode = mutableStateOf(cacheRepository.getThemeModeNormal())
 
     init {
         getThemeMode()
+        getLanguageCache()
     }
 
     /**
@@ -29,6 +30,14 @@ class ProfileNavPageViewModel @Inject constructor(
     fun updateLanguageCache(localeCode: String) {
         viewModelScope.launch {
             cacheRepository.putLanguage(localeCode)
+        }
+    }
+
+    private fun getLanguageCache() {
+        viewModelScope.launch {
+            cacheRepository.getLanguage().collectLatest {
+                currentLanguage.value = it
+            }
         }
     }
 

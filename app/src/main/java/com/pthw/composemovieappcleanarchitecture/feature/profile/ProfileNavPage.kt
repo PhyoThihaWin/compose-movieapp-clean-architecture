@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,8 +49,6 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Dimens
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalLocalization
 import com.pthw.domain.general.AppThemeMode
-import com.pthw.domain.general.Localization
-import timber.log.Timber
 
 /**
  * Created by P.T.H.W on 27/03/2024.
@@ -91,7 +88,7 @@ private fun PageContent(
     Scaffold {
         LazyColumn(modifier = Modifier.padding(it)) {
             item {
-                LocalLocalization.current.value
+                LocalLocalization.current
 
                 Spacer(modifier = Modifier.height(Dimens.MARGIN_XLARGE))
                 Row(
@@ -173,7 +170,7 @@ private fun PageContent(
 
         LanguageModalSheet(
             isShow = toShowLanguageSheet,
-            localeCode = LocalLocalization.current.value
+            localeCode = LocalLocalization.current
         ) {
             toShowLanguageSheet = false
             it?.let { localeCode ->
