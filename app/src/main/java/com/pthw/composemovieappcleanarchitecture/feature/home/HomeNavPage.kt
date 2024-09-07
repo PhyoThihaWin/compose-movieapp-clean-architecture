@@ -91,6 +91,7 @@ import com.pthw.domain.home.model.MovieVo
 import com.pthw.composemovieappcleanarchitecture.AppConstant
 import com.pthw.composemovieappcleanarchitecture.composable.MovieFavoriteIcon
 import com.pthw.composemovieappcleanarchitecture.feature.listing.MovieListingPageNavigation
+import com.pthw.composemovieappcleanarchitecture.feature.search.HomeSearchBarView
 import com.pthw.composemovieappcleanarchitecture.ui.theme.LocalColorScheme
 import com.pthw.shared.extension.roundTo
 import com.pthw.shared.extension.showShimmer
@@ -219,9 +220,16 @@ private fun HomePageContent(
                 item {
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
-                    HomeSearchBarView(modifier = modifier) {
-                        onAction(UiEvent.GoSearch)
-                    }
+                    HomeSearchBarView(
+                        modifier = Modifier
+                            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
+                            .clickable {
+                                onAction(UiEvent.GoSearch)
+                            },
+                        hint = stringResource(R.string.txt_search),
+                        enable = false,
+                        onValueChange = {}
+                    )
 
                     Spacer(modifier = modifier.padding(top = Dimens.MARGIN_MEDIUM))
 
@@ -972,37 +980,6 @@ private fun HorizontalPagerIndicator(
             )
         }
     }
-}
-
-@Composable
-private fun HomeSearchBarView(
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(Dimens.BTN_COMMON_HEIGHT)
-            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-            .clip(Shapes.medium)
-            .background(color = LocalColorScheme.current.searchBoxColor)
-            .clickable { onClick() }
-            .padding(horizontal = Dimens.MARGIN_MEDIUM_2)
-
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_search_normal),
-            contentDescription = ""
-        )
-        Spacer(modifier = Modifier.width(Dimens.MARGIN_MEDIUM_2))
-        Text(
-            text = stringResource(id = R.string.txt_search),
-            fontSize = Dimens.TEXT_REGULAR,
-            color = Color.Gray,
-        )
-    }
-
 }
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")

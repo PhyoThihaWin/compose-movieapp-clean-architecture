@@ -86,7 +86,7 @@ class HomeNavPageViewModel @Inject constructor(
         nowPlayingMovies.value = ResultState.Loading
         viewModelScope.launch {
             getNowPlayingMoviesUseCase().onStart { delay(3000) }.collectLatest {
-                nowPlayingMovies.value = ResultState.Success(it)
+                if (it.isNotEmpty()) nowPlayingMovies.value = ResultState.Success(it)
             }
         }
     }
@@ -95,7 +95,7 @@ class HomeNavPageViewModel @Inject constructor(
         upComingMovies.value = ResultState.Loading
         viewModelScope.launch {
             getUpComingMoviesUseCase().onStart { delay(3000) }.collectLatest {
-                upComingMovies.value = ResultState.Success(it)
+                if (it.isNotEmpty()) upComingMovies.value = ResultState.Success(it)
             }
         }
     }
@@ -104,7 +104,7 @@ class HomeNavPageViewModel @Inject constructor(
         popularMovies.value = ResultState.Loading
         viewModelScope.launch {
             getPopularMoviesUseCase().onStart { delay(3000) }.collectLatest {
-                popularMovies.value = ResultState.Success(it)
+                if (it.isNotEmpty()) popularMovies.value = ResultState.Success(it)
             }
         }
     }
@@ -112,7 +112,7 @@ class HomeNavPageViewModel @Inject constructor(
     private fun getPopularPeople() {
         viewModelScope.launch {
             getPopularPeopleUseCase().collectLatest {
-                popularPeople.value = ResultState.Success(it)
+                if (it.isNotEmpty()) popularPeople.value = ResultState.Success(it)
             }
         }
     }

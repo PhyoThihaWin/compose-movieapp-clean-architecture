@@ -4,14 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import androidx.room.withTransaction
-import com.pthw.data.local.database.AppDatabase
-import com.pthw.data.local.database.entities.GenreEntity
-import com.pthw.data.local.movie.MovieEntityVoMapper
-import com.pthw.data.local.movie.MovieVoEntityMapper
+import com.pthw.data.local.datasource.GenreDataSource
+import com.pthw.data.local.datasource.MovieDataSource
 import com.pthw.data.network.movie.MovieApiService
 import com.pthw.data.network.movie.mapper.MovieDetailVoMapper
-import com.pthw.data.network.movie.mapper.MovieVoMapper
 import com.pthw.data.network.movie.pagingsource.NowPlayingMoviePagingSource
 import com.pthw.data.network.movie.pagingsource.SearchMoviePagingSource
 import com.pthw.data.network.movie.pagingsource.UpComingMoviePagingSource
@@ -19,9 +15,7 @@ import com.pthw.domain.home.model.MovieVo
 import com.pthw.domain.movie.model.GenreVo
 import com.pthw.domain.movie.model.MovieDetailVo
 import com.pthw.domain.repository.MovieRepository
-import com.pthw.shared.extension.orZero
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -33,97 +27,46 @@ import javax.inject.Inject
 private const val ITEMS_PER_PAGE = 10
 
 class MovieRepositoryImpl @Inject constructor(
-    private val database: AppDatabase,
+    private val movieDataSource: MovieDataSource,
+    private val genreDataSource: GenreDataSource,
     private val apiService: MovieApiService,
-    private val movieVoMapper: MovieVoMapper,
-    private val movieDetailVoMapper: MovieDetailVoMapper,
-    private val movieEntityVoMapper: MovieEntityVoMapper,
-    private val movieVoEntityMapper: MovieVoEntityMapper,
+    private val movieDetailVoMapper: MovieDetailVoMapper
 ) : MovieRepository {
 
     override suspend fun fetchNowPlayingMovies() {
         val raw = apiService.getNowPlayingMovies()
-        movieVoEntityMapper.prepareForNowPlaying()
-        val genres = database.genreDao().getAllGenres().map {
-            GenreVo(it.id, it.name)
-        }
-        val data = raw.data?.map {
-            movieVoMapper.map(it, genres)
-        }?.map(movieVoEntityMapper::map)
+        movieDataSource.insertMovies(raw.data.orEmpty(), isNowPlaying = true)
 
-        database.withTransaction {
-            val favorites = database.movieDao().getFavoriteMovies().first()
-            database.movieDao().deleteNowPlayingMovies()
-            database.movieDao().insertMovies(data?.map { item ->
-                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
-            }.orEmpty())
-        }
     }
 
     override suspend fun fetchUpComingMovies() {
         val raw = apiService.getUpComingMovies()
-        movieVoEntityMapper.prepareForUpComing()
-        val genres = database.genreDao().getAllGenres().map {
-            GenreVo(it.id, it.name)
-        }
-        val data = raw.data?.map {
-            movieVoMapper.map(it, genres)
-        }?.map(movieVoEntityMapper::map)
-
-        database.withTransaction {
-            val favorites = database.movieDao().getFavoriteMovies().first()
-            database.movieDao().deleteUpComingMovies()
-            database.movieDao().insertMovies(data?.map { item ->
-                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
-            }.orEmpty())
-        }
+        movieDataSource.insertMovies(raw.data.orEmpty(), isUpComing = true)
     }
 
     override suspend fun fetchPopularMovies() {
         val raw = apiService.getPopularMovies()
-        movieVoEntityMapper.prepareForPopular()
-        val genres = database.genreDao().getAllGenres().map {
-            GenreVo(it.id, it.name)
-        }
-        val data = raw.data?.map {
-            movieVoMapper.map(it, genres)
-        }?.map(movieVoEntityMapper::map)
-
-        database.withTransaction {
-            val favorites = database.movieDao().getFavoriteMovies().first()
-            database.movieDao().deletePopularMovies()
-            database.movieDao().insertMovies(data?.map { item ->
-                if (favorites.find { it.id == item.id } != null) item.copy(isFavorite = true) else item
-            }.orEmpty())
-        }
+        movieDataSource.insertMovies(raw.data.orEmpty(), isPopular = true)
     }
 
     override fun getDbNowPlayingMovies(): Flow<List<MovieVo>> {
-        return database.movieDao().getHomeMovies(isNowPlaying = true).map { list ->
-            list.map(movieEntityVoMapper::map)
-        }
+        return movieDataSource.getHomeMovies(isNowPlaying = true)
     }
 
     override fun getDbUpComingMovies(): Flow<List<MovieVo>> {
-        return database.movieDao().getHomeMovies(isUpComing = true).map { list ->
-            list.map(movieEntityVoMapper::map)
-        }
+        return movieDataSource.getHomeMovies(isUpComing = true)
     }
 
     override fun getDbPopularMovies(): Flow<List<MovieVo>> {
-        return database.movieDao().getHomeMovies(isPopular = true).map { list ->
-            list.map(movieEntityVoMapper::map)
-        }
+        return movieDataSource.getHomeMovies(isPopular = true)
     }
 
     override fun getDbFavoriteMovies(): Flow<List<MovieVo>> {
-        return database.movieDao().getFavoriteMovies().map {
-            it.map(movieEntityVoMapper::map)
-        }
+        return movieDataSource.getFavoriteMovies()
     }
 
     override suspend fun favoriteDbMovie(movieId: Int) {
-        database.movieDao().updateFavoriteMovie(movieId)
+        movieDataSource.updateFavoriteMovie(movieId)
     }
 
 
@@ -136,10 +79,8 @@ class MovieRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = { NowPlayingMoviePagingSource(apiService = apiService) }
         ).flow.map { pagingData ->
-            val genres = database.genreDao().getAllGenres().map {
-                GenreVo(it.id, it.name)
-            }
-            pagingData.map { movieVoMapper.map(it, genres) }
+            val genres = genreDataSource.getAllGenres()
+            pagingData.map { it.toMovieVo(genres) }
         }
     }
 
@@ -152,10 +93,8 @@ class MovieRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = { UpComingMoviePagingSource(apiService = apiService) }
         ).flow.map { pagingData ->
-            val genres = database.genreDao().getAllGenres().map {
-                GenreVo(it.id, it.name)
-            }
-            pagingData.map { movieVoMapper.map(it, genres) }
+            val genres = genreDataSource.getAllGenres()
+            pagingData.map { it.toMovieVo(genres) }
         }
     }
 
@@ -170,10 +109,8 @@ class MovieRepositoryImpl @Inject constructor(
                 SearchMoviePagingSource(query, apiService)
             }
         ).flow.map { pagingData ->
-            val genres = database.genreDao().getAllGenres().map {
-                GenreVo(it.id, it.name)
-            }
-            pagingData.map { movieVoMapper.map(it, genres) }
+            val genres = genreDataSource.getAllGenres()
+            pagingData.map { it.toMovieVo(genres) }
         }
     }
 
@@ -181,28 +118,18 @@ class MovieRepositoryImpl @Inject constructor(
         val rawDetails = apiService.getMovieDetails(movieId)
         val rawCasts = apiService.getMovieDetailCasts(movieId)
 
-        val favorites = database.movieDao().getFavoriteMovies().first()
+        val favorites = movieDataSource.getFavoriteMovies().first()
         return movieDetailVoMapper.map(rawDetails, rawCasts)
             .copy(isFavorite = favorites.find { it.id == movieId } != null)
     }
 
     override suspend fun getMovieGenres() {
         val raw = apiService.getMovieGenres()
-        database.withTransaction {
-            database.genreDao().clearGenres()
-            database.genreDao().insertGenres(
-                raw.genres?.map {
-                    GenreEntity(
-                        id = it?.id.orZero(),
-                        name = it?.name.orEmpty()
-                    )
-                }.orEmpty()
-            )
-        }
+        genreDataSource.insertGenres(raw.genres.orEmpty())
     }
 
     override suspend fun getGenreById(id: Int): GenreVo {
-        val genreEntity = database.genreDao().getGenreById(id)
+        val genreEntity = genreDataSource.getGenreById(id)
         return GenreVo(
             id = genreEntity.id,
             name = genreEntity.name

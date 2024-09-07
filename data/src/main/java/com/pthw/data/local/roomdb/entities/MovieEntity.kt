@@ -1,7 +1,8 @@
-package com.pthw.data.local.database.entities
+package com.pthw.data.local.roomdb.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.pthw.domain.home.model.MovieVo
 
 /**
  * Created by P.T.H.W on 02/04/2024.
@@ -23,4 +24,16 @@ data class MovieEntity(
     var isNowPlaying: Boolean = false,
     var isUpComing: Boolean = false,
     var isPopular: Boolean = false
-)
+) {
+    fun toMovieVo() = MovieVo(
+        id = id,
+        title = title,
+        overview = overview,
+        backdropPath = backdropPath,
+        releaseDate = releaseDate,
+        posterPath = posterPath,
+        voteAverage = voteAverage.toFloat(),
+        genreIds = genreIds,
+        isFavorite = isFavorite
+    )
+}

@@ -1,4 +1,4 @@
-package com.pthw.data.local.repository
+package com.pthw.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

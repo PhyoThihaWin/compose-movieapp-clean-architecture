@@ -1,10 +1,10 @@
-package com.pthw.data.local.actor
+package com.pthw.data.local.roomdb.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.pthw.data.local.database.entities.ActorEntity
+import com.pthw.data.local.roomdb.entities.ActorEntity
 import kotlinx.coroutines.flow.Flow
 
 /**

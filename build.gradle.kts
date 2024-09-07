@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.googleService) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.realm.kotlin) apply false
 }
 
 tasks.register("clean", Delete::class) {

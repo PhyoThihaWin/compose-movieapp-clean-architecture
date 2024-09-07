@@ -1,6 +1,11 @@
 package com.pthw.data.network.movie.response
 
 
+import com.pthw.data.local.roomdb.entities.ActorEntity
+import com.pthw.data.local.realmdb.entity.ActorRealmEntity
+import com.pthw.data.network.ktor.IMAGE_BASE_URL
+import com.pthw.shared.extension.orFalse
+import com.pthw.shared.extension.orZero
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -33,5 +38,27 @@ data class ActorResponse(
         @SerialName("video") val video: Boolean?,
         @SerialName("vote_average") val voteAverage: Double?,
         @SerialName("vote_count") val voteCount: Int?
+    )
+
+    fun toActorRealmEntity() = ActorRealmEntity().apply {
+        adult = this@ActorResponse.adult.orFalse()
+        gender = this@ActorResponse.gender.orZero()
+        id = this@ActorResponse.id ?: 0
+        knownForDepartment = this@ActorResponse.knownForDepartment.toString()
+        name = this@ActorResponse.name.orEmpty()
+        originalName = this@ActorResponse.originalName.orEmpty()
+        popularity = this@ActorResponse.popularity.orZero()
+        profilePath = IMAGE_BASE_URL + this@ActorResponse.profilePath.orEmpty()
+    }
+
+    fun toActorEntity() = ActorEntity(
+        adult = adult.orFalse(),
+        gender = gender.orZero(),
+        id = id.orZero(),
+        knownForDepartment = knownForDepartment.orEmpty(),
+        name = name.orEmpty(),
+        originalName = originalName.orEmpty(),
+        popularity = popularity.orZero(),
+        profilePath = IMAGE_BASE_URL + profilePath
     )
 }

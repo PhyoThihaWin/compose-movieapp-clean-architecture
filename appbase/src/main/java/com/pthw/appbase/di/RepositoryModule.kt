@@ -1,6 +1,6 @@
 package com.pthw.appbase.di
 
-import com.pthw.data.local.repository.CacheRepositoryImpl
+import com.pthw.data.repository.CacheRepositoryImpl
 import com.pthw.data.repository.ActorRepositoryImpl
 import com.pthw.data.repository.MovieRepositoryImpl
 import com.pthw.domain.repository.ActorRepository

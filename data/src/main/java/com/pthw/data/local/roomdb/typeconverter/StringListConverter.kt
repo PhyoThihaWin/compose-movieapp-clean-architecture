@@ -1,4 +1,4 @@
-package com.pthw.data.local.database.typeconverter
+package com.pthw.data.local.roomdb.typeconverter
 
 import androidx.room.TypeConverter
 

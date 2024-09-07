@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +34,7 @@ import com.pthw.composemovieappcleanarchitecture.ui.theme.Shapes
 fun HomeSearchBarView(
     modifier: Modifier,
     hint: String,
+    enable: Boolean = true,
     onValueChange: (String) -> Unit
 ) {
     var textSearchBox by rememberSaveable { mutableStateOf("") }
@@ -50,6 +52,7 @@ fun HomeSearchBarView(
             contentDescription = ""
         )
         TextField(
+            enabled = enable,
             value = textSearchBox,
             onValueChange = {
                 textSearchBox = it

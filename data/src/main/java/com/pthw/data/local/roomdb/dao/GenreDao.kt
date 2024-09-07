@@ -1,10 +1,10 @@
-package com.pthw.data.local.movie
+package com.pthw.data.local.roomdb.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.pthw.data.local.database.entities.GenreEntity
+import com.pthw.data.local.roomdb.entities.GenreEntity
 
 /**
  * Created by P.T.H.W on 26/04/2024.

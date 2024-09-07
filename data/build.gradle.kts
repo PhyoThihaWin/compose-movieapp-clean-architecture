@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.koltin.serilization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.realm.kotlin)
 }
 
 android {
@@ -60,5 +61,5 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.paging.common)
-
+    implementation(libs.realm.kotlin)
 }

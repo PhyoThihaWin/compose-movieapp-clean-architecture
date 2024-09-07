@@ -22,6 +22,7 @@ ComposeMovieApp is the one that I developed with Jetpack Compose and Clean Archi
 - SplashScreen API
 - Preference DataStore
 - Room Database
+- Realm 
 - Coil 
 - Timber
 

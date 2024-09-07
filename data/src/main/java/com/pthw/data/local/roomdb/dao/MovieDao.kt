@@ -1,11 +1,10 @@
-package com.pthw.data.local.movie
+package com.pthw.data.local.roomdb.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import com.pthw.data.local.database.entities.MovieEntity
+import com.pthw.data.local.roomdb.entities.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
 /**

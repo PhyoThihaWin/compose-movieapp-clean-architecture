@@ -38,7 +38,7 @@ paging = "3.3.2"
 pagingCompose = "3.3.2"
 constraintLayoutCompose = "1.1.0-alpha13"
 firebaseBom = "33.2.0"
-
+realm = "2.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -94,6 +94,7 @@ constraint-compose = { module = "androidx.constraintlayout:constraintlayout-comp
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+realm-kotlin = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -106,6 +107,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 googleService = { id = "com.google.gms.google-services", version.ref = "googleService" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+realm-kotlin = { id = "io.realm.kotlin", version.ref = "realm" }
 
 [bundles]
 ktor = ["ktor-client-okhttp", "ktor-client-logging", "ktor-content-negotiation", "ktor-kotlinx-serialization", "kotlinx-serialization"]

@@ -1,16 +1,16 @@
-package com.pthw.data.local.database
+package com.pthw.data.local.roomdb
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.pthw.data.local.actor.ActorDao
-import com.pthw.data.local.movie.MovieDao
-import com.pthw.data.local.database.entities.ActorEntity
-import com.pthw.data.local.database.entities.GenreEntity
-import com.pthw.data.local.database.entities.MovieEntity
-import com.pthw.data.local.database.typeconverter.IntegerListConverter
-import com.pthw.data.local.database.typeconverter.StringListConverter
-import com.pthw.data.local.movie.GenreDao
+import com.pthw.data.local.roomdb.dao.ActorDao
+import com.pthw.data.local.roomdb.dao.MovieDao
+import com.pthw.data.local.roomdb.entities.ActorEntity
+import com.pthw.data.local.roomdb.entities.GenreEntity
+import com.pthw.data.local.roomdb.entities.MovieEntity
+import com.pthw.data.local.roomdb.typeconverter.IntegerListConverter
+import com.pthw.data.local.roomdb.typeconverter.StringListConverter
+import com.pthw.data.local.roomdb.dao.GenreDao
 
 /**
  * Created by P.T.H.W on 30/03/2023.
