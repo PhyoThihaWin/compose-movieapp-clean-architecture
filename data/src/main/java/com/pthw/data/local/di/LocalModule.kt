@@ -11,6 +11,9 @@ import com.pthw.data.local.realmdb.datasource_impl.GenreRealmDataSourceImpl
 import com.pthw.data.local.realmdb.datasource_impl.MovieRealmDataSourceImpl
 import com.pthw.data.local.roomdb.AppDatabase
 import com.pthw.data.local.realmdb.RealmDatabase
+import com.pthw.data.local.roomdb.datasource_impl.ActorRoomDataSourceImpl
+import com.pthw.data.local.roomdb.datasource_impl.GenreRoomDataSourceImpl
+import com.pthw.data.local.roomdb.datasource_impl.MovieRoomDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -54,11 +57,11 @@ object DatabaseModule {
 @InstallIn(ViewModelComponent::class)
 abstract class DataSourceModule {
     @Binds
-    abstract fun provideMovieDataSource(dataSource: MovieRealmDataSourceImpl): MovieDataSource
+    abstract fun provideMovieDataSource(dataSource: MovieRoomDataSourceImpl): MovieDataSource
 
     @Binds
-    abstract fun provideActorDataSource(dataSource: ActorRealmDataSourceImpl): ActorDataSource
+    abstract fun provideActorDataSource(dataSource: ActorRoomDataSourceImpl): ActorDataSource
 
     @Binds
-    abstract fun provideGenreDataSource(dataSource: GenreRealmDataSourceImpl): GenreDataSource
+    abstract fun provideGenreDataSource(dataSource: GenreRoomDataSourceImpl): GenreDataSource
 }
